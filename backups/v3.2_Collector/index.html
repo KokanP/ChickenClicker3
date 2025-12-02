@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chicken Clicker: The Farm</title>
+    <link rel="stylesheet" href="style.css?v=3.2">
+    <!-- html2canvas for achievement screenshots -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+    <div id="app-wrapper">
+        
+        <!-- The Farm Scene -->
+        <div id="game-scene">
+            <!-- Layers -->
+            <div id="sky-layer" class="scene-layer"></div>
+            
+            <!-- Title Cloud -->
+            <div id="title-cloud" class="scene-layer">
+                <svg viewBox="0 0 200 100" style="width:100%; height:100%; overflow:visible;">
+                    <path d="M25,60 Q40,30 70,40 Q90,10 130,40 Q160,20 175,50 Q195,50 180,80 L25,80 Z" fill="#fff" opacity="0.9"/>
+                    <text x="100" y="70" font-family="'VT323', monospace" font-size="22" text-anchor="middle" fill="#8b5a2b" font-weight="bold" style="text-shadow: 1px 1px 0 #fff;">CHICKEN CLICKER</text>
+                </svg>
+            </div>
+
+            <div id="ground-layer" class="scene-layer"></div>
+            
+            <div id="event-banner"></div>
+
+            <!-- Assets (Initially Hidden) -->
+            <!-- Coop: A classic red barn -->
+            <svg id="coop-asset" class="scene-layer" viewBox="0 0 100 100">
+                <title>Coop: Workers live here</title>
+                <!-- Main Barn Structure -->
+                <path d="M10,40 L50,10 L90,40 V90 H10 Z" fill="#c0392b" stroke="#5c4033" stroke-width="3"/>
+                <!-- Roof Trim -->
+                <path d="M10,40 L50,10 L90,40" fill="none" stroke="#fff" stroke-width="3"/>
+                <!-- Door -->
+                <rect x="35" y="50" width="30" height="40" fill="#5c4033" stroke="#3e2b22" stroke-width="2"/>
+                <line x1="35" y1="50" x2="65" y2="90" stroke="#3e2b22" stroke-width="2"/>
+                <line x1="65" y1="50" x2="35" y2="90" stroke="#3e2b22" stroke-width="2"/>
+                <!-- Loft Window -->
+                <circle cx="50" cy="30" r="8" fill="#fff" stroke="#5c4033" stroke-width="2"/>
+            </svg>
+
+            <!-- Incubator: A high-tech warm machine, not a shed -->
+            <svg id="incubator-asset" class="scene-layer" viewBox="0 0 100 100">
+                <title>Incubator: Boosts click power</title>
+                <!-- Metal casing -->
+                <rect x="20" y="30" width="60" height="70" rx="5" fill="#95a5a6" stroke="#7f8c8d" stroke-width="3"/>
+                <!-- Glass window with warm glow -->
+                <rect x="30" y="40" width="40" height="40" fill="#f1c40f" opacity="0.8" stroke="#f39c12" stroke-width="2"/>
+                <!-- Eggs inside -->
+                <ellipse cx="40" cy="65" rx="6" ry="8" fill="#fff"/>
+                <ellipse cx="60" cy="65" rx="6" ry="8" fill="#fff"/>
+                <!-- Temperature gauge -->
+                <rect x="35" y="20" width="30" height="10" fill="#333"/>
+                <rect x="37" y="22" width="26" height="6" fill="red"/>
+            </svg>
+
+            <!-- Silkie Patch: Fenced off area with special feed -->
+            <svg id="silkie-asset" class="scene-layer" viewBox="0 0 100 50" style="display:none;">
+                <title>Silkie Patch: Chance for feathers</title>
+                <rect x="5" y="5" width="90" height="40" fill="#55a300" stroke="#8b5a2b" stroke-width="2" stroke-dasharray="5,5"/>
+                <circle cx="30" cy="25" r="5" fill="#fff" />
+                <circle cx="50" cy="20" r="5" fill="#fff" />
+                <circle cx="70" cy="30" r="5" fill="#fff" />
+            </svg>
+
+            <!-- Fence: Wooden posts -->
+            <div id="fence-asset" class="scene-layer" title="Secure Farm: 1M+ Eggs" style="background: repeating-linear-gradient(90deg, #8b5a2b 0, #8b5a2b 10px, transparent 10px, transparent 50px);"></div>
+
+            <!-- Flagpole: Prestige indicator -->
+            <svg id="flagpole-asset" class="scene-layer" viewBox="0 0 50 150">
+                <title>Prestige: Honor of the Farm</title>
+                <!-- Pole -->
+                <rect x="22" y="10" width="6" height="140" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="1"/>
+                <!-- Base -->
+                <path d="M10,150 L40,150 L35,140 L15,140 Z" fill="#7f8c8d"/>
+                <!-- Flag (Waving) -->
+                <path d="M28,15 C40,10 45,25 28,35 Z" fill="#e74c3c" stroke="#c0392b" stroke-width="1"/>
+                <!-- Gold Ball on top -->
+                <circle cx="25" cy="10" r="4" fill="gold" stroke="#f39c12" stroke-width="1"/>
+            </svg>
+
+            <!-- Interactive Events (Initially Hidden) -->
+            
+            <!-- Eagle: Flies across the sky -->
+            <svg id="eagle-asset" class="scene-layer" viewBox="0 0 100 50" style="display:none; width: 100px; cursor: crosshair; z-index: 100;">
+                <title>Eagle: Click to scare!</title>
+                <path d="M10,20 Q30,5 50,20 Q70,5 90,20 L80,30 Q60,40 50,30 Q40,40 20,30 Z" fill="#5c4033"/>
+                <circle cx="85" cy="22" r="2" fill="white"/>
+                <path d="M90,20 L95,25 L90,28 Z" fill="yellow"/>
+            </svg>
+
+            <!-- Fox/Badger Eyes: Hiding in the bushes -->
+            <svg id="ground-critter-asset" class="scene-layer" viewBox="0 0 50 20" style="display:none; width: 50px; cursor: pointer; z-index: 40;">
+                <title>Something in the bushes...</title>
+                <circle cx="15" cy="10" r="5" fill="yellow" class="glowing-eye"/>
+                <circle cx="35" cy="10" r="5" fill="yellow" class="glowing-eye"/>
+            </svg>
+
+            <!-- Umbrella: Appears during rain -->
+            <svg id="umbrella-asset" class="scene-layer" viewBox="0 0 50 50" style="display:none; width: 50px; cursor: pointer; z-index: 100;">
+                <title>Stay Dry!</title>
+                <path d="M5,25 Q25,5 45,25" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+                <rect x="24" y="25" width="2" height="20" fill="#333"/>
+                <path d="M24,45 Q20,50 18,45" fill="none" stroke="#333" stroke-width="2"/>
+            </svg>
+
+            <!-- Rain Overlay -->
+            <div id="rain-overlay" class="scene-layer" style="display:none; width:100%; height:100%; z-index: 90; pointer-events: none; background: url('data:image/svg+xml;utf8,<svg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'><line x1=\'10\' y1=\'0\' x2=\'5\' y2=\'10\' stroke=\'rgba(173, 216, 230, 0.5)\' stroke-width=\'1\'/></svg>'); animation: rainFall 0.5s linear infinite;"></div>
+
+            <!-- The Main Chicken -->
+            <div id="chicken-container">
+                <svg id="chicken" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+                    <!-- Pixelated style chicken attempt via SVG -->
+                    <rect x="30" y="40" width="40" height="40" fill="white" />
+                    <rect x="30" y="30" width="20" height="10" fill="white" />
+                    <rect x="70" y="40" width="10" height="10" fill="orange" /> <!-- Beak -->
+                    <rect x="30" y="20" width="10" height="10" fill="red" /> <!-- Comb -->
+                    <rect x="40" y="80" width="5" height="15" fill="orange" /> <!-- Leg -->
+                    <rect x="55" y="80" width="5" height="15" fill="orange" /> <!-- Leg -->
+                    <rect x="50" y="35" width="5" height="5" fill="black" /> <!-- Eye -->
+                </svg>
+            </div>
+
+            <!-- Container for random event items -->
+            <div id="colored-egg-container" style="position: absolute; inset: 0; pointer-events: none;">
+                <!-- Golden chicken and eggs will be injected here via JS -->
+                <svg id="golden-chicken" class="golden-chicken" viewBox="0 0 100 100">
+                     <rect x="30" y="40" width="40" height="40" fill="gold" />
+                     <rect x="30" y="30" width="20" height="10" fill="gold" />
+                     <rect x="70" y="40" width="10" height="10" fill="orange" />
+                     <rect x="30" y="20" width="10" height="10" fill="red" />
+                     <rect x="40" y="80" width="5" height="15" fill="orange" />
+                     <rect x="55" y="80" width="5" height="15" fill="orange" />
+                     <rect x="50" y="35" width="5" height="5" fill="black" />
+                </svg>
+            </div>
+            
+            <div id="achievement-toast">
+                <h3 id="toast-title"></h3>
+                <p id="toast-description"></p>
+            </div>
+        </div>
+
+        <!-- The HUD -->
+        <div id="hud-bar">
+            <!-- Stats -->
+            <div class="hud-stats">
+                <div class="stat-row">
+                    <span class="stat-icon">🥚</span>
+                    <span id="egg-counter" class="stat-value">0</span>
+                </div>
+                <div class="stat-row" style="font-size: 1rem;">
+                    <span class="stat-icon" style="font-size:1rem">🪶</span>
+                    <span id="feather-counter">0</span>
+                    <span class="stat-icon" style="font-size:1rem; margin-left:10px;">🏅</span>
+                    <span id="reputation-points">0</span>
+                </div>
+                <div class="sub-stats">
+                    <span id="eggs-per-second">EPS: 0</span> | <span id="eggs-per-click">EPC: 1</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="hud-nav">
+                <div class="nav-btn" data-modal="upgrades-screen">
+                    <svg viewBox="0 0 24 24"><path d="M14.7 6.3l-1.7-1.7c-.4-.4-1-.4-1.4 0l-3 3c-.4.4-.4 1 0 1.4l1.7 1.7L5 16.3V21h4.7l5-5.3 1.7 1.7c.4.4 1 .4 1.4 0l3-3c.4-.4.4-1 0-1.4l-1.7-1.7L21 9.4l-4.7-4.8-1.6 1.7zM12 13.4l-3-3L12 7.4l3 3-3 3z"/></svg>
+                    <span>Build</span>
+                </div>
+                <div class="nav-btn" data-modal="coop-screen">
+                    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                    <span>Coop</span>
+                </div>
+                <div class="nav-btn" data-modal="achievements-screen">
+                    <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1l0 2.5C3 14 5.7 17.5 9 18.4V20h6v-1.6c3.3-.9 6-4.4 6-7.9V7c0-1.1-.9-2-2-2zM5 9V7h2v2H5zm10 9.4V20H9v-1.6c-2.8-.7-4.9-3.2-5-6.4h2c0 3.3 2.7 6 6 6s6-2.7 6-6h2c-.1 3.2-2.2 5.7-5 6.4zM17 9h2V7h-2v2z"/></svg>
+                    <span>Awards</span>
+                </div>
+                <div class="nav-btn" data-modal="museum-screen">
+                    <svg viewBox="0 0 24 24"><path d="M2 20h20v2H2v-2zm2-8h2v7H4v-7zm5 0h2v7H9v-7zm5 0h2v7h-2v-7zm5 0h2v7h-2v-7zM2 7l10-5 10 5v4H2V7zm2 2v2h16V9H4z"/></svg>
+                    <span>Museum</span>
+                </div>
+                <div class="nav-btn" data-modal="genetic-lab-screen">
+                    <svg viewBox="0 0 24 24"><path d="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2z"/></svg>
+                    <span>Genetic</span>
+                </div>
+                <div class="nav-btn" data-modal="settings-screen">
+                    <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.488.488 0 0 0-.59.22L2.64 8.87a.49.49 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.58 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                    <span>System</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div id="upgrades-screen" class="modal-screen">
+            <div class="modal-content">
+                <button class="close-modal-btn">&times;</button>
+                <h2 class="modal-title">Farm Upgrades</h2>
+                <div id="upgrades-list" class="modal-body"></div>
+            </div>
+        </div>
+
+        <div id="coop-screen" class="modal-screen">
+            <div class="modal-content">
+                <button class="close-modal-btn">&times;</button>
+                <h2 class="modal-title">The Coop</h2>
+                <div id="coop-list" class="modal-body"></div>
+            </div>
+        </div>
+
+        <div id="achievements-screen" class="modal-screen">
+            <div class="modal-content">
+                <button class="close-modal-btn">&times;</button>
+                <h2 class="modal-title">Achievements</h2>
+                <div class="modal-body">
+                    <div id="achievements-list"></div>
+                    <!-- Prestige Section -->
+                    <div style="margin-top: 20px; border-top: 4px double #5c4033; padding-top: 10px;">
+                        <h3 style="font-size: 2rem; text-align: center;">Sell The Farm</h3>
+                        <p id="prestige-cost-text" style="text-align: center;">Cost: 1T Eggs</p>
+                        <button id="prestige-button" class="funky-button" style="width: 100%; background: #8e44ad;">Prestige (Reset)</button>
+                        
+                        <!-- Prestige Upgrade (Ancestral Blueprints) -->
+                        <div style="margin-top: 15px; border: 2px solid #5c4033; padding: 10px;">
+                            <h4>Ancestral Blueprints</h4>
+                            <p>Start with +5 Workers per level.</p>
+                            <p>Level: <span id="ancestralBlueprints-level">0</span> | Cost: <span id="ancestralBlueprints-cost">10</span> Rep</p>
+                            <button id="buy-ancestralBlueprints" class="funky-button" style="width: 100%;">Buy Upgrade</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="museum-screen" class="modal-screen">
+            <div class="modal-content">
+                <button class="close-modal-btn">&times;</button>
+                <h2 class="modal-title">Museum of Antiquities</h2>
+                <p style="text-align: center; font-style: italic; margin-bottom: 10px;">"One man's trash is another man's artifact."</p>
+                <div id="museum-list" class="modal-body" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;"></div>
+            </div>
+        </div>
+
+        <div id="genetic-lab-screen" class="modal-screen">
+            <div class="modal-content">
+                <button class="close-modal-btn">&times;</button>
+                <h2 class="modal-title">Genetic Lab</h2>
+                <p style="text-align: center; font-style: italic; margin-bottom: 10px;">"Unleash the inner chicken."</p>
+                <div id="genetic-lab-list" class="modal-body" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;"></div>
+            </div>
+        </div>
+
+        <div id="settings-screen" class="modal-screen">
+            <div class="modal-content">
+                <button class="close-modal-btn">&times;</button>
+                <h2 class="modal-title">Settings</h2>
+                <div class="modal-body" style="display: flex; flex-direction: column; gap: 10px;">
+                    <input type="text" id="nickname-input" placeholder="Name" style="font-family: inherit; font-size: 1.5rem; padding: 5px; text-align: center;">
+                    <p id="player-name-display" style="text-align: center; display: none;"></p> 
+                    
+                    <hr style="border: 1px solid #5c4033; width: 100%;">
+                    
+                    <button id="export-save-clipboard" class="funky-button">Export to Clipboard</button>
+                    <button id="export-save-file" class="funky-button">Export to File</button>
+                    
+                    <textarea id="import-save-text" placeholder="Paste save here..." style="font-family: inherit; padding: 5px;"></textarea>
+                    <button id="import-save-text-btn" class="funky-button">Import from Text</button>
+                    <button id="import-save-file-btn" class="funky-button">Import from File</button>
+                    <input type="file" id="import-file-input" style="display: none;">
+
+                    <hr style="border: 1px solid #5c4033; width: 100%;">
+                    
+                    <button id="reset-button" class="funky-button" style="background: #c0392b;">HARD RESET</button>
+                    
+                    <p style="text-align: center; margin-top: 20px; font-size: 0.8rem;">Version: <span id="version-number">3.0</span></p>
+                    <details>
+                        <summary id="license-summary" style="cursor: pointer; text-decoration: underline;">License</summary>
+                        <p>MIT License</p>
+                    </details>
+                    <details style="margin-top: 10px;">
+                        <summary style="cursor: pointer; text-decoration: underline; font-weight: bold;">Full Changelog</summary>
+                        <div style="text-align: left; font-size: 1rem; max-height: 300px; overflow-y: auto; margin-top: 10px; border: 2px solid #5c4033; padding: 10px; background: rgba(255,255,255,0.3);">
+                            <h3 style="border-bottom: 2px solid #5c4033;">Version 3.1 (The Alive Update)</h3>
+                            <ul>
+                                <li><strong>Interactive Events:</strong> The farm now feels alive with 3 new randomized events to watch out for:
+                                    <ul>
+                                        <li><strong>The Predator:</strong> An Eagle flies across the sky. Click it to protect your flock and earn a reward.</li>
+                                        <li><strong>Forest Critters:</strong> Keep an eye on the bushes. You might spot glowing eyes (Fox) or a rare Badger.</li>
+                                        <li><strong>Weather:</strong> Rainstorms pass through. Click the umbrella to stay dry and earn a bonus.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>New Achievements:</strong> Added 7 new achievements tied to these events, including the elusive "Mushroom Mushroom!" for finding a Badger.</li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 3.1.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 3.0 (Br1ck version - moar kok)</h3>
+                            <ul>
+                                <li><strong>Visual Overhaul:</strong> Transformed the main screen into a "Living Diorama" of the player's farm, replacing the dashboard of stats.</li>
+                                <li><strong>Dynamic Scene Assets:</strong> Implemented new visual assets that appear based on game progression:
+                                    <ul>
+                                        <li><strong>Coop:</strong> Appears when a Coop Worker is purchased.</li>
+                                        <li><strong>Incubator (Shed):</strong> Appears when an Incubator is purchased.</li>
+                                        <li><strong>Silkie Chicken Patch:</strong> Appears when a Silkie Chicken is purchased.</li>
+                                        <li><strong>Rustic Fence:</strong> Appears upon reaching 1 Million total eggs.</li>
+                                        <li><strong>Flagpole:</strong> Appears after the first Prestige.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Enhanced Animations:</strong>
+                                    <ul>
+                                        <li><strong>Golden Chicken:</strong> Now runs frantically across the screen instead of simply fading in.</li>
+                                        <li><strong>Colored Eggs:</strong> Now fall from the sky and bounce on the ground.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Thematic HUD:</strong> Redesigned the Heads-Up Display (HUD) at the bottom of the screen with a pixel-art theme, integrating core stats and navigation buttons.</li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 3.0.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.93 (Clarity Update)</h3>
+                            <ul>
+                                <li><strong>UI/Clarity:</strong> Updated descriptions for several upgrades and chickens (Coop Worker, Incubator, Golden Loom, Rooster, Wyandotte Warrior, Doja Cow) to be more explicit about mechanical effects.</li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 2.93.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.92 (Eggies)</h3>
+                            <ul>
+                                <li><strong>Feature (UI):</strong> Added a banner for active colored egg buffs with countdowns.</li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 2.92.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.91 (Jules)</h3>
+                            <ul>
+                                <li><strong>Critical Fix (Reputation):</strong> Roosters now grant base 1,000 Reputation. Wyandotte bonus increased to 5%.</li>
+                                <li><strong>Critical Fix (Buffs):</strong> Fixed buff expiration logic.</li>
+                                <li><strong>Feature (UI):</strong> Added progress bars to achievements.</li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 2.91.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.9 (Cluck You Totoro!)</h3>
+                            <ul>
+                                <li><strong>Fix:</strong> "Fowl Language" upgrade now works (insults added).</li>
+                                <li><strong>Documentation:</strong> Updated "How to Play" and "Running Locally".</li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 2.9.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.8 (Architect's Update)</h3>
+                            <ul>
+                                <li><strong>Balance:</strong> Prestige cost now doubles with each use.</li>
+                                <li><strong>Feature:</strong> Added Golden Compass, Comfy Coop Bedding, Prismatic Feed, Ancestral Blueprints.</li>
+                                <li><strong>Fix:</strong> Mobile version title overflow fix.</li>
+                                <li><strong>Housekeeping:</strong> Refactored into multi-file structure.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.7 (Banty Shack)</h3>
+                            <ul>
+                                <li><strong>Feature:</strong> Implemented Offline Progress.</li>
+                                <li><strong>UI:</strong> Added "Welcome Back" modal.</li>
+                                <li><strong>Housekeeping:</strong> Updated version to 2.7.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.6 (Tarzan)</h3>
+                            <ul>
+                                <li><strong>Balance:</strong> Achievement bonuses changed to additive.</li>
+                                <li><strong>UI:</strong> Prestige menu breakdown added.</li>
+                                <li><strong>Feature:</strong> Orpington Oracle implemented.</li>
+                                <li><strong>Fix:</strong> Wyandotte Warrior reputation fix.</li>
+                                <li><strong>Housekeeping:</strong> Updated version to 2.6.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.5 (Totoro)</h3>
+                            <ul>
+                                <li><strong>Feature:</strong> Added "Help" screen.</li>
+                                <li><strong>Feature:</strong> Save Export/Import system.</li>
+                                <li><strong>Bug Fix (Critical):</strong> Fixed Nest Egg IRA infinity bug.</li>
+                                <li><strong>Bug Fix:</strong> Doja Cow Super Click chain fix.</li>
+                                <li><strong>Bug Fix:</strong> Green/Orange egg buffs fixed.</li>
+                                <li><strong>Bug Fix:</strong> Hard Reset achievement fixed.</li>
+                                <li><strong>Housekeeping:</strong> Updated version to 2.5.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.4 (Hotfix & Consolidation)</h3>
+                            <ul>
+                                <li><strong>Project Consolidation:</strong> Merged files for stability.</li>
+                                <li><strong>Bug Fix (Critical):</strong> Fixed missing colors for upgrades/items.</li>
+                                <li><strong>Bug Fix:</strong> Hard Reset achievement logic fix.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.3</h3>
+                            <ul>
+                                <li><strong>Refactor:</strong> Split code into logical modules (config, ui, game).</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.2</h3>
+                            <ul>
+                                <li><strong>Feature:</strong> "Doja Chicken" reworked to "Doja Cow" (Super Click).</li>
+                                <li><strong>Bug Fix:</strong> Player name display fix.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.1</h3>
+                            <ul>
+                                <li><strong>Feature:</strong> 50+ new achievements.</li>
+                                <li><strong>Feature:</strong> 10 Colored Eggs with bonuses.</li>
+                                <li><strong>Feature:</strong> 6 new Upgrade tiers.</li>
+                                <li><strong>Feature:</strong> 6 new Chicken tiers.</li>
+                                <li><strong>UI:</strong> Name prompt added.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.0</h3>
+                            <ul>
+                                <li><strong>Refactor:</strong> Split into index, style, game.js.</li>
+                                <li><strong>Refactor:</strong> Central CONFIG object.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 1.x</h3>
+                            <ul>
+                                <li>Initial prototype.</li>
+                                <li>Core clicking, upgrades, chickens.</li>
+                                <li>Prestige system.</li>
+                                <li>Mobile-first UI.</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+
+        <!-- Helper Modals -->
+        <div id="name-modal" class="modal-screen">
+            <div class="modal-content" style="height: auto; padding: 40px;">
+                <h2 class="modal-title">Welcome Farmer</h2>
+                <input type="text" id="initial-nickname-input" placeholder="Enter Name" style="font-family: inherit; font-size: 2rem; padding: 10px; width: 100%;">
+                <button id="start-game-btn" class="funky-button" style="margin-top: 20px; width: 100%;">Begin</button>
+            </div>
+        </div>
+
+        <div id="offline-progress-modal" class="modal-screen">
+            <div class="modal-content" style="height: auto;">
+                <button class="close-modal-btn">&times;</button>
+                <h2 class="modal-title">Welcome Back!</h2>
+                <div id="offline-recap" style="text-align: center; font-size: 1.5rem;">
+                    <p>You were gone for <span id="offline-time">0s</span>.</p>
+                    <p id="offline-eggs-line"></p>
+                    <p id="offline-feathers-line"></p>
+                    <p id="offline-rep-line"></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Helper for screenshot template -->
+    <div id="achievement-screenshot-template" style="position: absolute; left: -9999px; background: #f4e4bc; padding: 20px; border: 8px solid #5c4033; font-family: 'VT323', monospace;">
+        <h2 style="font-size: 3rem; text-align: center; margin: 0;">Achievement!</h2>
+        <p id="screenshot-nickname" style="font-size: 2rem; text-align: center; color: #8b5a2b;"></p>
+        <p id="screenshot-ach-name" style="font-size: 2.5rem; text-align: center; font-weight: bold;"></p>
+        <p id="screenshot-ach-desc" style="font-size: 1.5rem; text-align: center;"></p>
+        <p id="screenshot-date" style="font-size: 1rem; text-align: right; margin-top: 10px;"></p>
+    </div>
+
+    <script src="script.js?v=3.2"></script>
+</body>
+</html>
