@@ -200,8 +200,137 @@
                     
                     <p style="text-align: center; margin-top: 20px; font-size: 0.8rem;">Version: <span id="version-number">3.0</span></p>
                     <details>
-                        <summary id="license-summary">License</summary>
+                        <summary id="license-summary" style="cursor: pointer; text-decoration: underline;">License</summary>
                         <p>MIT License</p>
+                    </details>
+                    <details style="margin-top: 10px;">
+                        <summary style="cursor: pointer; text-decoration: underline; font-weight: bold;">Full Changelog</summary>
+                        <div style="text-align: left; font-size: 1rem; max-height: 300px; overflow-y: auto; margin-top: 10px; border: 2px solid #5c4033; padding: 10px; background: rgba(255,255,255,0.3);">
+                            <h3 style="border-bottom: 2px solid #5c4033;">Version 3.0 (Diorama Update)</h3>
+                            <ul>
+                                <li><strong>Visual Overhaul:</strong> Transformed the main screen into a "Living Diorama" of the player's farm, replacing the dashboard of stats.</li>
+                                <li><strong>Dynamic Scene Assets:</strong> Implemented new visual assets that appear based on game progression:
+                                    <ul>
+                                        <li><strong>Coop:</strong> Appears when a Coop Worker is purchased.</li>
+                                        <li><strong>Incubator (Shed):</strong> Appears when an Incubator is purchased.</li>
+                                        <li><strong>Silkie Chicken Patch:</strong> Appears when a Silkie Chicken is purchased.</li>
+                                        <li><strong>Rustic Fence:</strong> Appears upon reaching 1 Million total eggs.</li>
+                                        <li><strong>Flagpole:</strong> Appears after the first Prestige.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Enhanced Animations:</strong>
+                                    <ul>
+                                        <li><strong>Golden Chicken:</strong> Now runs frantically across the screen instead of simply fading in.</li>
+                                        <li><strong>Colored Eggs:</strong> Now fall from the sky and bounce on the ground.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Thematic HUD:</strong> Redesigned the Heads-Up Display (HUD) at the bottom of the screen with a pixel-art theme, integrating core stats and navigation buttons.</li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 3.0.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.93 (Clarity Update)</h3>
+                            <ul>
+                                <li><strong>UI/Clarity:</strong> Updated descriptions for several upgrades and chickens (Coop Worker, Incubator, Golden Loom, Rooster, Wyandotte Warrior, Doja Cow) to be more explicit about mechanical effects.</li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 2.93.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.92 (Eggies)</h3>
+                            <ul>
+                                <li><strong>Feature (UI):</strong> Added a banner for active colored egg buffs with countdowns.</li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 2.92.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.91 (Jules)</h3>
+                            <ul>
+                                <li><strong>Critical Fix (Reputation):</strong> Roosters now grant base 1,000 Reputation. Wyandotte bonus increased to 5%.</li>
+                                <li><strong>Critical Fix (Buffs):</strong> Fixed buff expiration logic.</li>
+                                <li><strong>Feature (UI):</strong> Added progress bars to achievements.</li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 2.91.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.9 (Cluck You Totoro!)</h3>
+                            <ul>
+                                <li><strong>Fix:</strong> "Fowl Language" upgrade now works (insults added).</li>
+                                <li><strong>Documentation:</strong> Updated "How to Play" and "Running Locally".</li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 2.9.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.8 (Architect's Update)</h3>
+                            <ul>
+                                <li><strong>Balance:</strong> Prestige cost now doubles with each use.</li>
+                                <li><strong>Feature:</strong> Added Golden Compass, Comfy Coop Bedding, Prismatic Feed, Ancestral Blueprints.</li>
+                                <li><strong>Fix:</strong> Mobile version title overflow fix.</li>
+                                <li><strong>Housekeeping:</strong> Refactored into multi-file structure.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.7 (Banty Shack)</h3>
+                            <ul>
+                                <li><strong>Feature:</strong> Implemented Offline Progress.</li>
+                                <li><strong>UI:</strong> Added "Welcome Back" modal.</li>
+                                <li><strong>Housekeeping:</strong> Updated version to 2.7.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.6 (Tarzan)</h3>
+                            <ul>
+                                <li><strong>Balance:</strong> Achievement bonuses changed to additive.</li>
+                                <li><strong>UI:</strong> Prestige menu breakdown added.</li>
+                                <li><strong>Feature:</strong> Orpington Oracle implemented.</li>
+                                <li><strong>Fix:</strong> Wyandotte Warrior reputation fix.</li>
+                                <li><strong>Housekeeping:</strong> Updated version to 2.6.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.5 (Totoro)</h3>
+                            <ul>
+                                <li><strong>Feature:</strong> Added "Help" screen.</li>
+                                <li><strong>Feature:</strong> Save Export/Import system.</li>
+                                <li><strong>Bug Fix (Critical):</strong> Fixed Nest Egg IRA infinity bug.</li>
+                                <li><strong>Bug Fix:</strong> Doja Cow Super Click chain fix.</li>
+                                <li><strong>Bug Fix:</strong> Green/Orange egg buffs fixed.</li>
+                                <li><strong>Bug Fix:</strong> Hard Reset achievement fixed.</li>
+                                <li><strong>Housekeeping:</strong> Updated version to 2.5.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.4 (Hotfix & Consolidation)</h3>
+                            <ul>
+                                <li><strong>Project Consolidation:</strong> Merged files for stability.</li>
+                                <li><strong>Bug Fix (Critical):</strong> Fixed missing colors for upgrades/items.</li>
+                                <li><strong>Bug Fix:</strong> Hard Reset achievement logic fix.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.3</h3>
+                            <ul>
+                                <li><strong>Refactor:</strong> Split code into logical modules (config, ui, game).</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.2</h3>
+                            <ul>
+                                <li><strong>Feature:</strong> "Doja Chicken" reworked to "Doja Cow" (Super Click).</li>
+                                <li><strong>Bug Fix:</strong> Player name display fix.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.1</h3>
+                            <ul>
+                                <li><strong>Feature:</strong> 50+ new achievements.</li>
+                                <li><strong>Feature:</strong> 10 Colored Eggs with bonuses.</li>
+                                <li><strong>Feature:</strong> 6 new Upgrade tiers.</li>
+                                <li><strong>Feature:</strong> 6 new Chicken tiers.</li>
+                                <li><strong>UI:</strong> Name prompt added.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 2.0</h3>
+                            <ul>
+                                <li><strong>Refactor:</strong> Split into index, style, game.js.</li>
+                                <li><strong>Refactor:</strong> Central CONFIG object.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 1.x</h3>
+                            <ul>
+                                <li>Initial prototype.</li>
+                                <li>Core clicking, upgrades, chickens.</li>
+                                <li>Prestige system.</li>
+                                <li>Mobile-first UI.</li>
+                            </ul>
+                        </div>
                     </details>
                 </div>
             </div>
