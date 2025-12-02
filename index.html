@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chicken Clicker: The Farm</title>
-    <link rel="stylesheet" href="style.css?v=3.0">
+    <link rel="stylesheet" href="style.css?v=3.1">
     <!-- html2canvas for achievement screenshots -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -84,6 +84,34 @@
                 <!-- Gold Ball on top -->
                 <circle cx="25" cy="10" r="4" fill="gold" stroke="#f39c12" stroke-width="1"/>
             </svg>
+
+            <!-- Interactive Events (Initially Hidden) -->
+            
+            <!-- Eagle: Flies across the sky -->
+            <svg id="eagle-asset" class="scene-layer" viewBox="0 0 100 50" style="display:none; width: 100px; cursor: crosshair; z-index: 100;">
+                <title>Eagle: Click to scare!</title>
+                <path d="M10,20 Q30,5 50,20 Q70,5 90,20 L80,30 Q60,40 50,30 Q40,40 20,30 Z" fill="#5c4033"/>
+                <circle cx="85" cy="22" r="2" fill="white"/>
+                <path d="M90,20 L95,25 L90,28 Z" fill="yellow"/>
+            </svg>
+
+            <!-- Fox/Badger Eyes: Hiding in the bushes -->
+            <svg id="ground-critter-asset" class="scene-layer" viewBox="0 0 50 20" style="display:none; width: 50px; cursor: pointer; z-index: 40;">
+                <title>Something in the bushes...</title>
+                <circle cx="15" cy="10" r="5" fill="yellow" class="glowing-eye"/>
+                <circle cx="35" cy="10" r="5" fill="yellow" class="glowing-eye"/>
+            </svg>
+
+            <!-- Umbrella: Appears during rain -->
+            <svg id="umbrella-asset" class="scene-layer" viewBox="0 0 50 50" style="display:none; width: 50px; cursor: pointer; z-index: 100;">
+                <title>Stay Dry!</title>
+                <path d="M5,25 Q25,5 45,25" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+                <rect x="24" y="25" width="2" height="20" fill="#333"/>
+                <path d="M24,45 Q20,50 18,45" fill="none" stroke="#333" stroke-width="2"/>
+            </svg>
+
+            <!-- Rain Overlay -->
+            <div id="rain-overlay" class="scene-layer" style="display:none; width:100%; height:100%; z-index: 90; pointer-events: none; background: url('data:image/svg+xml;utf8,<svg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'><line x1=\'10\' y1=\'0\' x2=\'5\' y2=\'10\' stroke=\'rgba(173, 216, 230, 0.5)\' stroke-width=\'1\'/></svg>'); animation: rainFall 0.5s linear infinite;"></div>
 
             <!-- The Main Chicken -->
             <div id="chicken-container">
@@ -230,7 +258,20 @@
                     <details style="margin-top: 10px;">
                         <summary style="cursor: pointer; text-decoration: underline; font-weight: bold;">Full Changelog</summary>
                         <div style="text-align: left; font-size: 1rem; max-height: 300px; overflow-y: auto; margin-top: 10px; border: 2px solid #5c4033; padding: 10px; background: rgba(255,255,255,0.3);">
-                            <h3 style="border-bottom: 2px solid #5c4033;">Version 3.0 (Br1ck version - moar kok)</h3>
+                            <h3 style="border-bottom: 2px solid #5c4033;">Version 3.1 (The Alive Update)</h3>
+                            <ul>
+                                <li><strong>Interactive Events:</strong> The farm now feels alive with 3 new randomized events to watch out for:
+                                    <ul>
+                                        <li><strong>The Predator:</strong> An Eagle flies across the sky. Click it to protect your flock and earn a reward.</li>
+                                        <li><strong>Forest Critters:</strong> Keep an eye on the bushes. You might spot glowing eyes (Fox) or a rare Badger.</li>
+                                        <li><strong>Weather:</strong> Rainstorms pass through. Click the umbrella to stay dry and earn a bonus.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>New Achievements:</strong> Added 7 new achievements tied to these events, including the elusive "Mushroom Mushroom!" for finding a Badger.</li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 3.1.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 3.0 (Br1ck version - moar kok)</h3>
                             <ul>
                                 <li><strong>Visual Overhaul:</strong> Transformed the main screen into a "Living Diorama" of the player's farm, replacing the dashboard of stats.</li>
                                 <li><strong>Dynamic Scene Assets:</strong> Implemented new visual assets that appear based on game progression:
@@ -393,6 +434,6 @@
         <p id="screenshot-date" style="font-size: 1rem; text-align: right; margin-top: 10px;"></p>
     </div>
 
-    <script src="script.js?v=3.0"></script>
+    <script src="script.js?v=3.1"></script>
 </body>
 </html>

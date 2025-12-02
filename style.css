@@ -364,6 +364,20 @@ body {
     animation: bounceDrop 2s forwards;
 }
 
+@keyframes blink {
+    0%, 90%, 100% { opacity: 1; }
+    95% { opacity: 0; }
+}
+
+.glowing-eye {
+    animation: blink 3s infinite;
+}
+
+@keyframes rainFall {
+    0% { background-position: 0 0; }
+    100% { background-position: -20px 20px; }
+}
+
 /* --- Mobile Full Screen Fix --- */
 @media (max-width: 800px) {
     #app-wrapper {

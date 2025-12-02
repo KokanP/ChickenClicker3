@@ -13,6 +13,7 @@ export const initialGameState = {
     },
     unlockedAchievements: [], reputation: 0, timePlayed: 0, failedBuys: 0, licenseClicked: false,
     goldenChickensClicked: 0, prestigeCount: 0, resets: 0,
+    eagleClicks: 0, foxClicks: 0, badgerClicks: 0, umbrellaClicks: 0,
     event: { active: false, type: null, duration: 0, modifier: 1 },
     activeBuffs: {}, permanentBonus: 1, clickedColoredEggs: {},
     oracleTimer: 0,

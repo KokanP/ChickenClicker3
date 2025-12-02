@@ -2,11 +2,13 @@
   // src/config.js
   var CONFIG = {
     SAVE_KEY: "chickenClickerSave_v2.9",
-    GAME_VERSION: "3.0 (Br1ck version - moar kok)",
+    GAME_VERSION: "3.1 (The Alive Update)",
     GAME_TICK_INTERVAL: 0.1,
     SAVE_INTERVAL: 5,
     GOLDEN_CHICKEN_SPAWN_INTERVAL: 60,
     RANDOM_EVENT_INTERVAL: 180,
+    INTERACTIVE_EVENT_INTERVAL: 45,
+    // New interval for "Alive" events
     COLORED_EGG_ATTEMPT_INTERVAL: 15,
     COLORED_EGG_SPAWN_CHANCE: 10 / 240,
     PRESTIGE_COST: 1e12,
@@ -115,7 +117,14 @@
     allUpgrades: { name: "Master Builder", description: "Buy at least one of every upgrade.", bonus: 1.2, hidden: true },
     allChickens: { name: "Gotta Cluck 'Em All", description: "Own at least one of every chicken.", bonus: 1.2, hidden: true },
     eggCollector: { name: "Taste the Rainbow", description: "Find one of every colored egg.", bonus: 1.25, hidden: true },
-    firstInsult: { name: "Ruffled Feathers", description: "Witness the chicken's dark side for the first time.", bonus: 1.01, hidden: true }
+    firstInsult: { name: "Ruffled Feathers", description: "Witness the chicken's dark side for the first time.", bonus: 1.01, hidden: true },
+    eagle1: { name: "Bird Watcher", description: "Scare away an Eagle.", bonus: 1.01 },
+    eagle10: { name: "No Fly Zone", description: "Scare away 10 Eagles.", bonus: 1.02 },
+    eagle50: { name: "Apex Predator", description: "Scare away 50 Eagles. They fear you now.", bonus: 1.05 },
+    fox1: { name: "What Does It Say?", description: "Catch a Fox lurking in the bushes.", bonus: 1.01 },
+    badger1: { name: "Mushroom Mushroom!", description: "Tickle a Badger. Snake not included.", bonus: 1.05, hidden: true },
+    umbrella1: { name: "Drying Off", description: "Use an Umbrella during a storm.", bonus: 1.01 },
+    umbrella10: { name: "Kingsman", description: "Manners maketh man. Use 10 Umbrellas.", bonus: 1.03 }
   };
   var achievementConditions = {
     click1: (gs) => gs.totalClicks >= 1,
@@ -173,7 +182,14 @@
     allUpgrades: (gs) => Object.keys(CONFIG.UPGRADES).every((u) => gs.upgrades[u] > 0),
     allChickens: (gs) => Object.keys(CONFIG.CHICKENS).every((c) => gs.chickens[c] > 0),
     eggCollector: (gs) => Object.keys(CONFIG.COLORED_EGGS).every((c) => gs.clickedColoredEggs[c]),
-    firstInsult: (gs) => gs.firstInsultFired
+    firstInsult: (gs) => gs.firstInsultFired,
+    eagle1: (gs) => gs.eagleClicks >= 1,
+    eagle10: (gs) => gs.eagleClicks >= 10,
+    eagle50: (gs) => gs.eagleClicks >= 50,
+    fox1: (gs) => gs.foxClicks >= 1,
+    badger1: (gs) => gs.badgerClicks >= 1,
+    umbrella1: (gs) => gs.umbrellaClicks >= 1,
+    umbrella10: (gs) => gs.umbrellaClicks >= 10
   };
 
   // src/utils.js
@@ -276,6 +292,10 @@
     goldenChickensClicked: 0,
     prestigeCount: 0,
     resets: 0,
+    eagleClicks: 0,
+    foxClicks: 0,
+    badgerClicks: 0,
+    umbrellaClicks: 0,
     event: { active: false, type: null, duration: 0, modifier: 1 },
     activeBuffs: {},
     permanentBonus: 1,
@@ -385,7 +405,11 @@
     incubatorAsset: document.getElementById("incubator-asset"),
     silkieAsset: document.getElementById("silkie-asset"),
     fenceAsset: document.getElementById("fence-asset"),
-    flagpoleAsset: document.getElementById("flagpole-asset")
+    flagpoleAsset: document.getElementById("flagpole-asset"),
+    eagleAsset: document.getElementById("eagle-asset"),
+    groundCritterAsset: document.getElementById("ground-critter-asset"),
+    umbrellaAsset: document.getElementById("umbrella-asset"),
+    rainOverlay: document.getElementById("rain-overlay")
   };
   function buildUpgradeShop(gameState2, buyUpgradeCallback) {
     elements.upgradesListContainer.innerHTML = "";
@@ -1078,6 +1102,71 @@
         gameState.prestigeUpgrades.ancestralBlueprints++;
       }
     });
+    elements.eagleAsset.addEventListener("click", () => {
+      gameState.eagleClicks++;
+      const bonus = getEggsPerSecond(gameState) * 600;
+      gameState.eggs += bonus;
+      gameState.totalEggs += bonus;
+      showFloatingText(`+${formatNumber(bonus)} (Scared!)`, { clientX: window.innerWidth / 2, clientY: 100 });
+      elements.eagleAsset.style.display = "none";
+      checkAchievements(gameState, showToast);
+    });
+    elements.groundCritterAsset.addEventListener("click", () => {
+      const isBadger = Math.random() < 0.1;
+      if (isBadger) {
+        gameState.badgerClicks++;
+        showToast("Mushroom Mushroom!", "You found a Badger!");
+      } else {
+        gameState.foxClicks++;
+        showToast("What Does It Say?", "You shooed a Fox!");
+      }
+      gameState.feathers++;
+      gameState.totalFeathers++;
+      showFloatingText("+1 Feather", { clientX: window.innerWidth / 2, clientY: window.innerHeight - 100 });
+      elements.groundCritterAsset.style.display = "none";
+      checkAchievements(gameState, showToast);
+    });
+    elements.umbrellaAsset.addEventListener("click", () => {
+      gameState.umbrellaClicks++;
+      const bonus = getEggsPerClick(gameState) * 500;
+      gameState.eggs += bonus;
+      gameState.totalEggs += bonus;
+      showFloatingText("Stay Dry!", { clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
+      elements.umbrellaAsset.style.display = "none";
+      elements.rainOverlay.style.display = "none";
+      checkAchievements(gameState, showToast);
+    });
+  }
+  function triggerInteractiveEvent() {
+    const roll = Math.random();
+    if (roll < 0.4) {
+      elements.eagleAsset.style.display = "block";
+      elements.eagleAsset.classList.remove("run-animation");
+      elements.eagleAsset.style.top = "50px";
+      elements.eagleAsset.style.left = "-100px";
+      void elements.eagleAsset.offsetWidth;
+      elements.eagleAsset.classList.add("run-animation");
+      setTimeout(() => {
+        elements.eagleAsset.style.display = "none";
+      }, 1e4);
+    } else if (roll < 0.7) {
+      elements.groundCritterAsset.style.display = "block";
+      const randomX = 10 + Math.random() * 80;
+      elements.groundCritterAsset.style.left = `${randomX}%`;
+      elements.groundCritterAsset.style.bottom = "25%";
+      setTimeout(() => {
+        elements.groundCritterAsset.style.display = "none";
+      }, 5e3);
+    } else {
+      elements.rainOverlay.style.display = "block";
+      elements.umbrellaAsset.style.display = "block";
+      elements.umbrellaAsset.style.top = `${20 + Math.random() * 60}%`;
+      elements.umbrellaAsset.style.left = `${20 + Math.random() * 60}%`;
+      setTimeout(() => {
+        elements.rainOverlay.style.display = "none";
+        elements.umbrellaAsset.style.display = "none";
+      }, 8e3);
+    }
   }
   function initialize() {
     if (elements.versionNumberEl) {
@@ -1095,6 +1184,7 @@
     setInterval(spawnGoldenChicken, CONFIG.GOLDEN_CHICKEN_SPAWN_INTERVAL * 1e3);
     setInterval(triggerEvent, CONFIG.RANDOM_EVENT_INTERVAL * 1e3);
     setInterval(spawnColoredEgg, CONFIG.COLORED_EGG_ATTEMPT_INTERVAL * 1e3);
+    setInterval(triggerInteractiveEvent, CONFIG.INTERACTIVE_EVENT_INTERVAL * 1e3);
   }
   initialize();
 })();

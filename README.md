@@ -33,6 +33,14 @@ Version 2.5 introduces the ability to export and import your save data. This is 
 
 ## **Changelog**
 
+### **Version 3.1 (The Alive Update)**
+*   **Interactive Events:** The farm now feels alive with 3 new randomized events to watch out for:
+    *   **The Predator:** An Eagle flies across the sky. Click it to protect your flock and earn a reward.
+    *   **Forest Critters:** Keep an eye on the bushes. You might spot glowing eyes (Fox) or a rare Badger.
+    *   **Weather:** Rainstorms pass through. Click the umbrella to stay dry and earn a bonus.
+*   **New Achievements:** Added 7 new achievements tied to these events, including the elusive "Mushroom Mushroom!" for finding a Badger.
+*   **Housekeeping:** Updated version number to 3.1.
+
 ### **Version 3.0 (Br1ck version - moar kok)**
 *   **Visual Overhaul:** Transformed the main screen into a "Living Diorama" of the player's farm, replacing the dashboard of stats.
 *   **Dynamic Scene Assets:** Implemented new visual assets that appear based on game progression:

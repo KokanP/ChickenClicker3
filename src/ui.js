@@ -39,6 +39,10 @@ export const elements = {
     silkieAsset: document.getElementById('silkie-asset'),
     fenceAsset: document.getElementById('fence-asset'),
     flagpoleAsset: document.getElementById('flagpole-asset'),
+    eagleAsset: document.getElementById('eagle-asset'),
+    groundCritterAsset: document.getElementById('ground-critter-asset'),
+    umbrellaAsset: document.getElementById('umbrella-asset'),
+    rainOverlay: document.getElementById('rain-overlay'),
 };
 
 export function buildUpgradeShop(gameState, buyUpgradeCallback) {

@@ -496,6 +496,87 @@ function setupEventListeners() {
             gameState.prestigeUpgrades.ancestralBlueprints++;
         }
     });
+
+    // Interactive Event Listeners
+    elements.eagleAsset.addEventListener('click', () => {
+        gameState.eagleClicks++;
+        const bonus = getEggsPerSecond(gameState) * 600; // 10 minutes of production
+        gameState.eggs += bonus;
+        gameState.totalEggs += bonus;
+        showFloatingText(`+${formatNumber(bonus)} (Scared!)`, { clientX: window.innerWidth/2, clientY: 100 });
+        elements.eagleAsset.style.display = 'none';
+        checkAchievements(gameState, showToast);
+    });
+
+    elements.groundCritterAsset.addEventListener('click', () => {
+        // 10% chance to be a Badger, else Fox
+        const isBadger = Math.random() < 0.1;
+        if (isBadger) {
+            gameState.badgerClicks++;
+            showToast("Mushroom Mushroom!", "You found a Badger!");
+        } else {
+            gameState.foxClicks++;
+            showToast("What Does It Say?", "You shooed a Fox!");
+        }
+        // Bonus: Golden Feather
+        gameState.feathers++;
+        gameState.totalFeathers++;
+        showFloatingText("+1 Feather", { clientX: window.innerWidth/2, clientY: window.innerHeight - 100 });
+        elements.groundCritterAsset.style.display = 'none';
+        checkAchievements(gameState, showToast);
+    });
+
+    elements.umbrellaAsset.addEventListener('click', () => {
+        gameState.umbrellaClicks++;
+        const bonus = getEggsPerClick(gameState) * 500;
+        gameState.eggs += bonus;
+        gameState.totalEggs += bonus;
+        showFloatingText("Stay Dry!", { clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
+        elements.umbrellaAsset.style.display = 'none';
+        elements.rainOverlay.style.display = 'none'; // Stop rain immediately on click
+        checkAchievements(gameState, showToast);
+    });
+}
+
+function triggerInteractiveEvent() {
+    const roll = Math.random();
+    
+    if (roll < 0.4) {
+        // Eagle (40% chance)
+        elements.eagleAsset.style.display = 'block';
+        elements.eagleAsset.classList.remove('run-animation');
+        // Re-use run-animation logic but maybe we need a fly-animation? 
+        // For now, just place it and move it via CSS or reuse the class if it works horizontally.
+        // Let's repurpose 'run-animation' which moves left to right.
+        elements.eagleAsset.style.top = '50px';
+        elements.eagleAsset.style.left = '-100px';
+        void elements.eagleAsset.offsetWidth;
+        elements.eagleAsset.classList.add('run-animation');
+        
+        setTimeout(() => { elements.eagleAsset.style.display = 'none'; }, 10000);
+
+    } else if (roll < 0.7) {
+        // Ground Critter (30% chance)
+        elements.groundCritterAsset.style.display = 'block';
+        // Random position in the "bush" layer (bottom 30%)
+        const randomX = 10 + Math.random() * 80;
+        elements.groundCritterAsset.style.left = `${randomX}%`;
+        elements.groundCritterAsset.style.bottom = '25%';
+        
+        setTimeout(() => { elements.groundCritterAsset.style.display = 'none'; }, 5000);
+
+    } else {
+        // Rain (30% chance)
+        elements.rainOverlay.style.display = 'block';
+        elements.umbrellaAsset.style.display = 'block';
+        elements.umbrellaAsset.style.top = `${20 + Math.random() * 60}%`;
+        elements.umbrellaAsset.style.left = `${20 + Math.random() * 60}%`;
+        
+        setTimeout(() => { 
+            elements.rainOverlay.style.display = 'none';
+            elements.umbrellaAsset.style.display = 'none';
+        }, 8000);
+    }
 }
 
 function initialize() {
@@ -516,6 +597,7 @@ function initialize() {
     setInterval(spawnGoldenChicken, CONFIG.GOLDEN_CHICKEN_SPAWN_INTERVAL * 1000);
     setInterval(triggerEvent, CONFIG.RANDOM_EVENT_INTERVAL * 1000);
     setInterval(spawnColoredEgg, CONFIG.COLORED_EGG_ATTEMPT_INTERVAL * 1000);
+    setInterval(triggerInteractiveEvent, CONFIG.INTERACTIVE_EVENT_INTERVAL * 1000);
 }
 
 initialize();
