@@ -670,7 +670,7 @@
         elements.goldenChicken.style.display = "none";
         elements.goldenChicken.classList.remove("run-animation");
       }, 500);
-    }, 4e3);
+    }, 1e4);
   }
   function clickGoldenChicken(event) {
     const compassBonus = 1 + gameState.upgrades.goldenCompass * 0.25;

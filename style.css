@@ -357,7 +357,7 @@ body {
 }
 
 .run-animation {
-    animation: runAcross 4s linear forwards;
+    animation: runAcross 10s linear forwards;
 }
 
 .bounce-animation {

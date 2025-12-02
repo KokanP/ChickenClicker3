@@ -104,7 +104,7 @@ function spawnGoldenChicken() {
             elements.goldenChicken.style.display = 'none';
             elements.goldenChicken.classList.remove('run-animation');
         }, 500);
-    }, 4000);
+    }, 10000); // Animation is 10s
 }
 
 function clickGoldenChicken(event) {
