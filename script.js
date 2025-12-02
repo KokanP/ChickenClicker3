@@ -2,7 +2,7 @@
 
 const CONFIG = {
     SAVE_KEY: 'chickenClickerSave_v2.9',
-    GAME_VERSION: '3.0 (Diorama Update)',
+    GAME_VERSION: '3.0 (Br1ck version - moar kok)',
     GAME_TICK_INTERVAL: 0.1,
     SAVE_INTERVAL: 5,
     GOLDEN_CHICKEN_SPAWN_INTERVAL: 60,

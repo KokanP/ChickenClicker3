@@ -33,7 +33,7 @@ Version 2.5 introduces the ability to export and import your save data. This is 
 
 ## **Changelog**
 
-### **Version 3.0 (Diorama Update)**
+### **Version 3.0 (Br1ck version - moar kok)**
 *   **Visual Overhaul:** Transformed the main screen into a "Living Diorama" of the player's farm, replacing the dashboard of stats.
 *   **Dynamic Scene Assets:** Implemented new visual assets that appear based on game progression:
     *   **Coop:** Appears when a Coop Worker is purchased.
