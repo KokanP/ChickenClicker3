@@ -33,6 +33,20 @@ Version 2.5 introduces the ability to export and import your save data. This is 
 
 ## **Changelog**
 
+### **Version 3.0 (Diorama Update)**
+*   **Visual Overhaul:** Transformed the main screen into a "Living Diorama" of the player's farm, replacing the dashboard of stats.
+*   **Dynamic Scene Assets:** Implemented new visual assets that appear based on game progression:
+    *   **Coop:** Appears when a Coop Worker is purchased.
+    *   **Incubator (Shed):** Appears when an Incubator is purchased.
+    *   **Silkie Chicken Patch:** Appears when a Silkie Chicken is purchased.
+    *   **Rustic Fence:** Appears upon reaching 1 Million total eggs.
+    *   **Flagpole:** Appears after the first Prestige.
+*   **Enhanced Animations:**
+    *   **Golden Chicken:** Now runs frantically across the screen instead of simply fading in.
+    *   **Colored Eggs:** Now fall from the sky and bounce on the ground.
+*   **Thematic HUD:** Redesigned the Heads-Up Display (HUD) at the bottom of the screen with a pixel-art theme, integrating core stats and navigation buttons.
+*   **Housekeeping:** Updated version number to 3.0.
+
 ### **Version 2.93 (Clarity Update)**
 *   **UI/Clarity:** Updated the descriptions for several upgrades and chickens (Coop Worker, Incubator, Golden Loom, Rooster, Wyandotte Warrior, and Doja Cow) to be more explicit about their mechanical effects and how they scale. This addresses player confusion about upgrade stacking and hidden mechanics.
 *   **Housekeeping:** Updated version number to 2.93.
