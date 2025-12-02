@@ -1,0 +1,29 @@
+{
+  "name": "chickenclicker3",
+  "version": "1.0.0",
+  "description": "An incremental idle game about clicking chickens and managing a coop. This game is an evolution of the classic *Cow Clicker* concept, expanded with modern idle game mechanics like achievements, prestige, and now, **offline progress**.",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KokanP/ChickenClicker3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KokanP/ChickenClicker3/issues"
+  },
+  "homepage": "https://github.com/KokanP/ChickenClicker3#readme",
+  "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "babel-jest": "^30.2.0",
+    "esbuild": "^0.27.0",
+    "jest": "^30.2.0"
+  }
+}
