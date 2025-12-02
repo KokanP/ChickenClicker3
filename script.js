@@ -21,6 +21,13 @@
       firstEgg: { name: "The First Egg", desc: "Which came first? This one.", bonusDesc: "+5% Global Multiplier", effect: "global", value: 0.05 },
       oldBoot: { name: "Old Boot", desc: "Useless. Smells faintly of cheese.", bonusDesc: "No bonus.", effect: "none", value: 0 }
     },
+    SKINS: {
+      default: { name: "Default Chicken", desc: "The classic clucker. No frills.", svg: `<rect x="30" y="40" width="40" height="40" fill="white" /><rect x="30" y="30" width="20" height="10" fill="white" /><rect x="70" y="40" width="10" height="10" fill="orange" /><rect x="30" y="20" width="10" height="10" fill="red" /><rect x="40" y="80" width="5" height="15" fill="orange" /><rect x="55" y="80" width="5" height="15" fill="orange" /><rect x="50" y="35" width="5" height="5" fill="black" />` },
+      leghorn: { name: "Leghorn Look", desc: "A sleek, no-nonsense classic white.", svg: `<rect x="30" y="40" width="40" height="40" fill="lightgray" /><rect x="30" y="30" width="20" height="10" fill="lightgray" /><rect x="70" y="40" width="10" height="10" fill="orange" /><rect x="30" y="20" width="10" height="10" fill="red" /><rect x="40" y="80" width="5" height="15" fill="orange" /><rect x="55" y="80" width="5" height="15" fill="orange" /><rect x="50" y="35" width="5" height="5" fill="black" />` },
+      silkie: { name: "Silkie Style", desc: "Fluffy and fabulous.", svg: `<circle cx="50" cy="50" r="30" fill="white" /><circle cx="40" cy="30" r="10" fill="white" /><circle cx="60" cy="30" r="10" fill="white" /><rect x="70" y="40" width="10" height="10" fill="orange" /><circle cx="50" cy="20" r="5" fill="red" /><rect x="40" y="80" width="5" height="15" fill="orange" /><rect x="55" y="80" width="5" height="15" fill="orange" /><circle cx="50" cy="35" r="3" fill="black" />` },
+      rooster: { name: "Rooster Royalty", desc: "Proud and vibrant.", svg: `<rect x="30" y="40" width="40" height="40" fill="darkred" /><rect x="30" y="30" width="20" height="10" fill="darkred" /><rect x="70" y="40" width="10" height="10" fill="orange" /><path d="M30,20 L35,15 L40,20 L35,25 Z" fill="yellow" /><rect x="40" y="80" width="5" height="15" fill="orange" /><rect x="55" y="80" width="5" height="15" fill="orange" /><rect x="50" y="35" width="5" height="5" fill="black" />` },
+      quantum: { name: "Quantum Form", desc: "A glitch in the matrix. Pixelated and electric.", svg: `<rect x="30" y="40" width="40" height="40" fill="cyan" /><rect x="30" y="30" width="20" height="10" fill="cyan" /><rect x="70" y="40" width="10" height="10" fill="lightgreen" /><rect x="30" y="20" width="10" height="10" fill="blue" /><rect x="40" y="80" width="5" height="15" fill="lightgreen" /><rect x="55" y="80" width="5" height="15" fill="lightgreen" /><rect x="50" y="35" width="5" height="5" fill="white" />` }
+    },
     UPGRADES: {
       worker: { name: "Coop Worker", desc: "Each level helps Leghorn Chickens produce +1 EPS.", baseCost: 10, exponent: 1.15, currency: "eggs", color: "green" },
       incubator: { name: "Incubator", desc: "Each level increases your base Eggs Per Click by +1.", baseCost: 50, exponent: 1.15, currency: "eggs", color: "blue" },
@@ -306,6 +313,8 @@
     badgerClicks: 0,
     umbrellaClicks: 0,
     artifacts: [],
+    unlockedSkins: ["default"],
+    // Default skin is always unlocked
     skin: "default",
     event: { active: false, type: null, duration: 0, modifier: 1 },
     activeBuffs: {},
@@ -443,13 +452,16 @@
     groundCritterAsset: document.getElementById("ground-critter-asset"),
     umbrellaAsset: document.getElementById("umbrella-asset"),
     rainOverlay: document.getElementById("rain-overlay"),
-    museumList: document.getElementById("museum-list")
+    museumList: document.getElementById("museum-list"),
+    geneticLabList: document.getElementById("genetic-lab-list"),
+    chickenSVG: document.getElementById("chicken")
   };
-  function renderMuseum(gameState2) {
-    elements.museumList.innerHTML = "";
-    for (const id in CONFIG.ARTIFACTS) {
-      const art = CONFIG.ARTIFACTS[id];
-      const isUnlocked = gameState2.artifacts.includes(id);
+  function renderGeneticLab(gameState2, equipSkinCallback) {
+    elements.geneticLabList.innerHTML = "";
+    for (const id in CONFIG.SKINS) {
+      const skin = CONFIG.SKINS[id];
+      const isUnlocked = gameState2.unlockedSkins.includes(id);
+      const isActive = gameState2.skin === id;
       const el = document.createElement("div");
       el.className = `shop-item`;
       el.style.flexDirection = "column";
@@ -457,13 +469,23 @@
       el.style.textAlign = "center";
       el.style.opacity = isUnlocked ? "1" : "0.5";
       el.style.filter = isUnlocked ? "none" : "grayscale(100%)";
+      el.style.border = isActive ? "2px solid gold" : "";
       el.innerHTML = `
-            <div style="font-size: 2rem; margin-bottom: 5px;">\u{1F3FA}</div>
-            <h4 style="font-size: 1.2rem;">${isUnlocked ? art.name : "???"}</h4>
-            <p style="font-size: 0.9rem; color: #555;">${isUnlocked ? art.desc : "Undiscovered"}</p>
-            <p style="font-size: 0.8rem; font-weight: bold; color: #c0392b;">${isUnlocked ? art.bonusDesc : ""}</p>
+            <svg viewBox="0 0 100 100" style="width: 60px; height: 60px;">${skin.svg}</svg>
+            <h4 style="font-size: 1.2rem; margin-top: 5px;">${isUnlocked ? skin.name : "???" + skin.name.substring(1)}</h4>
+            <p style="font-size: 0.9rem; color: #555;">${isUnlocked ? skin.desc : "Unlock to reveal"}</p>
+            <button id="equip-${id}" class="funky-button" ${!isUnlocked || isActive ? "disabled" : ""}>${isActive ? "Equipped" : "Equip"}</button>
         `;
-      elements.museumList.appendChild(el);
+      elements.geneticLabList.appendChild(el);
+      if (isUnlocked && !isActive) {
+        document.getElementById(`equip-${id}`).addEventListener("click", () => equipSkinCallback(id));
+      }
+    }
+  }
+  function updateChickenSkin(skinId) {
+    const skin = CONFIG.SKINS[skinId];
+    if (elements.chickenSVG && skin) {
+      elements.chickenSVG.innerHTML = skin.svg;
     }
   }
   function buildUpgradeShop(gameState2, buyUpgradeCallback) {
@@ -510,6 +532,27 @@
     if (uiCache.get(element) !== strValue) {
       element.textContent = strValue;
       uiCache.set(element, strValue);
+    }
+  }
+  function renderMuseum(gameState2) {
+    elements.museumList.innerHTML = "";
+    for (const id in CONFIG.ARTIFACTS) {
+      const art = CONFIG.ARTIFACTS[id];
+      const isUnlocked = gameState2.artifacts.includes(id);
+      const el = document.createElement("div");
+      el.className = `shop-item`;
+      el.style.flexDirection = "column";
+      el.style.alignItems = "center";
+      el.style.textAlign = "center";
+      el.style.opacity = isUnlocked ? "1" : "0.5";
+      el.style.filter = isUnlocked ? "none" : "grayscale(100%)";
+      el.innerHTML = `
+            <div style="font-size: 2rem; margin-bottom: 5px;">\u{1F3FA}</div>
+            <h4 style="font-size: 1.2rem;">${isUnlocked ? art.name : "???"}</h4>
+            <p style="font-size: 0.9rem; color: #555;">${isUnlocked ? art.desc : "Undiscovered"}</p>
+            <p style="font-size: 0.8rem; font-weight: bold; color: #c0392b;">${isUnlocked ? art.bonusDesc : ""}</p>
+        `;
+      elements.museumList.appendChild(el);
     }
   }
   function updateUI(gameState2) {
@@ -760,6 +803,11 @@
     if (gameState.eggs >= cost) {
       gameState.eggs -= cost;
       gameState.chickens[id]++;
+      if (CONFIG.SKINS[id] && !gameState.unlockedSkins.includes(id)) {
+        gameState.unlockedSkins.push(id);
+        showToast("New Skin Unlocked!", `You can now use the ${CONFIG.SKINS[id].name} skin!`);
+        renderGeneticLab(gameState, equipSkin);
+      }
       updateUI(gameState);
     } else {
       gameState.failedBuys++;
@@ -1119,6 +1167,9 @@
         const modalId = button.dataset.modal;
         document.getElementById(modalId).style.display = "flex";
         gameState.modalOpens++;
+        if (modalId === "achievements-screen") renderAchievements(gameState);
+        if (modalId === "museum-screen") renderMuseum(gameState);
+        if (modalId === "genetic-lab-screen") renderGeneticLab(gameState, equipSkin);
       });
     });
     closeButtons.forEach((button) => {
@@ -1228,6 +1279,16 @@
       }, 8e3);
     }
   }
+  function equipSkin(skinId) {
+    if (gameState.unlockedSkins.includes(skinId)) {
+      gameState.skin = skinId;
+      updateChickenSkin(skinId);
+      renderGeneticLab(gameState, equipSkin);
+      showToast("Skin Changed!", `You are now a ${CONFIG.SKINS[skinId].name}!`);
+    } else {
+      showToast("Locked Skin", "You haven't unlocked this skin yet!");
+    }
+  }
   function initialize() {
     if (elements.versionNumberEl) {
       elements.versionNumberEl.textContent = CONFIG.GAME_VERSION;
@@ -1238,6 +1299,8 @@
     calculateOfflineProgress();
     renderAchievements(gameState);
     renderMuseum(gameState);
+    renderGeneticLab(gameState, equipSkin);
+    updateChickenSkin(gameState.skin);
     updateUI(gameState);
     setupEventListeners();
     setInterval(gameLoop, CONFIG.GAME_TICK_INTERVAL * 1e3);

@@ -44,14 +44,17 @@ export const elements = {
     umbrellaAsset: document.getElementById('umbrella-asset'),
     rainOverlay: document.getElementById('rain-overlay'),
     museumList: document.getElementById('museum-list'),
+    geneticLabList: document.getElementById('genetic-lab-list'),
+    chickenSVG: document.getElementById('chicken'),
 };
 
-export function renderMuseum(gameState) {
-    elements.museumList.innerHTML = '';
-    for (const id in CONFIG.ARTIFACTS) {
-        const art = CONFIG.ARTIFACTS[id];
-        const isUnlocked = gameState.artifacts.includes(id);
-        
+export function renderGeneticLab(gameState, equipSkinCallback) {
+    elements.geneticLabList.innerHTML = '';
+    for (const id in CONFIG.SKINS) {
+        const skin = CONFIG.SKINS[id];
+        const isUnlocked = gameState.unlockedSkins.includes(id);
+        const isActive = gameState.skin === id;
+
         const el = document.createElement('div');
         el.className = `shop-item`;
         el.style.flexDirection = 'column';
@@ -59,14 +62,26 @@ export function renderMuseum(gameState) {
         el.style.textAlign = 'center';
         el.style.opacity = isUnlocked ? '1' : '0.5';
         el.style.filter = isUnlocked ? 'none' : 'grayscale(100%)';
-        
+        el.style.border = isActive ? '2px solid gold' : '';
+
         el.innerHTML = `
-            <div style="font-size: 2rem; margin-bottom: 5px;">🏺</div>
-            <h4 style="font-size: 1.2rem;">${isUnlocked ? art.name : '???'}</h4>
-            <p style="font-size: 0.9rem; color: #555;">${isUnlocked ? art.desc : 'Undiscovered'}</p>
-            <p style="font-size: 0.8rem; font-weight: bold; color: #c0392b;">${isUnlocked ? art.bonusDesc : ''}</p>
+            <svg viewBox="0 0 100 100" style="width: 60px; height: 60px;">${skin.svg}</svg>
+            <h4 style="font-size: 1.2rem; margin-top: 5px;">${isUnlocked ? skin.name : '???' + skin.name.substring(1)}</h4>
+            <p style="font-size: 0.9rem; color: #555;">${isUnlocked ? skin.desc : 'Unlock to reveal'}</p>
+            <button id="equip-${id}" class="funky-button" ${!isUnlocked || isActive ? 'disabled' : ''}>${isActive ? 'Equipped' : 'Equip'}</button>
         `;
-        elements.museumList.appendChild(el);
+        elements.geneticLabList.appendChild(el);
+
+        if (isUnlocked && !isActive) {
+            document.getElementById(`equip-${id}`).addEventListener('click', () => equipSkinCallback(id));
+        }
+    }
+}
+
+export function updateChickenSkin(skinId) {
+    const skin = CONFIG.SKINS[skinId];
+    if (elements.chickenSVG && skin) {
+        elements.chickenSVG.innerHTML = skin.svg;
     }
 }
 
@@ -112,6 +127,12 @@ export function buildCoop(gameState, buyChickenCallback) {
 
 const uiCache = new Map();
 
+/**
+ * Helper function to set textContent of an element only if it has changed,
+ * preventing unnecessary DOM updates.
+ * @param {HTMLElement} element - The DOM element to update.
+ * @param {string|number} value - The new text content.
+ */
 function setText(element, value) {
     if (!element) return;
     const strValue = String(value);
@@ -121,6 +142,39 @@ function setText(element, value) {
     }
 }
 
+/**
+ * Renders the Museum modal with artifacts, showing unlocked ones and placeholders for locked ones.
+ * @param {object} gameState - The current game state.
+ */
+export function renderMuseum(gameState) {
+    elements.museumList.innerHTML = '';
+    for (const id in CONFIG.ARTIFACTS) {
+        const art = CONFIG.ARTIFACTS[id];
+        const isUnlocked = gameState.artifacts.includes(id);
+        
+        const el = document.createElement('div');
+        el.className = `shop-item`;
+        el.style.flexDirection = 'column';
+        el.style.alignItems = 'center';
+        el.style.textAlign = 'center';
+        el.style.opacity = isUnlocked ? '1' : '0.5';
+        el.style.filter = isUnlocked ? 'none' : 'grayscale(100%)';
+        
+        el.innerHTML = `
+            <div style="font-size: 2rem; margin-bottom: 5px;">🏺</div>
+            <h4 style="font-size: 1.2rem;">${isUnlocked ? art.name : '???'}</h4>
+            <p style="font-size: 0.9rem; color: #555;">${isUnlocked ? art.desc : 'Undiscovered'}</p>
+            <p style="font-size: 0.8rem; font-weight: bold; color: #c0392b;">${isUnlocked ? art.bonusDesc : ''}</p>
+        `;
+        elements.museumList.appendChild(el);
+    }
+}
+
+/**
+ * Updates the UI display based on the current game state.
+ * This is an optimized function that only updates DOM elements if their value has changed.
+ * @param {object} gameState - The current game state.
+ */
 export function updateUI(gameState) {
     // HUD Stats
     setText(elements.eggCounter, formatNumber(gameState.eggs));

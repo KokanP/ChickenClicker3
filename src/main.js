@@ -5,7 +5,7 @@ import { initialGameState } from './state.js';
 import { getEggsPerSecond, getEggsPerClick, getPrestigeCost, checkAchievements, getBuffModifier, tryDigArtifact } from './logic.js';
 import { 
     elements, buildUpgradeShop, buildCoop, updateUI, 
-    renderAchievements, updateAchievementProgress, showToast, showFloatingText, renderMuseum 
+    renderAchievements, updateAchievementProgress, showToast, showFloatingText, renderMuseum, renderGeneticLab, updateChickenSkin
 } from './ui.js';
 
 let gameState = {};
@@ -84,6 +84,12 @@ function buyChicken(id) {
     if (gameState.eggs >= cost) {
         gameState.eggs -= cost;
         gameState.chickens[id]++;
+        // Unlock skin associated with this chicken
+        if (CONFIG.SKINS[id] && !gameState.unlockedSkins.includes(id)) {
+            gameState.unlockedSkins.push(id);
+            showToast("New Skin Unlocked!", `You can now use the ${CONFIG.SKINS[id].name} skin!`);
+            renderGeneticLab(gameState, equipSkin); // Update lab if open
+        }
         updateUI(gameState); // Immediate update
     } else {
         gameState.failedBuys++;
@@ -459,6 +465,10 @@ function setupEventListeners() {
             const modalId = button.dataset.modal;
             document.getElementById(modalId).style.display = 'flex';
             gameState.modalOpens++;
+            // Specific renders for each modal
+            if (modalId === 'achievements-screen') renderAchievements(gameState);
+            if (modalId === 'museum-screen') renderMuseum(gameState);
+            if (modalId === 'genetic-lab-screen') renderGeneticLab(gameState, equipSkin);
         });
     });
     closeButtons.forEach(button => {
@@ -586,6 +596,17 @@ function triggerInteractiveEvent() {
     }
 }
 
+function equipSkin(skinId) {
+    if (gameState.unlockedSkins.includes(skinId)) {
+        gameState.skin = skinId;
+        updateChickenSkin(skinId);
+        renderGeneticLab(gameState, equipSkin); // Re-render to update 'Equipped' state
+        showToast("Skin Changed!", `You are now a ${CONFIG.SKINS[skinId].name}!`);
+    } else {
+        showToast("Locked Skin", "You haven't unlocked this skin yet!");
+    }
+}
+
 function initialize() {
     if (elements.versionNumberEl) {
         elements.versionNumberEl.textContent = CONFIG.GAME_VERSION;
@@ -598,6 +619,8 @@ function initialize() {
 
     renderAchievements(gameState);
     renderMuseum(gameState);
+    renderGeneticLab(gameState, equipSkin); // Initial render
+    updateChickenSkin(gameState.skin); // Apply active skin on load
     updateUI(gameState);
     setupEventListeners();
     setInterval(gameLoop, CONFIG.GAME_TICK_INTERVAL * 1000);
