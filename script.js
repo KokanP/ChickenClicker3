@@ -228,7 +228,7 @@ function getPrestigeCost(gs) {
 // --- ui.js content ---
 const elements = {
     nicknameInput: document.getElementById('nickname-input'),
-    chicken: document.getElementById('chicken'),
+    chicken: document.getElementById('chicken-container'), // Changed from 'chicken' to container for clicking
     eggCounter: document.getElementById('egg-counter'),
     featherCounter: document.getElementById('feather-counter'),
     epsCounter: document.getElementById('eggs-per-second'),
@@ -240,10 +240,10 @@ const elements = {
     toastDescription: document.getElementById('toast-description'),
     prestigeButton: document.getElementById('prestige-button'),
     reputationPointsEl: document.getElementById('reputation-points'),
-    reputationBonusEl: document.getElementById('reputation-bonus'),
+    // reputationBonusEl: document.getElementById('reputation-bonus'), // Removed from HUD
     resetButton: document.getElementById('reset-button'),
     licenseSummary: document.getElementById('license-summary'),
-    eventBanner: document.getElementById('event-banner'),
+    eventBanner: document.getElementById('event-banner'), // Might need to add back or ignore
     nameModal: document.getElementById('name-modal'),
     initialNicknameInput: document.getElementById('initial-nickname-input'),
     startGameBtn: document.getElementById('start-game-btn'),
@@ -258,18 +258,27 @@ const elements = {
     importSaveTextBtn: document.getElementById('import-save-text-btn'),
     importSaveFileBtn: document.getElementById('import-save-file-btn'),
     importFileInput: document.getElementById('import-file-input'),
+    // Scene Assets
+    coopAsset: document.getElementById('coop-asset'),
+    incubatorAsset: document.getElementById('incubator-asset'),
+    silkieAsset: document.getElementById('silkie-asset'),
+    fenceAsset: document.getElementById('fence-asset'),
+    flagpoleAsset: document.getElementById('flagpole-asset'),
 };
+
 function buildUpgradeShop() {
     elements.upgradesListContainer.innerHTML = '';
     for (const id in CONFIG.UPGRADES) {
         const upgrade = CONFIG.UPGRADES[id];
         const el = document.createElement('div');
-        el.className = `bg-${upgrade.color}-200 p-4 rounded-lg border-2 border-${upgrade.color}-400`;
+        el.className = `shop-item`;
         el.innerHTML = `
-            <h4 class="text-2xl funky-font">${upgrade.name}</h4>
-            <p class="text-gray-600 mb-2">${upgrade.desc}</p>
-            <p>Level: <span id="${id}-level" class="font-bold">0</span></p>
-            <button id="buy-${id}" class="w-full mt-2 funky-button bg-${upgrade.color}-500 text-white">Buy for <span id="${id}-cost">10</span> ${upgrade.currency === 'eggs' ? 'Eggs' : 'Feathers'}</button>
+            <div>
+                <h4>${upgrade.name}</h4>
+                <p>${upgrade.desc}</p>
+                <p>Lvl: <span id="${id}-level">0</span></p>
+            </div>
+            <button id="buy-${id}" class="funky-button">Buy: <span id="${id}-cost">10</span></button>
         `;
         elements.upgradesListContainer.appendChild(el);
     }
@@ -279,24 +288,30 @@ function buildCoop() {
     for (const id in CONFIG.CHICKENS) {
         const chicken = CONFIG.CHICKENS[id];
         const el = document.createElement('div');
-        el.className = `bg-${chicken.color}-200 p-4 rounded-lg border-2 border-${chicken.color}-400`;
-        let buttonHtml = `<button id="buy-${id}" class="w-full mt-2 funky-button bg-${chicken.color}-500 text-white">Buy for <span id="${id}-cost">1000</span> Eggs</button>`;
+        el.className = `shop-item`;
+        let buttonHtml = `<button id="buy-${id}" class="funky-button">Buy: <span id="${id}-cost">1000</span></button>`;
         
         el.innerHTML = `
-            <h4 class="text-2xl funky-font">${chicken.name}</h4>
-            <p class="text-gray-600 mb-2">${chicken.desc}</p>
-            <p>Owned: <span id="${id}-chickens" class="font-bold">0</span></p>
+            <div>
+                <h4>${chicken.name}</h4>
+                <p>${chicken.desc}</p>
+                <p>Owned: <span id="${id}-chickens">0</span></p>
+            </div>
             ${buttonHtml}
         `;
         elements.coopListContainer.appendChild(el);
     }
 }
-function updateUI(gameState) {
-    elements.eggCounter.textContent = `${formatNumber(gameState.eggs)} Eggs`;
-    elements.featherCounter.textContent = `${formatNumber(gameState.feathers)} Golden Feathers`;
-    elements.epsCounter.textContent = `per second: ${formatNumber(getEggsPerSecond(gameState))}`;
-    elements.epcCounter.textContent = `per click: ${formatNumber(getEggsPerClick(gameState))}`;
 
+function updateUI(gameState) {
+    // HUD Stats
+    elements.eggCounter.textContent = formatNumber(gameState.eggs);
+    elements.featherCounter.textContent = formatNumber(gameState.feathers);
+    elements.reputationPointsEl.textContent = formatNumber(gameState.reputation);
+    elements.epsCounter.textContent = `EPS: ${formatNumber(getEggsPerSecond(gameState))}`;
+    elements.epcCounter.textContent = `EPC: ${formatNumber(getEggsPerClick(gameState))}`;
+
+    // Update Shop Costs & Levels
     for (const id in CONFIG.UPGRADES) {
         const upgrade = CONFIG.UPGRADES[id];
         const levelEl = document.getElementById(`${id}-level`);
@@ -323,35 +338,15 @@ function updateUI(gameState) {
         buttonEl.disabled = gameState.eggs < cost;
     }
     
-    elements.reputationPointsEl.textContent = formatNumber(gameState.reputation);
-    elements.reputationBonusEl.textContent = ((getReputationBonus(gameState) - 1) * 100).toFixed(0);
-
+    // Prestige Button
     const requiredPrestigeCost = getPrestigeCost(gameState);
     const prestigeCostTextEl = document.getElementById('prestige-cost-text');
     if (prestigeCostTextEl) {
-         prestigeCostTextEl.textContent = `Reset progress for a permanent production boost. Requires ${formatNumber(requiredPrestigeCost)} eggs.`;
+         prestigeCostTextEl.textContent = `Cost: ${formatNumber(requiredPrestigeCost)} Eggs`;
     }
     elements.prestigeButton.disabled = gameState.eggs < requiredPrestigeCost;
 
-    const achBonus = getAchievementBonus(gameState);
-    const repBonus = getReputationBonus(gameState);
-    const permBonus = gameState.permanentBonus;
-
-    const achBonusUI = document.getElementById('achievement-bonus-ui');
-    const permBonusUI = document.getElementById('permanent-bonus-ui');
-    const totalMultiplierUI = document.getElementById('total-multiplier-ui');
-
-    if (achBonusUI) achBonusUI.textContent = `+${((achBonus - 1) * 100).toFixed(0)}`;
-    if (permBonusUI) permBonusUI.textContent = `x${permBonus.toFixed(2)}`;
-    if (totalMultiplierUI) totalMultiplierUI.textContent = `x${(achBonus * repBonus * permBonus).toFixed(2)}`;
-
-    if(gameState.event.active) {
-        elements.eventBanner.style.display = 'block';
-        elements.eventBanner.textContent = `${gameState.event.type}! ${Math.ceil(gameState.event.duration)}s left!`;
-    } else {
-        elements.eventBanner.style.display = 'none';
-    }
-
+    // Ancestral Blueprints
     const blueprintsLevelEl = document.getElementById('ancestralBlueprints-level');
     const blueprintsCostEl = document.getElementById('ancestralBlueprints-cost');
     const buyBlueprintsBtn = document.getElementById('buy-ancestralBlueprints');
@@ -363,36 +358,16 @@ function updateUI(gameState) {
         buyBlueprintsBtn.disabled = gameState.reputation < cost;
     }
 
-    updateEggEffectsBanner(gameState);
+    // --- Scene Visuals (The Diorama) ---
+    if (elements.coopAsset) elements.coopAsset.style.display = gameState.upgrades.worker > 0 ? 'block' : 'none';
+    if (elements.incubatorAsset) elements.incubatorAsset.style.display = gameState.upgrades.incubator > 0 ? 'block' : 'none';
+    if (elements.silkieAsset) elements.silkieAsset.style.display = gameState.chickens.silkie > 0 ? 'block' : 'none';
+    if (elements.fenceAsset) elements.fenceAsset.style.display = gameState.totalEggs >= 1000000 ? 'block' : 'none';
+    if (elements.flagpoleAsset) elements.flagpoleAsset.style.display = gameState.prestigeCount > 0 ? 'block' : 'none';
 }
 
-function updateEggEffectsBanner(gameState) {
-  const banner = document.getElementById('egg-effects-banner');
-  banner.innerHTML = '';
-  // Only consider buffs with duration > 0 (active timed buffs)
-  const activeBuffs = Object.entries(gameState.activeBuffs)
-    .filter(([effect, buff]) => buff.duration > 0);
-
-  if (activeBuffs.length === 0) {
-    banner.style.display = 'none';
-    return;
-  }
-
-  banner.style.display = 'flex';
-  activeBuffs.forEach(([effect, buff]) => {
-    // Find the egg config to get color and icon
-    const eggEntry = Object.entries(CONFIG.COLORED_EGGS).find(([k, egg]) => egg.effect === effect);
-    const color = eggEntry ? eggEntry[1].color : '#e2e8f0';
-    const name = effect.charAt(0).toUpperCase() + effect.slice(1).replace(/([A-Z])/g, ' $1');
-
-    const pill = document.createElement('span');
-    pill.className = 'egg-effect-pill';
-    pill.style.background = color + "22"; // transparent background
-    pill.style.border = `2px solid ${color}`;
-    pill.innerHTML = `<span class="icon" style="color:${color}">🥚</span> ${name}: ${Math.ceil(buff.duration)}s`;
-    banner.appendChild(pill);
-  });
-}
+// Stub for now as banner is not in HTML
+function updateEggEffectsBanner(gameState) {}
 
 function renderAchievements(gameState) {
     elements.achievementsList.innerHTML = '';
@@ -402,7 +377,8 @@ function renderAchievements(gameState) {
         if (ach.hidden && !isUnlocked) return;
 
         const el = document.createElement('div');
-        el.className = `p-2 rounded-lg transition-all duration-300 font-semibold ${isUnlocked ? 'bg-yellow-300 text-yellow-800' : 'bg-gray-200 text-gray-500'}`;
+        el.dataset.id = id;
+        el.className = `achievement-item p-2 rounded-lg transition-all duration-300 font-semibold ${isUnlocked ? 'bg-yellow-300 text-yellow-800' : 'bg-gray-200 text-gray-500'}`;
 
         let progressHtml = '';
         if (!isUnlocked) {
@@ -426,7 +402,7 @@ function renderAchievements(gameState) {
                         <div class="achievement-progress-bar">
                             <div class="achievement-progress" style="width: ${progress * 100}%"></div>
                         </div>
-                        <p class="text-xs text-gray-600 text-right mt-1">${formatNumber(current)} / ${formatNumber(target)}</p>
+                        <p class="achievement-progress-text text-xs text-gray-600 text-right mt-1">${formatNumber(current)} / ${formatNumber(target)}</p>
                     `;
                 }
             }
@@ -470,13 +446,14 @@ function showFloatingText(text, event, isSuper = false) {
         el.classList.add('super-click-text');
     }
     el.textContent = text;
-    const chickenContainer = document.querySelector('.chicken-container');
-    if (!chickenContainer) return;
-    chickenContainer.appendChild(el);
+    const scene = document.getElementById('game-scene');
+    if (!scene) return;
+    scene.appendChild(el);
     
-    const containerRect = chickenContainer.getBoundingClientRect();
-    el.style.left = `${event.clientX - containerRect.left - (el.offsetWidth / 2)}px`;
-    el.style.top = `${event.clientY - containerRect.top - (el.offsetHeight / 2)}px`;
+    const containerRect = scene.getBoundingClientRect();
+    // Position relative to the scene
+    el.style.left = `${event.clientX - containerRect.left}px`;
+    el.style.top = `${event.clientY - containerRect.top}px`;
     
     setTimeout(() => {
         if (el.parentElement) {
@@ -524,14 +501,13 @@ function clickChicken(event) {
         el.className = 'floating-insult'; // Use the new CSS class
         el.textContent = insult;
 
-		const chickenContainer = document.querySelector('.chicken-container');
-		if (chickenContainer) {
-			chickenContainer.appendChild(el);
-			const containerRect = chickenContainer.getBoundingClientRect();
-			// Center horizontally
+		const scene = document.getElementById('game-scene');
+		if (scene) {
+			scene.appendChild(el);
+			const containerRect = scene.getBoundingClientRect();
+			// Center horizontally roughly relative to chicken position (center screen)
 			el.style.left = `${(containerRect.width / 2) - (el.offsetWidth / 2)}px`;
-			// Place above the chicken's head; adjust -40 or -50 as needed for visual fit
-			el.style.top = `10px`;
+			el.style.top = `${containerRect.height * 0.6}px`; // Approximate chicken head height
 			setTimeout(() => {
 				if (el.parentElement) {
 					el.parentElement.removeChild(el);
@@ -583,14 +559,28 @@ function buyChicken(id) {
 
 function spawnGoldenChicken() {
     const containerRect = elements.coloredEggContainer.getBoundingClientRect();
-    elements.goldenChicken.style.top = `${Math.random() * (containerRect.height - 120)}px`;
-    elements.goldenChicken.style.left = `${Math.random() * (containerRect.width - 80)}px`;
+    // Ground level is roughly the bottom 30%
+    const groundTop = containerRect.height * 0.65; 
+    const randomY = groundTop + Math.random() * (containerRect.height * 0.2);
+    
+    elements.goldenChicken.style.top = `${randomY}px`;
+    elements.goldenChicken.style.left = '0px'; // Starting point, animation handles movement
     elements.goldenChicken.style.display = 'block';
     elements.goldenChicken.style.opacity = '1';
+    elements.goldenChicken.style.pointerEvents = 'auto';
+    
+    // Reset animation
+    elements.goldenChicken.classList.remove('run-animation');
+    void elements.goldenChicken.offsetWidth; // Trigger reflow
+    elements.goldenChicken.classList.add('run-animation');
+
     setTimeout(() => {
         elements.goldenChicken.style.opacity = '0';
-        setTimeout(() => elements.goldenChicken.style.display = 'none', 500);
-    }, 5000);
+        setTimeout(() => {
+            elements.goldenChicken.style.display = 'none';
+            elements.goldenChicken.classList.remove('run-animation');
+        }, 500);
+    }, 4000); // Animation is 4s
 }
 
 function clickGoldenChicken(event) {
@@ -612,13 +602,17 @@ function spawnColoredEgg() {
         cumulativeLikelihood += egg.likelihood;
         if (roll < cumulativeLikelihood) {
             const eggEl = document.createElement('div');
-            eggEl.className = 'colored-egg';
+            eggEl.className = 'colored-egg bounce-animation'; // Add bounce animation
             eggEl.style.backgroundColor = egg.color;
             eggEl.style.borderRadius = '50% 50% 50% 50% / 60% 60% 40% 40%';
             eggEl.style.boxShadow = `inset -5px -5px 10px rgba(0,0,0,0.3), 0 0 10px ${egg.color}`;
+            eggEl.style.pointerEvents = 'auto';
+            
             const containerRect = elements.coloredEggContainer.getBoundingClientRect();
-            eggEl.style.top = `${Math.random() * (containerRect.height - 120)}px`;
+            // Random horizontal position
             eggEl.style.left = `${Math.random() * (containerRect.width - 40)}px`;
+            // Top is handled by animation
+            
             eggEl.style.display = 'block';
             eggEl.addEventListener('click', () => { applyEggEffect(id); eggEl.remove(); }, { once: true });
             elements.coloredEggContainer.appendChild(eggEl);
@@ -642,15 +636,20 @@ function applyEggEffect(id) {
         case 'boostMultiplier': bonusDescription = `All egg production is doubled for ${egg.duration} seconds!`; break;
         case 'superClickFrenzy': bonusDescription = `Super Click chance is doubled for ${egg.duration} seconds!`; break;
         case 'prestigeBuff': bonusDescription = `Your next prestige will grant an extra ${egg.value * 100}% Reputation!`; break;
-        case 'prestigePercent': const prestigeGain = CONFIG.PRESTIGE_COST * egg.value; gameState.eggs += prestigeGain; gameState.totalEggs += prestigeGain; bonusDescription = `Gained ${formatNumber(prestigeGain)} eggs toward your next prestige!`; break;
+        case 'prestigePercent': const prestigeGain = getPrestigeCost(gameState) * egg.value; gameState.eggs += prestigeGain; gameState.totalEggs += prestigeGain; bonusDescription = `Gained ${formatNumber(prestigeGain)} eggs toward your next prestige!`; break;
         case 'permanentBonus': bonusDescription = `Permanently increased all egg production by ${egg.value * 100}%!`; break;
     }
     showToast(bonusTitle, bonusDescription);
 
     if (egg.duration > 0) {
         const durationBonus = 1 + (gameState.upgrades.prismaticFeed * 0.10);
-        const newDuration = egg.duration * durationBonus;
-        gameState.activeBuffs[egg.effect] = { value: egg.value, duration: newDuration };
+        const addedDuration = egg.duration * durationBonus;
+        if (gameState.activeBuffs[egg.effect]) {
+            gameState.activeBuffs[egg.effect].duration += addedDuration;
+            gameState.activeBuffs[egg.effect].value = egg.value;
+        } else {
+            gameState.activeBuffs[egg.effect] = { value: egg.value, duration: addedDuration };
+        }
     } else if (egg.effect === 'permanentBonus') {
         gameState.permanentBonus += egg.value;
     } else if (egg.effect === 'prestigeBuff') {
@@ -804,10 +803,18 @@ function calculateOfflineProgress() {
     document.getElementById('offline-progress-modal').style.display = 'flex';
 }
 
+let lastTick = Date.now();
 
 function gameLoop() {
     try {
-        const secondsPassed = CONFIG.GAME_TICK_INTERVAL;
+        const now = Date.now();
+        let secondsPassed = (now - lastTick) / 1000;
+        lastTick = now;
+        
+        // Prevent huge time jumps (e.g. if computer sleeps) from breaking logic, 
+        // but allow enough for lag spikes. Offline progress handles long breaks.
+        if (secondsPassed > 3600) secondsPassed = 0.1; 
+
         const eps = getEggsPerSecond(gameState);
         gameState.eggs += eps * secondsPassed;
         gameState.totalEggs += eps * secondsPassed;
@@ -862,6 +869,7 @@ function gameLoop() {
         }
 
         updateUI(gameState);
+        updateAchievementProgress(gameState);
         checkAchievements();
     } catch (error) {
         console.error("Game loop crashed:", error);
@@ -942,7 +950,7 @@ function setupEventListeners() {
     });
     elements.chicken.addEventListener('click', clickChicken);
     elements.goldenChicken.addEventListener('click', clickGoldenChicken);
-    const navButtons = document.querySelectorAll('.nav-button');
+    const navButtons = document.querySelectorAll('.nav-btn');
     const closeButtons = document.querySelectorAll('.close-modal-btn');
     navButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -998,6 +1006,40 @@ function setupEventListeners() {
         if (gameState.reputation >= cost) {
             gameState.reputation -= cost;
             gameState.prestigeUpgrades.ancestralBlueprints++;
+        }
+    });
+}
+
+function updateAchievementProgress(gs) {
+    const achievementItems = document.querySelectorAll('.achievement-item');
+    achievementItems.forEach(el => {
+        const id = el.dataset.id;
+        if (!id || gs.unlockedAchievements.includes(id)) return;
+
+        const bar = el.querySelector('.achievement-progress');
+        const text = el.querySelector('.achievement-progress-text');
+        
+        if (bar && text && achievementConditions[id]) {
+            const conditionStr = achievementConditions[id].toString();
+            const match = conditionStr.match(/gs\.(totalClicks|totalEggs|upgrades\.(\w+)|chickens\.(\w+)|goldenChickensClicked)\s*>=\s*([\d.e+]+)/);
+            
+            if (match) {
+                const key = match[1];
+                const target = parseFloat(match[4]);
+                let current = 0;
+                
+                if (key.startsWith('upgrades.')) {
+                    current = gs.upgrades[match[2]] || 0;
+                } else if (key.startsWith('chickens.')) {
+                    current = gs.chickens[match[3]] || 0;
+                } else {
+                    current = gs[key] || 0;
+                }
+                
+                const progress = Math.min(current / target, 1);
+                bar.style.width = `${progress * 100}%`;
+                text.textContent = `${formatNumber(current)} / ${formatNumber(target)}`;
+            }
         }
     });
 }
