@@ -30,21 +30,39 @@
             <div id="event-banner"></div>
 
             <!-- Assets (Initially Hidden) -->
-            <!-- Coop: A simple barn shape -->
+            <!-- Coop: A classic red barn -->
             <svg id="coop-asset" class="scene-layer" viewBox="0 0 100 100">
-                <path d="M10,40 L50,10 L90,40 V90 H10 Z" fill="#c0392b" stroke="#5c4033" stroke-width="4"/>
-                <rect x="35" y="50" width="30" height="40" fill="#5c4033"/>
-                <rect x="40" y="25" width="20" height="15" fill="#fff"/>
+                <title>Coop: Workers live here</title>
+                <!-- Main Barn Structure -->
+                <path d="M10,40 L50,10 L90,40 V90 H10 Z" fill="#c0392b" stroke="#5c4033" stroke-width="3"/>
+                <!-- Roof Trim -->
+                <path d="M10,40 L50,10 L90,40" fill="none" stroke="#fff" stroke-width="3"/>
+                <!-- Door -->
+                <rect x="35" y="50" width="30" height="40" fill="#5c4033" stroke="#3e2b22" stroke-width="2"/>
+                <line x1="35" y1="50" x2="65" y2="90" stroke="#3e2b22" stroke-width="2"/>
+                <line x1="65" y1="50" x2="35" y2="90" stroke="#3e2b22" stroke-width="2"/>
+                <!-- Loft Window -->
+                <circle cx="50" cy="30" r="8" fill="#fff" stroke="#5c4033" stroke-width="2"/>
             </svg>
 
-            <!-- Incubator: A shed with a glowing window -->
+            <!-- Incubator: A high-tech warm machine, not a shed -->
             <svg id="incubator-asset" class="scene-layer" viewBox="0 0 100 100">
-                <path d="M10,30 L50,10 L90,30 V90 H10 Z" fill="#7f8c8d" stroke="#2c3e50" stroke-width="4"/>
-                <rect x="30" y="40" width="40" height="30" fill="#f1c40f" stroke="#f39c12" stroke-width="2"/>
+                <title>Incubator: Boosts click power</title>
+                <!-- Metal casing -->
+                <rect x="20" y="30" width="60" height="70" rx="5" fill="#95a5a6" stroke="#7f8c8d" stroke-width="3"/>
+                <!-- Glass window with warm glow -->
+                <rect x="30" y="40" width="40" height="40" fill="#f1c40f" opacity="0.8" stroke="#f39c12" stroke-width="2"/>
+                <!-- Eggs inside -->
+                <ellipse cx="40" cy="65" rx="6" ry="8" fill="#fff"/>
+                <ellipse cx="60" cy="65" rx="6" ry="8" fill="#fff"/>
+                <!-- Temperature gauge -->
+                <rect x="35" y="20" width="30" height="10" fill="#333"/>
+                <rect x="37" y="22" width="26" height="6" fill="red"/>
             </svg>
 
             <!-- Silkie Patch: Fenced off area with special feed -->
             <svg id="silkie-asset" class="scene-layer" viewBox="0 0 100 50" style="display:none;">
+                <title>Silkie Patch: Chance for feathers</title>
                 <rect x="5" y="5" width="90" height="40" fill="#55a300" stroke="#8b5a2b" stroke-width="2" stroke-dasharray="5,5"/>
                 <circle cx="30" cy="25" r="5" fill="#fff" />
                 <circle cx="50" cy="20" r="5" fill="#fff" />
@@ -52,13 +70,19 @@
             </svg>
 
             <!-- Fence: Wooden posts -->
-            <div id="fence-asset" class="scene-layer" style="background: repeating-linear-gradient(90deg, #8b5a2b 0, #8b5a2b 10px, transparent 10px, transparent 50px);"></div>
+            <div id="fence-asset" class="scene-layer" title="Secure Farm: 1M+ Eggs" style="background: repeating-linear-gradient(90deg, #8b5a2b 0, #8b5a2b 10px, transparent 10px, transparent 50px);"></div>
 
             <!-- Flagpole: Prestige indicator -->
             <svg id="flagpole-asset" class="scene-layer" viewBox="0 0 50 150">
-                <rect x="20" y="10" width="5" height="140" fill="#7f8c8d"/>
-                <path d="M25,15 L45,25 L25,35 Z" fill="#e74c3c"/>
-                <rect x="10" y="140" width="30" height="10" fill="#95a5a6"/>
+                <title>Prestige: Honor of the Farm</title>
+                <!-- Pole -->
+                <rect x="22" y="10" width="6" height="140" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="1"/>
+                <!-- Base -->
+                <path d="M10,150 L40,150 L35,140 L15,140 Z" fill="#7f8c8d"/>
+                <!-- Flag (Waving) -->
+                <path d="M28,15 C40,10 45,25 28,35 Z" fill="#e74c3c" stroke="#c0392b" stroke-width="1"/>
+                <!-- Gold Ball on top -->
+                <circle cx="25" cy="10" r="4" fill="gold" stroke="#f39c12" stroke-width="1"/>
             </svg>
 
             <!-- The Main Chicken -->
