@@ -43,7 +43,32 @@ export const elements = {
     groundCritterAsset: document.getElementById('ground-critter-asset'),
     umbrellaAsset: document.getElementById('umbrella-asset'),
     rainOverlay: document.getElementById('rain-overlay'),
+    museumList: document.getElementById('museum-list'),
 };
+
+export function renderMuseum(gameState) {
+    elements.museumList.innerHTML = '';
+    for (const id in CONFIG.ARTIFACTS) {
+        const art = CONFIG.ARTIFACTS[id];
+        const isUnlocked = gameState.artifacts.includes(id);
+        
+        const el = document.createElement('div');
+        el.className = `shop-item`;
+        el.style.flexDirection = 'column';
+        el.style.alignItems = 'center';
+        el.style.textAlign = 'center';
+        el.style.opacity = isUnlocked ? '1' : '0.5';
+        el.style.filter = isUnlocked ? 'none' : 'grayscale(100%)';
+        
+        el.innerHTML = `
+            <div style="font-size: 2rem; margin-bottom: 5px;">🏺</div>
+            <h4 style="font-size: 1.2rem;">${isUnlocked ? art.name : '???'}</h4>
+            <p style="font-size: 0.9rem; color: #555;">${isUnlocked ? art.desc : 'Undiscovered'}</p>
+            <p style="font-size: 0.8rem; font-weight: bold; color: #c0392b;">${isUnlocked ? art.bonusDesc : ''}</p>
+        `;
+        elements.museumList.appendChild(el);
+    }
+}
 
 export function buildUpgradeShop(gameState, buyUpgradeCallback) {
     elements.upgradesListContainer.innerHTML = '';

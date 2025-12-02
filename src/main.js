@@ -2,10 +2,10 @@
 import { CONFIG, FOWL_INSULTS } from './config.js';
 import { formatNumber, calculateCost, deepMerge, isObject } from './utils.js';
 import { initialGameState } from './state.js';
-import { getEggsPerSecond, getEggsPerClick, getPrestigeCost, checkAchievements, getBuffModifier } from './logic.js';
+import { getEggsPerSecond, getEggsPerClick, getPrestigeCost, checkAchievements, getBuffModifier, tryDigArtifact } from './logic.js';
 import { 
     elements, buildUpgradeShop, buildCoop, updateUI, 
-    renderAchievements, updateAchievementProgress, showToast, showFloatingText 
+    renderAchievements, updateAchievementProgress, showToast, showFloatingText, renderMuseum 
 } from './ui.js';
 
 let gameState = {};
@@ -18,6 +18,13 @@ function clickChicken(event) {
     gameState.eggs += epc;
     gameState.totalEggs += epc;
     showFloatingText(`+${formatNumber(epc)}`, event);
+    
+    // Artifact Digging
+    const artifact = tryDigArtifact(gameState);
+    if (artifact) {
+        showToast("Artifact Found!", `You dug up: ${artifact.name}`);
+        renderMuseum(gameState); // Update UI if open
+    }
     
     // Check for Fowl Language upgrade and occasionally show an insult
     if (gameState.upgrades.fowlLanguage > 0 && Math.random() < 0.00008333) { 
@@ -590,6 +597,7 @@ function initialize() {
     calculateOfflineProgress();
 
     renderAchievements(gameState);
+    renderMuseum(gameState);
     updateUI(gameState);
     setupEventListeners();
     setInterval(gameLoop, CONFIG.GAME_TICK_INTERVAL * 1000);

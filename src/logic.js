@@ -31,18 +31,18 @@ export const getBuffModifier = (gs, buffType, defaultValue = 1) => {
     return defaultValue;
 };
 
-/**
- * Gets the global boost multiplier from buffs.
- * @param {object} gs - The game state.
- * @returns {number} The multiplier.
- */
 export const getBoostMultiplier = (gs) => getBuffModifier(gs, 'boostMultiplier');
 
-/**
- * Calculates the total achievement bonus.
- * @param {object} gs - The game state.
- * @returns {number} The multiplier (e.g., 1.10 for +10%).
- */
+export const getArtifactBonus = (gs, effectType) => {
+    return gs.artifacts.reduce((total, id) => {
+        const art = CONFIG.ARTIFACTS[id];
+        if (art && (art.effect === effectType || art.effect === 'global')) {
+            return total + art.value;
+        }
+        return total;
+    }, 0);
+};
+
 export const getAchievementBonus = (gs) => {
     const totalBonus = gs.unlockedAchievements.reduce((sum, id) => {
         const bonusValue = achievements[id]?.bonus || 1;
@@ -51,11 +51,6 @@ export const getAchievementBonus = (gs) => {
     return 1 + totalBonus;
 };
 
-/**
- * Calculates the base eggs per second based on buildings.
- * @param {object} gs - The game state.
- * @returns {number} Base EPS.
- */
 export const getBaseEggsPerSecond = (gs) => {
     let baseEps = gs.upgrades.worker * gs.chickens.leghorn * 1;
     baseEps += gs.chickens.brahma * (baseEps * 5);
@@ -75,10 +70,11 @@ export const getEggsPerSecond = (gs) => {
     const bantyBonus = Math.pow(1.1, gs.chickens.banty);
     const quantumBonus = gs.chickens.quantum > 0 ? Math.pow(1 + (gs.unlockedAchievements.length * 0.1), gs.chickens.quantum) : 1;
     const eventHorizonBonus = 1 + (gs.upgrades.eventHorizon * 0.01 * gs.prestigeCount);
+    const artifactBonus = 1 + getArtifactBonus(gs, 'eps');
     
     const totalBuildings = Object.values(gs.upgrades).reduce((a, b) => a + b, 0) + Object.values(gs.chickens).reduce((a, b) => a + b, 0);
     const cluckworkBonus = 1 + (gs.upgrades.cluckworkAutomation * 0.05 * totalBuildings);
-    return (baseEps + nestEggInterest) * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * quantumBonus * eventHorizonBonus * cluckworkBonus;
+    return (baseEps + nestEggInterest) * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * quantumBonus * eventHorizonBonus * cluckworkBonus * artifactBonus;
 };
 
 /**
@@ -91,7 +87,8 @@ export const getEggsPerClick = (gs) => {
     const baseEpc = 1 + gs.upgrades.incubator;
     const peckingOrderBonus = 1 + (gs.upgrades.peckingOrder * 0.1);
     const bantyBonus = Math.pow(1.1, gs.chickens.banty);
-    return Math.floor(baseEpc * loomBoost * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * getBuffModifier(gs, 'clickFrenzy'));
+    const artifactBonus = 1 + getArtifactBonus(gs, 'click');
+    return Math.floor(baseEpc * loomBoost * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * getBuffModifier(gs, 'clickFrenzy') * artifactBonus);
 };
 
 /**
@@ -103,6 +100,23 @@ export function getPrestigeCost(gs) {
     const baseCost = CONFIG.PRESTIGE_COST;
     const prestigeCount = gs.prestigeCount || 0;
     return baseCost * Math.pow(2, prestigeCount);
+}
+
+/**
+ * Attempts to dig up an artifact.
+ * @param {object} gs - The game state.
+ * @returns {object|null} The found artifact object or null.
+ */
+export function tryDigArtifact(gs) {
+    if (Math.random() < CONFIG.ARTIFACT_DIG_CHANCE) {
+        const available = Object.keys(CONFIG.ARTIFACTS).filter(id => !gs.artifacts.includes(id));
+        if (available.length > 0) {
+            const id = available[Math.floor(Math.random() * available.length)];
+            gs.artifacts.push(id);
+            return CONFIG.ARTIFACTS[id];
+        }
+    }
+    return null;
 }
 
 /**

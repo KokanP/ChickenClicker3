@@ -2,15 +2,24 @@
 
 export const CONFIG = {
     SAVE_KEY: 'chickenClickerSave_v2.9',
-    GAME_VERSION: '3.1 (The Alive Update)',
+    GAME_VERSION: '3.2 (The Collector Update)',
     GAME_TICK_INTERVAL: 0.1,
     SAVE_INTERVAL: 5,
     GOLDEN_CHICKEN_SPAWN_INTERVAL: 60,
     RANDOM_EVENT_INTERVAL: 180,
-    INTERACTIVE_EVENT_INTERVAL: 45, // New interval for "Alive" events
+    INTERACTIVE_EVENT_INTERVAL: 45,
     COLORED_EGG_ATTEMPT_INTERVAL: 15,
     COLORED_EGG_SPAWN_CHANCE: 10 / 240,
+    ARTIFACT_DIG_CHANCE: 0.0001, // 1 in 10,000 clicks
     PRESTIGE_COST: 1e12,
+    ARTIFACTS: {
+        ancientKernel: { name: "Ancient Kernel", desc: "Petrified corn. Hard as a rock.", bonusDesc: "+1% Click Power", effect: 'click', value: 0.01 },
+        rustySpur: { name: "Rusty Spur", desc: "From a cowboy who rode a rooster?", bonusDesc: "+1% EPS", effect: 'eps', value: 0.01 },
+        goldenFeatherFossil: { name: "Feather Fossil", desc: "Evidence of early evolution.", bonusDesc: "+5% Feather Chance", effect: 'feather', value: 0.05 },
+        moonRockSample: { name: "Moon Rock", desc: "How did this get here?", bonusDesc: "+10% Prestige Gain", effect: 'prestige', value: 0.1 },
+        firstEgg: { name: "The First Egg", desc: "Which came first? This one.", bonusDesc: "+5% Global Multiplier", effect: 'global', value: 0.05 },
+        oldBoot: { name: "Old Boot", desc: "Useless. Smells faintly of cheese.", bonusDesc: "No bonus.", effect: 'none', value: 0 }
+    },
     UPGRADES: {
         worker: { name: 'Coop Worker', desc: 'Each level helps Leghorn Chickens produce +1 EPS.', baseCost: 10, exponent: 1.15, currency: 'eggs', color: 'green' },
         incubator: { name: 'Incubator', desc: 'Each level increases your base Eggs Per Click by +1.', baseCost: 50, exponent: 1.15, currency: 'eggs', color: 'blue' },

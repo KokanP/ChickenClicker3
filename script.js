@@ -2,16 +2,25 @@
   // src/config.js
   var CONFIG = {
     SAVE_KEY: "chickenClickerSave_v2.9",
-    GAME_VERSION: "3.1 (The Alive Update)",
+    GAME_VERSION: "3.2 (The Collector Update)",
     GAME_TICK_INTERVAL: 0.1,
     SAVE_INTERVAL: 5,
     GOLDEN_CHICKEN_SPAWN_INTERVAL: 60,
     RANDOM_EVENT_INTERVAL: 180,
     INTERACTIVE_EVENT_INTERVAL: 45,
-    // New interval for "Alive" events
     COLORED_EGG_ATTEMPT_INTERVAL: 15,
     COLORED_EGG_SPAWN_CHANCE: 10 / 240,
+    ARTIFACT_DIG_CHANCE: 1e-4,
+    // 1 in 10,000 clicks
     PRESTIGE_COST: 1e12,
+    ARTIFACTS: {
+      ancientKernel: { name: "Ancient Kernel", desc: "Petrified corn. Hard as a rock.", bonusDesc: "+1% Click Power", effect: "click", value: 0.01 },
+      rustySpur: { name: "Rusty Spur", desc: "From a cowboy who rode a rooster?", bonusDesc: "+1% EPS", effect: "eps", value: 0.01 },
+      goldenFeatherFossil: { name: "Feather Fossil", desc: "Evidence of early evolution.", bonusDesc: "+5% Feather Chance", effect: "feather", value: 0.05 },
+      moonRockSample: { name: "Moon Rock", desc: "How did this get here?", bonusDesc: "+10% Prestige Gain", effect: "prestige", value: 0.1 },
+      firstEgg: { name: "The First Egg", desc: "Which came first? This one.", bonusDesc: "+5% Global Multiplier", effect: "global", value: 0.05 },
+      oldBoot: { name: "Old Boot", desc: "Useless. Smells faintly of cheese.", bonusDesc: "No bonus.", effect: "none", value: 0 }
+    },
     UPGRADES: {
       worker: { name: "Coop Worker", desc: "Each level helps Leghorn Chickens produce +1 EPS.", baseCost: 10, exponent: 1.15, currency: "eggs", color: "green" },
       incubator: { name: "Incubator", desc: "Each level increases your base Eggs Per Click by +1.", baseCost: 50, exponent: 1.15, currency: "eggs", color: "blue" },
@@ -296,6 +305,8 @@
     foxClicks: 0,
     badgerClicks: 0,
     umbrellaClicks: 0,
+    artifacts: [],
+    skin: "default",
     event: { active: false, type: null, duration: 0, modifier: 1 },
     activeBuffs: {},
     permanentBonus: 1,
@@ -320,6 +331,15 @@
     return defaultValue;
   };
   var getBoostMultiplier = (gs) => getBuffModifier(gs, "boostMultiplier");
+  var getArtifactBonus = (gs, effectType) => {
+    return gs.artifacts.reduce((total, id) => {
+      const art = CONFIG.ARTIFACTS[id];
+      if (art && (art.effect === effectType || art.effect === "global")) {
+        return total + art.value;
+      }
+      return total;
+    }, 0);
+  };
   var getAchievementBonus = (gs) => {
     const totalBonus = gs.unlockedAchievements.reduce((sum, id) => {
       const bonusValue = achievements2[id]?.bonus || 1;
@@ -340,21 +360,34 @@
     const bantyBonus = Math.pow(1.1, gs.chickens.banty);
     const quantumBonus = gs.chickens.quantum > 0 ? Math.pow(1 + gs.unlockedAchievements.length * 0.1, gs.chickens.quantum) : 1;
     const eventHorizonBonus = 1 + gs.upgrades.eventHorizon * 0.01 * gs.prestigeCount;
+    const artifactBonus = 1 + getArtifactBonus(gs, "eps");
     const totalBuildings = Object.values(gs.upgrades).reduce((a, b) => a + b, 0) + Object.values(gs.chickens).reduce((a, b) => a + b, 0);
     const cluckworkBonus = 1 + gs.upgrades.cluckworkAutomation * 0.05 * totalBuildings;
-    return (baseEps + nestEggInterest) * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * quantumBonus * eventHorizonBonus * cluckworkBonus;
+    return (baseEps + nestEggInterest) * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * quantumBonus * eventHorizonBonus * cluckworkBonus * artifactBonus;
   };
   var getEggsPerClick = (gs) => {
     const loomBoost = 1 + gs.upgrades.loom * 0.25;
     const baseEpc = 1 + gs.upgrades.incubator;
     const peckingOrderBonus = 1 + gs.upgrades.peckingOrder * 0.1;
     const bantyBonus = Math.pow(1.1, gs.chickens.banty);
-    return Math.floor(baseEpc * loomBoost * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * getBuffModifier(gs, "clickFrenzy"));
+    const artifactBonus = 1 + getArtifactBonus(gs, "click");
+    return Math.floor(baseEpc * loomBoost * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * getBuffModifier(gs, "clickFrenzy") * artifactBonus);
   };
   function getPrestigeCost(gs) {
     const baseCost = CONFIG.PRESTIGE_COST;
     const prestigeCount = gs.prestigeCount || 0;
     return baseCost * Math.pow(2, prestigeCount);
+  }
+  function tryDigArtifact(gs) {
+    if (Math.random() < CONFIG.ARTIFACT_DIG_CHANCE) {
+      const available = Object.keys(CONFIG.ARTIFACTS).filter((id) => !gs.artifacts.includes(id));
+      if (available.length > 0) {
+        const id = available[Math.floor(Math.random() * available.length)];
+        gs.artifacts.push(id);
+        return CONFIG.ARTIFACTS[id];
+      }
+    }
+    return null;
   }
   function checkAchievements(gameState2, callback) {
     let unlockedAny = false;
@@ -409,8 +442,30 @@
     eagleAsset: document.getElementById("eagle-asset"),
     groundCritterAsset: document.getElementById("ground-critter-asset"),
     umbrellaAsset: document.getElementById("umbrella-asset"),
-    rainOverlay: document.getElementById("rain-overlay")
+    rainOverlay: document.getElementById("rain-overlay"),
+    museumList: document.getElementById("museum-list")
   };
+  function renderMuseum(gameState2) {
+    elements.museumList.innerHTML = "";
+    for (const id in CONFIG.ARTIFACTS) {
+      const art = CONFIG.ARTIFACTS[id];
+      const isUnlocked = gameState2.artifacts.includes(id);
+      const el = document.createElement("div");
+      el.className = `shop-item`;
+      el.style.flexDirection = "column";
+      el.style.alignItems = "center";
+      el.style.textAlign = "center";
+      el.style.opacity = isUnlocked ? "1" : "0.5";
+      el.style.filter = isUnlocked ? "none" : "grayscale(100%)";
+      el.innerHTML = `
+            <div style="font-size: 2rem; margin-bottom: 5px;">\u{1F3FA}</div>
+            <h4 style="font-size: 1.2rem;">${isUnlocked ? art.name : "???"}</h4>
+            <p style="font-size: 0.9rem; color: #555;">${isUnlocked ? art.desc : "Undiscovered"}</p>
+            <p style="font-size: 0.8rem; font-weight: bold; color: #c0392b;">${isUnlocked ? art.bonusDesc : ""}</p>
+        `;
+      elements.museumList.appendChild(el);
+    }
+  }
   function buildUpgradeShop(gameState2, buyUpgradeCallback) {
     elements.upgradesListContainer.innerHTML = "";
     for (const id in CONFIG.UPGRADES) {
@@ -647,6 +702,11 @@
     gameState.eggs += epc;
     gameState.totalEggs += epc;
     showFloatingText(`+${formatNumber(epc)}`, event);
+    const artifact = tryDigArtifact(gameState);
+    if (artifact) {
+      showToast("Artifact Found!", `You dug up: ${artifact.name}`);
+      renderMuseum(gameState);
+    }
     if (gameState.upgrades.fowlLanguage > 0 && Math.random() < 8333e-8) {
       const insult = FOWL_INSULTS[Math.floor(Math.random() * FOWL_INSULTS.length)];
       const el = document.createElement("div");
@@ -1177,6 +1237,7 @@
     loadGame();
     calculateOfflineProgress();
     renderAchievements(gameState);
+    renderMuseum(gameState);
     updateUI(gameState);
     setupEventListeners();
     setInterval(gameLoop, CONFIG.GAME_TICK_INTERVAL * 1e3);
