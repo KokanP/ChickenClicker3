@@ -22,7 +22,8 @@
       fowlLanguage: { name: "Fowl Language", desc: "The chicken occasionally squawks insults. Essential.", baseCost: 1e12, exponent: 10, currency: "eggs", color: "red" },
       goldenCompass: { name: "Golden Compass", desc: "Increases the egg bonus from Golden Chickens by 25% per level.", baseCost: 25, exponent: 1.6, currency: "feathers", color: "yellow" },
       comfyCoopBedding: { name: "Comfy Coop Bedding", desc: "Increases the maximum offline progress time by 2 hours per level.", baseCost: 5e12, exponent: 2.2, currency: "eggs", color: "teal" },
-      prismaticFeed: { name: "Prismatic Feed", desc: "Increases the duration of all Colored Egg buffs by 10% per level.", baseCost: 1e15, exponent: 2.5, currency: "eggs", color: "pink" }
+      prismaticFeed: { name: "Prismatic Feed", desc: "Increases the duration of all Colored Egg buffs by 10% per level.", baseCost: 1e15, exponent: 2.5, currency: "eggs", color: "pink" },
+      eventHorizon: { name: "Event Horizon", desc: "Compresses time. +1% EPS for every Prestige level you have.", baseCost: 1e45, exponent: 3, currency: "eggs", color: "black" }
     },
     CHICKENS: {
       leghorn: { name: "Leghorn Chicken", desc: "The backbone of your coop. Produces 1 egg/s per Coop Worker.", baseCost: 1e3, exponent: 1.25, color: "gray" },
@@ -33,7 +34,8 @@
       doja: { name: "Doja Cow", desc: '"Moooove over!" Each click has a chance to be a "Super Click", granting 1 hour of EPS. Landing Super Clicks within 10 seconds of each other creates a chain, increasing the bonus by 10% each time!', baseCost: 5e12, exponent: 1.4, color: "pink" },
       brahma: { name: "Brahma Behemoth", desc: "A gentle giant. Adds a massive +500% to your base EPS.", baseCost: 1e15, exponent: 1.45, color: "green" },
       serama: { name: "Serama Sorcerer", desc: "Has a chance to grant a free upgrade level.", baseCost: 1e18, exponent: 1.5, color: "purple" },
-      banty: { name: "Banty Chicken", desc: "The king. Provides a +10% multiplicative bonus to ALL production.", baseCost: 1e21, exponent: 1.6, color: "indigo" }
+      banty: { name: "Banty Chicken", desc: "The king. Provides a +10% multiplicative bonus to ALL production.", baseCost: 1e21, exponent: 1.6, color: "indigo" },
+      quantum: { name: "Quantum Clucker", desc: "Exists in multiple coops at once. Multiplies EPS by (1 + Unlocked Achievements).", baseCost: 1e40, exponent: 1.8, color: "cyan" }
     },
     COLORED_EGGS: {
       green: { likelihood: 15, effect: "discount", value: 0.1, duration: 5, color: "#4ade80" },
@@ -178,7 +180,30 @@
   function formatNumber(num) {
     if (num === null || isNaN(num) || !isFinite(num)) return "0";
     if (num < 1e3) return num.toFixed(0);
-    const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+    const suffixes = [
+      "",
+      "K",
+      "M",
+      "B",
+      "T",
+      "Qa",
+      "Qi",
+      "Sx",
+      "Sp",
+      "Oc",
+      "No",
+      "Dc",
+      "Ud",
+      "Dd",
+      "Td",
+      "Qd",
+      "Qn",
+      "Sd",
+      "St",
+      "Od",
+      "Nd",
+      "Vg"
+    ];
     const i = Math.floor(Math.log10(num) / 3);
     if (i >= suffixes.length) return num.toExponential(2);
     return (num / Math.pow(1e3, i)).toFixed(2) + suffixes[i];
@@ -228,7 +253,8 @@
       fowlLanguage: 0,
       goldenCompass: 0,
       comfyCoopBedding: 0,
-      prismaticFeed: 0
+      prismaticFeed: 0,
+      eventHorizon: 0
     },
     chickens: {
       leghorn: 1,
@@ -239,7 +265,8 @@
       doja: 0,
       brahma: 0,
       serama: 0,
-      banty: 0
+      banty: 0,
+      quantum: 0
     },
     unlockedAchievements: [],
     reputation: 0,
@@ -291,9 +318,11 @@
     const nestEggInterest = gs.upgrades.nestEggIRA > 0 ? Math.min(baseEps * 1e-3 * gs.upgrades.nestEggIRA, interestCap) : 0;
     const peckingOrderBonus = 1 + gs.upgrades.peckingOrder * 0.1;
     const bantyBonus = Math.pow(1.1, gs.chickens.banty);
+    const quantumBonus = gs.chickens.quantum > 0 ? Math.pow(1 + gs.unlockedAchievements.length * 0.1, gs.chickens.quantum) : 1;
+    const eventHorizonBonus = 1 + gs.upgrades.eventHorizon * 0.01 * gs.prestigeCount;
     const totalBuildings = Object.values(gs.upgrades).reduce((a, b) => a + b, 0) + Object.values(gs.chickens).reduce((a, b) => a + b, 0);
     const cluckworkBonus = 1 + gs.upgrades.cluckworkAutomation * 0.05 * totalBuildings;
-    return (baseEps + nestEggInterest) * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * cluckworkBonus;
+    return (baseEps + nestEggInterest) * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * quantumBonus * eventHorizonBonus * cluckworkBonus;
   };
   var getEggsPerClick = (gs) => {
     const loomBoost = 1 + gs.upgrades.loom * 0.25;

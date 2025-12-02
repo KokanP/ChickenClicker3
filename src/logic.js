@@ -73,9 +73,12 @@ export const getEggsPerSecond = (gs) => {
     const nestEggInterest = gs.upgrades.nestEggIRA > 0 ? Math.min(baseEps * 0.001 * gs.upgrades.nestEggIRA, interestCap) : 0;
     const peckingOrderBonus = 1 + (gs.upgrades.peckingOrder * 0.1);
     const bantyBonus = Math.pow(1.1, gs.chickens.banty);
+    const quantumBonus = gs.chickens.quantum > 0 ? Math.pow(1 + (gs.unlockedAchievements.length * 0.1), gs.chickens.quantum) : 1;
+    const eventHorizonBonus = 1 + (gs.upgrades.eventHorizon * 0.01 * gs.prestigeCount);
+    
     const totalBuildings = Object.values(gs.upgrades).reduce((a, b) => a + b, 0) + Object.values(gs.chickens).reduce((a, b) => a + b, 0);
     const cluckworkBonus = 1 + (gs.upgrades.cluckworkAutomation * 0.05 * totalBuildings);
-    return (baseEps + nestEggInterest) * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * cluckworkBonus;
+    return (baseEps + nestEggInterest) * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * quantumBonus * eventHorizonBonus * cluckworkBonus;
 };
 
 /**

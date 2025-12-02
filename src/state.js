@@ -5,11 +5,11 @@ export const initialGameState = {
     upgrades: {
         worker: 0, incubator: 0, loom: 0, featherForecast: 0, eggstraClicks: 0, 
         cluckworkAutomation: 0, peckingOrder: 0, nestEggIRA: 0, fowlLanguage: 0,
-        goldenCompass: 0, comfyCoopBedding: 0, prismaticFeed: 0
+        goldenCompass: 0, comfyCoopBedding: 0, prismaticFeed: 0, eventHorizon: 0
     },
     chickens: { 
         leghorn: 1, silkie: 0, rooster: 0, orpington: 0, wyandotte: 0, doja: 0,
-        brahma: 0, serama: 0, banty: 0
+        brahma: 0, serama: 0, banty: 0, quantum: 0
     },
     unlockedAchievements: [], reputation: 0, timePlayed: 0, failedBuys: 0, licenseClicked: false,
     goldenChickensClicked: 0, prestigeCount: 0, resets: 0,

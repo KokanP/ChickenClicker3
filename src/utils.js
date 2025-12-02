@@ -8,7 +8,10 @@
 export function formatNumber(num) {
     if (num === null || isNaN(num) || !isFinite(num)) return '0';
     if (num < 1000) return num.toFixed(0);
-    const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+    const suffixes = [
+        "", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc", 
+        "Ud", "Dd", "Td", "Qd", "Qn", "Sd", "St", "Od", "Nd", "Vg"
+    ];
     const i = Math.floor(Math.log10(num) / 3);
     if (i >= suffixes.length) return num.toExponential(2);
     return (num / Math.pow(1000, i)).toFixed(2) + suffixes[i];
