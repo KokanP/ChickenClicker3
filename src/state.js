@@ -5,11 +5,12 @@ export const initialGameState = {
     upgrades: {
         worker: 0, incubator: 0, loom: 0, featherForecast: 0, eggstraClicks: 0, 
         cluckworkAutomation: 0, peckingOrder: 0, nestEggIRA: 0, fowlLanguage: 0,
-        goldenCompass: 0, comfyCoopBedding: 0, prismaticFeed: 0, eventHorizon: 0
+        goldenCompass: 0, comfyCoopBedding: 0, prismaticFeed: 0, spaceProgram: 0, 
+        quantumEggTheory: 0, eventHorizon: 0, shovel: 0
     },
     chickens: { 
         leghorn: 1, silkie: 0, rooster: 0, orpington: 0, wyandotte: 0, doja: 0,
-        brahma: 0, serama: 0, banty: 0, quantum: 0
+        brahma: 0, serama: 0, banty: 0, quantum: 0, voidChicken: 0
     },
     unlockedAchievements: [], reputation: 0, timePlayed: 0, failedBuys: 0, licenseClicked: false,
     goldenChickensClicked: 0, prestigeCount: 0, resets: 0,
@@ -26,7 +27,7 @@ export const initialGameState = {
     moonEggs: 0,
     darkMatter: 0,
     lunarUpgrades: {
-        moonMiner: 0, gravStabilizer: 0, cosmicDustFilter: 0
+        moonMiner: 0, gravStabilizer: 0, cosmicDustFilter: 0, temporalAccelerator: 0
     },
     lunarChickens: {
         lunar: 0, alien: 0

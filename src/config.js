@@ -2,24 +2,74 @@
 
 export const CONFIG = {
     SAVE_KEY: 'chickenClickerSave_v2.9',
-    GAME_VERSION: '3.3 (The Cosmic Expansion)',
+    GAME_VERSION: '3.4 (The Antiquities Update)',
     GAME_TICK_INTERVAL: 0.1,
     SAVE_INTERVAL: 5,
     GOLDEN_CHICKEN_SPAWN_INTERVAL: 60,
     RANDOM_EVENT_INTERVAL: 180,
-    INTERACTIVE_EVENT_INTERVAL: 45,
+    INTERACTIVE_EVENT_INTERVAL: 120,
     COLORED_EGG_ATTEMPT_INTERVAL: 15,
     COLORED_EGG_SPAWN_CHANCE: 10 / 240,
-    ARTIFACT_DIG_CHANCE: 0.0001, // 1 in 10,000 clicks
+    ARTIFACT_DIG_CHANCE: 0.0005, // Reduced to 0.05% (1 in 2,000 clicks)
     PRESTIGE_COST: 1e12,
-    DARK_MATTER_PER_CLICK: 1, // Base Dark Matter per click
+    DARK_MATTER_PER_CLICK: 2, // Base Dark Matter per click
     ARTIFACTS: {
-        ancientKernel: { name: "Ancient Kernel", desc: "Petrified corn. Hard as a rock.", bonusDesc: "+1% Click Power", effect: 'click', value: 0.01 },
-        rustySpur: { name: "Rusty Spur", desc: "From a cowboy who rode a rooster?", bonusDesc: "+1% EPS", effect: 'eps', value: 0.01 },
-        goldenFeatherFossil: { name: "Feather Fossil", desc: "Evidence of early evolution.", bonusDesc: "+5% Feather Chance", effect: 'feather', value: 0.05 },
-        moonRockSample: { name: "Moon Rock", desc: "How did this get here?", bonusDesc: "+10% Prestige Gain", effect: 'prestige', value: 0.1 },
-        firstEgg: { name: "The First Egg", desc: "Which came first? This one.", bonusDesc: "+5% Global Multiplier", effect: 'global', value: 0.05 },
-        oldBoot: { name: "Old Boot", desc: "Useless. Smells faintly of cheese.", bonusDesc: "No bonus.", effect: 'none', value: 0 }
+        ancientKernel: { 
+            name: "Ancient Kernel", 
+            desc: "Petrified corn. Hard as a rock.", 
+            bonusDesc: "+1% Click Power", 
+            effect: 'click', 
+            value: 0.01,
+            svg: '<ellipse cx="50" cy="50" rx="30" ry="40" fill="#e67e22" /><circle cx="40" cy="40" r="5" fill="#d35400" /><circle cx="60" cy="60" r="5" fill="#d35400" /><circle cx="60" cy="30" r="5" fill="#d35400" />'
+        },
+        rustySpur: { 
+            name: "Rusty Spur", 
+            desc: "From a cowboy who rode a rooster?", 
+            bonusDesc: "+1% EPS", 
+            effect: 'eps', 
+            value: 0.01,
+            svg: '<path d="M20,20 Q50,80 80,20" fill="none" stroke="#8d6e63" stroke-width="10" /><circle cx="50" cy="80" r="10" fill="#8d6e63" /><circle cx="50" cy="80" r="4" fill="#fff" />' 
+        },
+        goldenFeatherFossil: { 
+            name: "Feather Fossil", 
+            desc: "Evidence of early evolution.", 
+            bonusDesc: "+5% Feather Chance", 
+            effect: 'feather', 
+            value: 0.05,
+            svg: '<rect x="20" y="20" width="60" height="60" fill="#95a5a6" rx="5" /><path d="M50,30 Q60,50 50,70" stroke="#7f8c8d" stroke-width="2" fill="none" /><path d="M50,35 L60,40 M50,45 L60,50 M50,55 L60,60" stroke="#7f8c8d" stroke-width="2" />'
+        },
+        moonRockSample: { 
+            name: "Moon Rock", 
+            desc: "How did this get here?", 
+            bonusDesc: "+10% Prestige Gain", 
+            effect: 'prestige', 
+            value: 0.1,
+            svg: '<path d="M30,70 L40,30 L70,20 L80,60 L60,80 Z" fill="#546e7a" /><circle cx="45" cy="40" r="3" fill="#37474f" /><circle cx="65" cy="65" r="5" fill="#37474f" />'
+        },
+        firstEgg: { 
+            name: "The First Egg", 
+            desc: "Which came first? This one.", 
+            bonusDesc: "+5% Global Multiplier", 
+            effect: 'global', 
+            value: 0.05,
+            svg: '<ellipse cx="50" cy="50" rx="30" ry="40" fill="#f5f5dc" stroke="#dcd0c0" stroke-width="2"/><path d="M40,30 L50,40 L60,30" fill="none" stroke="#dcd0c0" stroke-width="2"/>'
+        },
+        oldBoot: { 
+            name: "Old Boot", 
+            desc: "Useless. Smells faintly of cheese.", 
+            bonusDesc: "No bonus.", 
+            effect: 'none', 
+            value: 0,
+            svg: '<path d="M30,20 L30,60 L60,60 L70,70 L80,60 L80,20 Z" fill="#5d4037" /><rect x="30" y="60" width="30" height="10" fill="#3e2723" />'
+        },
+        donatorPack: {
+            name: "Donator Pack",
+            desc: "A mysterious box left by a generous benefactor.",
+            bonusDesc: "???",
+            effect: 'none', // Handled specially
+            value: 0,
+            svg: '<rect x="10" y="40" width="80" height="40" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/><rect x="45" y="40" width="10" height="40" fill="#f1c40f"/><rect x="10" y="30" width="80" height="10" fill="#c0392b"/><path d="M40,30 L40,15 Q20,10 45,30 M60,30 L60,15 Q80,10 55,30" fill="#f1c40f" stroke="#f39c12" stroke-width="2"/>'
+        }
     },
     SKINS: {
         default: { name: "Default Chicken", desc: "The classic clucker. No frills.", svg: `<rect x="30" y="40" width="40" height="40" fill="white" /><rect x="30" y="30" width="20" height="10" fill="white" /><rect x="70" y="40" width="10" height="10" fill="orange" /><rect x="30" y="20" width="10" height="10" fill="red" /><rect x="40" y="80" width="5" height="15" fill="orange" /><rect x="55" y="80" width="5" height="15" fill="orange" /><rect x="50" y="35" width="5" height="5" fill="black" />`},
@@ -29,6 +79,7 @@ export const CONFIG = {
         quantum: { name: "Quantum Form", desc: "A glitch in the matrix. Pixelated and electric.", svg: `<rect x="30" y="40" width="40" height="40" fill="cyan" /><rect x="30" y="30" width="20" height="10" fill="cyan" /><rect x="70" y="40" width="10" height="10" fill="lightgreen" /><rect x="30" y="20" width="10" height="10" fill="blue" /><rect x="40" y="80" width="5" height="15" fill="lightgreen" /><rect x="55" y="80" width="5" height="15" fill="lightgreen" /><rect x="50" y="35" width="5" height="5" fill="white" />`},
     },
     UPGRADES: {
+        shovel: { name: 'Archaeologist\'s Shovel', desc: 'Allows you to dig for ancient artifacts while clicking.', baseCost: 10000, exponent: 1000, currency: 'eggs', color: 'brown', oneTime: true }, // High exponent to ensure max level 1 basically
         worker: { name: 'Coop Worker', desc: 'Each level helps Leghorn Chickens produce +1 EPS.', baseCost: 10, exponent: 1.15, currency: 'eggs', color: 'green' },
         incubator: { name: 'Incubator', desc: 'Each level increases your base Eggs Per Click by +1.', baseCost: 50, exponent: 1.15, currency: 'eggs', color: 'blue' },
         loom: { name: 'Golden Loom', desc: 'Uses Golden Feathers to boost eggs per click by +25% per level.', baseCost: 10, exponent: 1.5, currency: 'feathers', color: 'yellow' },
@@ -41,7 +92,9 @@ export const CONFIG = {
         goldenCompass: { name: 'Golden Compass', desc: 'Increases the egg bonus from Golden Chickens by 25% per level.', baseCost: 25, exponent: 1.6, currency: 'feathers', color: 'yellow' },
         comfyCoopBedding: { name: 'Comfy Coop Bedding', desc: 'Increases the maximum offline progress time by 2 hours per level.', baseCost: 5e12, exponent: 2.2, currency: 'eggs', color: 'teal' },
         prismaticFeed: { name: 'Prismatic Feed', desc: 'Increases the duration of all Colored Egg buffs by 10% per level.', baseCost: 1e15, exponent: 2.5, currency: 'eggs', color: 'pink' },
-        eventHorizon: { name: 'Event Horizon', desc: 'Compresses time. +1% EPS for every Prestige level you have.', baseCost: 1e45, exponent: 3, currency: 'eggs', color: 'black' }
+        spaceProgram: { name: 'Space Program', desc: 'Unlocks the ability to travel to the Moon.', baseCost: 1e9, exponent: 1, currency: 'eggs', color: 'black' },
+        quantumEggTheory: { name: 'Quantum Egg Theory', desc: 'Understand the physics of egg-laying. Quantum Cluckers are 50% more effective.', baseCost: 1e42, exponent: 4, currency: 'eggs', color: 'cyan' },
+        eventHorizon: { name: 'Event Horizon', desc: 'Compresses time. +2% EPS for every Prestige level you have.', baseCost: 1e45, exponent: 3, currency: 'eggs', color: 'black' }
     },
     CHICKENS: {
         leghorn: { name: 'Leghorn Chicken', desc: 'The backbone of your coop. Produces 1 egg/s per Coop Worker.', baseCost: 1000, exponent: 1.25, color: 'gray' },
@@ -53,12 +106,14 @@ export const CONFIG = {
         brahma: { name: 'Brahma Behemoth', desc: 'A gentle giant. Adds a massive +500% to your base EPS.', baseCost: 1e15, exponent: 1.45, color: 'green' },
         serama: { name: 'Serama Sorcerer', desc: 'Has a chance to grant a free upgrade level.', baseCost: 1e18, exponent: 1.5, color: 'purple' },
         banty: { name: 'Banty Chicken', desc: 'The king. Provides a +10% multiplicative bonus to ALL production.', baseCost: 1e21, exponent: 1.6, color: 'indigo' },
-        quantum: { name: 'Quantum Clucker', desc: 'Exists in multiple coops at once. Multiplies EPS by (1 + Unlocked Achievements).', baseCost: 1e40, exponent: 1.8, color: 'cyan' }
+        quantum: { name: 'Quantum Clucker', desc: 'Exists in multiple coops at once. Multiplies EPS by (1 + Unlocked Achievements).', baseCost: 1e40, exponent: 1.8, color: 'cyan' },
+        voidChicken: { name: 'Void Chicken', desc: 'Stares back. Consumes reality to produce eggs.', baseCost: 1e54, exponent: 2.0, color: 'black' }
     },
     LUNAR_UPGRADES: { // New section for lunar upgrades
         moonMiner: { name: 'Moon Miner', desc: 'Extracts Dark Matter from lunar soil. +1 DM/s per level.', baseCost: 100, exponent: 1.2, currency: 'moonEggs', color: 'gray' },
         gravStabilizer: { name: 'Gravity Stabilizer', desc: 'Reduces lunar gravity. +1 DM/click per level.', baseCost: 500, exponent: 1.2, currency: 'moonEggs', color: 'white' },
-        cosmicDustFilter: { name: 'Cosmic Dust Filter', desc: 'Increases Moon Egg production efficiency. +10% Moon Eggs per level.', baseCost: 10000, exponent: 1.3, currency: 'darkMatter', color: 'purple' }
+        cosmicDustFilter: { name: 'Cosmic Dust Filter', desc: 'Increases Moon Egg production efficiency. +10% Moon Eggs per level.', baseCost: 10000, exponent: 1.3, currency: 'darkMatter', color: 'purple' },
+        temporalAccelerator: { name: 'Temporal Accelerator', desc: 'Uses Dark Matter to speed up Earth time. +5% Global EPS per level.', baseCost: 250, exponent: 1.5, currency: 'darkMatter', color: 'blue' }
     },
     LUNAR_CHICKENS: { // New section for lunar chickens
         lunar: { name: 'Lunar Hen', desc: 'A sturdy chicken adapted to lunar life. Produces 1 Moon Egg/s per Moon Miner.', baseCost: 5000, exponent: 1.3, color: 'silver' },
@@ -89,6 +144,8 @@ export const FOWL_INSULTS = [
 ];
 
 export const achievements = {
+    bantySecret: { name: "Banty 4 Life", description: "Unlocked via secret password. Share a screenshot with the dev!", bonus: 1.25, hidden: true },
+    bigFind: { name: "The Big Find", description: "You found the Donator Pack! Contact the dev!", bonus: 5.0, hidden: true }, // New Achievement
     click1: { name: "First Peck", description: "Click the chicken once.", bonus: 1.01 },
     click1k: { name: "Click Addict", description: "Click 1,000 times.", bonus: 1.02 },
     click100k: { name: "Carpal Tunnel Hopeful", description: "Click 100,000 times.", bonus: 1.05 },
@@ -155,6 +212,8 @@ export const achievements = {
 };
 
 export const achievementConditions = {
+    bantySecret: (gs) => false, // Manual unlock
+    bigFind: (gs) => gs.artifacts.includes('donatorPack'), // New condition
     click1: (gs) => gs.totalClicks >= 1, click1k: (gs) => gs.totalClicks >= 1000, click100k: (gs) => gs.totalClicks >= 100000, click1M: (gs) => gs.totalClicks >= 1e6,
     egg1k: (gs) => gs.totalEggs >= 1000, egg1M: (gs) => gs.totalEggs >= 1e6, egg1B: (gs) => gs.totalEggs >= 1e9, egg1T: (gs) => gs.totalEggs >= 1e12,
     worker25: (gs) => gs.upgrades.worker >= 25, worker100: (gs) => gs.upgrades.worker >= 100,

@@ -5,7 +5,8 @@ import { initialGameState } from './state.js';
 import { getEggsPerSecond, getEggsPerClick, getPrestigeCost, checkAchievements, getBuffModifier, tryDigArtifact, getMoonDarkMatterPerSecond, getMoonDarkMatterPerClick } from './logic.js';
 import { 
     elements, buildUpgradeShop, buildCoop, updateUI, 
-    renderAchievements, updateAchievementProgress, showToast, showFloatingText, renderMuseum, renderGeneticLab, updateChickenSkin, buildLunarUpgradeShop, buildLunarCoop, updateUIScene
+    renderAchievements, updateAchievementProgress, showToast, showFloatingText, renderMuseum, renderGeneticLab, updateChickenSkin, buildLunarUpgradeShop, buildLunarCoop, updateUIScene, updateChangelogSpoilers,
+    animateDigging, triggerConfetti
 } from './ui.js';
 
 let gameState = {};
@@ -29,7 +30,14 @@ function clickChicken(event) {
     if (gameState.activeScene === 'earth') {
         const artifact = tryDigArtifact(gameState);
         if (artifact) {
-            showToast("Artifact Found!", `You dug up: ${artifact.name}`);
+            animateDigging(artifact);
+            if (artifact.name === 'Donator Pack') {
+                triggerConfetti();
+                showToast("THE BIG FIND!", "You found the Donator Pack! Please screenshot this and contact the developer!");
+                checkAchievements(gameState, (name) => showToast("Achievement Unlocked!", name)); // Check for Big Find achievement immediately
+            } else {
+                showToast("Artifact Found!", `You dug up: ${artifact.name}`);
+            }
             renderMuseum(gameState); // Update UI if open
         }
     }
@@ -80,6 +88,13 @@ function buyUpgrade(id) {
     if (gameState[upgrade.currency] >= cost) {
         gameState[upgrade.currency] -= cost;
         gameState.upgrades[id]++;
+        
+        if (id === 'spaceProgram') {
+            launchRocketAnimation();
+            // Rebuild shop to reveal description
+            buildUpgradeShop(gameState, buyUpgrade);
+        }
+
         updateUI(gameState); // Immediate update
     } else {
         gameState.failedBuys++;
@@ -162,6 +177,18 @@ function clickGoldenChicken(event) {
     elements.goldenChicken.style.display = 'none';
 }
 
+function launchRocketAnimation() {
+    if (!elements.rocketAsset) return;
+    elements.rocketAsset.style.display = 'block';
+    elements.rocketAsset.classList.add('launch-animation');
+    showToast("LIFTOFF!", "The space program has begun!");
+    
+    setTimeout(() => {
+        elements.rocketAsset.style.display = 'none';
+        elements.rocketAsset.classList.remove('launch-animation');
+    }, 4000);
+}
+
 function spawnColoredEgg() {
     if (Math.random() > CONFIG.COLORED_EGG_SPAWN_CHANCE) return;
     const roll = Math.random() * 100;
@@ -222,7 +249,7 @@ function applyEggEffect(id) {
     } else if (egg.effect === 'prestigeBuff') {
         gameState.activeBuffs[egg.effect] = { value: (gameState.activeBuffs[egg.effect]?.value || 0) + egg.value };
     }
-    checkAchievements(gameState, showToast);
+    checkAchievements(gameState, (name) => showToast("Achievement Unlocked!", name));
 }
 
 function saveGame() { localStorage.setItem(CONFIG.SAVE_KEY, JSON.stringify(gameState)); }
@@ -316,14 +343,21 @@ function calculateOfflineProgress() {
     const maxOfflineSeconds = 86400 + (gameState.upgrades.comfyCoopBedding * 7200);
     offlineSeconds = Math.min(offlineSeconds, maxOfflineSeconds);
 
+    let eggsGained = 0;
+    let dmGained = 0;
+    let moonEggsGained = 0;
+
     if (gameState.activeScene === 'moon') {
         const offlineDps = getMoonDarkMatterPerSecond(gameState);
-        gameState.darkMatter += offlineDps * offlineSeconds;
-        gameState.moonEggs += gameState.lunarChickens.lunar * offlineSeconds;
+        dmGained = offlineDps * offlineSeconds;
+        moonEggsGained = gameState.lunarChickens.lunar * offlineSeconds;
+        gameState.darkMatter += dmGained;
+        gameState.moonEggs += moonEggsGained;
     } else {
         const offlineEps = getEggsPerSecond(gameState);
-        gameState.eggs += offlineEps * offlineSeconds;
-        gameState.totalEggs += offlineEps * offlineSeconds;
+        eggsGained = offlineEps * offlineSeconds;
+        gameState.eggs += eggsGained;
+        gameState.totalEggs += eggsGained;
     }
     
     const featherChancePerSecond = (gameState.chickens.silkie * (0.1 + (gameState.upgrades.featherForecast * 0.01)));
@@ -332,7 +366,7 @@ function calculateOfflineProgress() {
     const repChancePerSecond = gameState.chickens.rooster * 0.01;
     const repGained = repChancePerSecond * offlineSeconds;
 
-    if (eggsGained <= 0 && feathersGained <= 0 && repGained <= 0) return;
+    if (eggsGained <= 0 && feathersGained <= 0 && repGained <= 0 && dmGained <= 0 && moonEggsGained <= 0) return;
 
     const timeAwayHours = Math.floor(offlineSeconds / 3600);
     const timeAwayMinutes = Math.floor((offlineSeconds % 3600) / 60);
@@ -342,18 +376,41 @@ function calculateOfflineProgress() {
     if (eggsGained > 0) {
         offlineEggsLine.textContent = `+${formatNumber(eggsGained)} Eggs`;
         offlineEggsLine.classList.remove('hidden');
+    } else {
+        offlineEggsLine.classList.add('hidden');
     }
 
     const offlineFeathersLine = document.getElementById('offline-feathers-line');
      if (feathersGained > 0) {
         offlineFeathersLine.textContent = `+${formatNumber(feathersGained)} Golden Feathers`;
         offlineFeathersLine.classList.remove('hidden');
+    } else {
+        offlineFeathersLine.classList.add('hidden');
     }
 
     const offlineRepLine = document.getElementById('offline-rep-line');
      if (repGained > 0) {
         offlineRepLine.textContent = `+${formatNumber(repGained)} Reputation`;
         offlineRepLine.classList.remove('hidden');
+    } else {
+        offlineRepLine.classList.add('hidden');
+    }
+
+    // Dynamic Moon Lines
+    let moonLine = document.getElementById('offline-moon-line');
+    if (!moonLine) {
+        moonLine = document.createElement('p');
+        moonLine.id = 'offline-moon-line';
+        document.getElementById('offline-recap').appendChild(moonLine);
+    }
+    if (moonEggsGained > 0 || dmGained > 0) {
+        let text = [];
+        if (moonEggsGained > 0) text.push(`+${formatNumber(moonEggsGained)} Moon Eggs`);
+        if (dmGained > 0) text.push(`+${formatNumber(dmGained)} Dark Matter`);
+        moonLine.textContent = text.join(', ');
+        moonLine.style.display = 'block';
+    } else {
+        moonLine.style.display = 'none';
     }
 
     document.getElementById('offline-progress-modal').style.display = 'flex';
@@ -430,7 +487,7 @@ function gameLoop() {
 
         updateUI(gameState);
         updateAchievementProgress(gameState);
-        checkAchievements(gameState, showToast);
+        checkAchievements(gameState, (name) => showToast("Achievement Unlocked!", name));
     } catch (error) {
         console.error("Game loop crashed:", error);
     }
@@ -510,6 +567,7 @@ function setupEventListeners() {
             if (modalId === 'achievements-screen') renderAchievements(gameState);
             if (modalId === 'museum-screen') renderMuseum(gameState);
             if (modalId === 'genetic-lab-screen') renderGeneticLab(gameState, equipSkin);
+            if (modalId === 'settings-screen' || modalId === 'help-screen') updateChangelogSpoilers(gameState);
         });
     });
     closeButtons.forEach(button => {
@@ -518,8 +576,20 @@ function setupEventListeners() {
         });
     });
     elements.nicknameInput.addEventListener('change', (e) => { 
-        gameState.nickname = e.target.value || "A Farmer";
+        const name = e.target.value || "A Farmer";
+        gameState.nickname = name;
         elements.playerNameDisplay.textContent = gameState.nickname;
+
+        // Easter Egg: Faction Password
+        if (name.toLowerCase() === 'banty shack' && !gameState.unlockedAchievements.includes('bantySecret')) {
+            gameState.unlockedAchievements.push('bantySecret');
+            gameState.feathers += 500;
+            gameState.totalFeathers += 500;
+            showToast("Faction Reward!", "Banty Shack Forever! +500 Feathers & Bonus unlocked.");
+            saveGame();
+            renderAchievements(gameState);
+            updateUI(gameState);
+        }
     });
     elements.prestigeButton.addEventListener('click', prestige);
     elements.resetButton.addEventListener('click', hardReset);
@@ -565,17 +635,39 @@ function setupEventListeners() {
     }
 
     // Interactive Event Listeners
-    elements.eagleAsset.addEventListener('click', () => {
+    elements.eagleAsset.addEventListener('click', (e) => {
+        e.stopPropagation();
+        console.log("Eagle Clicked!");
         gameState.eagleClicks++;
+        
+        // Visual Feedback
+        elements.eagleAsset.style.transition = "all 0.2s";
+        elements.eagleAsset.style.transform = "scale(0)";
+        elements.eagleAsset.style.opacity = "0";
+
         const bonus = getEggsPerSecond(gameState) * 600; // 10 minutes of production
         gameState.eggs += bonus;
         gameState.totalEggs += bonus;
-        showFloatingText(`+${formatNumber(bonus)} (Scared!)`, { clientX: window.innerWidth/2, clientY: 100 });
-        elements.eagleAsset.style.display = 'none';
-        checkAchievements(gameState, showToast);
+        showFloatingText(`+${formatNumber(bonus)} (Scared!)`, e);
+        
+        if (gameState.eagleClicks === 1) {
+            showToast("Guide Updated!", "New information revealed in the Farmer's Guide.");
+        }
+        
+        saveGame();
+        setTimeout(() => { elements.eagleAsset.style.display = 'none'; }, 200);
+        checkAchievements(gameState, (name) => showToast("Achievement Unlocked!", name));
     });
 
-    elements.groundCritterAsset.addEventListener('click', () => {
+    elements.groundCritterAsset.addEventListener('click', (e) => {
+        e.stopPropagation();
+        console.log("Critter Clicked!");
+        
+        // Visual Feedback
+        elements.groundCritterAsset.style.transition = "all 0.2s";
+        elements.groundCritterAsset.style.transform = "scale(0)";
+        elements.groundCritterAsset.style.opacity = "0";
+
         // 10% chance to be a Badger, else Fox
         const isBadger = Math.random() < 0.1;
         if (isBadger) {
@@ -588,21 +680,56 @@ function setupEventListeners() {
         // Bonus: Golden Feather
         gameState.feathers++;
         gameState.totalFeathers++;
-        showFloatingText("+1 Feather", { clientX: window.innerWidth/2, clientY: window.innerHeight - 100 });
-        elements.groundCritterAsset.style.display = 'none';
-        checkAchievements(gameState, showToast);
+        showFloatingText("+1 Feather", e);
+        
+        if ((isBadger && gameState.badgerClicks === 1) || (!isBadger && gameState.foxClicks === 1)) {
+             // Only show guide toast if we haven't seen ANY critter yet? 
+             // The spoiler unlock condition is (eagle OR fox OR umbrella).
+             // So if eagleClicks==0 AND foxClicks==1 AND umbrellaClicks==0, show it.
+             if (gameState.eagleClicks === 0 && (gameState.foxClicks + gameState.badgerClicks === 1) && gameState.umbrellaClicks === 0) {
+                 showToast("Guide Updated!", "New information revealed in the Farmer's Guide.");
+             }
+        }
+
+        saveGame();
+        setTimeout(() => { elements.groundCritterAsset.style.display = 'none'; }, 200);
+        checkAchievements(gameState, (name) => showToast("Achievement Unlocked!", name));
     });
 
-    elements.umbrellaAsset.addEventListener('click', () => {
+    elements.umbrellaAsset.addEventListener('click', (e) => {
+        e.stopPropagation();
+        console.log("Umbrella Clicked!");
         gameState.umbrellaClicks++;
+
+        // Visual Feedback
+        elements.umbrellaAsset.style.transition = "all 0.2s";
+        elements.umbrellaAsset.style.transform = "scale(0)";
+        elements.umbrellaAsset.style.opacity = "0";
+
         const bonus = getEggsPerClick(gameState) * 500;
         gameState.eggs += bonus;
         gameState.totalEggs += bonus;
-        showFloatingText("Stay Dry!", { clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
-        elements.umbrellaAsset.style.display = 'none';
-        elements.rainOverlay.style.display = 'none'; // Stop rain immediately on click
-        checkAchievements(gameState, showToast);
+        showFloatingText("Stay Dry!", e);
+        
+        // Stop rain immediately
+        elements.rainOverlay.style.display = 'none'; 
+        
+        if (gameState.umbrellaClicks === 1) {
+            showToast("Guide Updated!", "New information revealed in the Farmer's Guide.");
+        }
+
+        saveGame();
+        setTimeout(() => { elements.umbrellaAsset.style.display = 'none'; }, 200);
+        checkAchievements(gameState, (name) => showToast("Achievement Unlocked!", name));
     });
+
+    // Guide / Help Icon Listener
+    if (elements.helpIcon) {
+        elements.helpIcon.addEventListener('click', () => {
+            document.getElementById('help-screen').style.display = 'flex';
+            updateChangelogSpoilers(gameState);
+        });
+    }
 }
 
 function equipSkin(skinId) {
@@ -669,6 +796,7 @@ function triggerInteractiveEvent() {
 }
 
 function initialize() {
+    loadGame();
     if (elements.versionNumberEl) {
         elements.versionNumberEl.textContent = CONFIG.GAME_VERSION;
     }
@@ -676,7 +804,6 @@ function initialize() {
     buildCoop(gameState, buyChicken);
     buildLunarUpgradeShop(gameState, buyLunarUpgrade); // New lunar shop
     buildLunarCoop(gameState, buyLunarChicken); // New lunar coop
-    loadGame();
     
     calculateOfflineProgress();
 

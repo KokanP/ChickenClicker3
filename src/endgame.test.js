@@ -35,7 +35,7 @@ describe('Endgame Mechanics', () => {
         // Bonus: 1 + (1 * 0.01 * 100) = 1 + 1 = 2x multiplier
         const eps = getEggsPerSecond(mockState);
         
-        // Base 1 * 2 = 2
-        expect(eps).toBe(2);
+        // Base 1 * 3 = 3
+        expect(eps).toBe(3);
     });
 });

@@ -54,6 +54,7 @@ export const getAchievementBonus = (gs) => {
 export const getBaseEggsPerSecond = (gs) => {
     let baseEps = gs.upgrades.worker * gs.chickens.leghorn * 1;
     baseEps += gs.chickens.brahma * (baseEps * 5);
+    baseEps += (gs.chickens.voidChicken || 0) * 1e45; // Void Chickens produce massive raw EPS
     return baseEps;
 };
 
@@ -68,13 +69,17 @@ export const getEggsPerSecond = (gs) => {
     const nestEggInterest = gs.upgrades.nestEggIRA > 0 ? Math.min(baseEps * 0.001 * gs.upgrades.nestEggIRA, interestCap) : 0;
     const peckingOrderBonus = 1 + (gs.upgrades.peckingOrder * 0.1);
     const bantyBonus = Math.pow(1.1, gs.chickens.banty);
-    const quantumBonus = gs.chickens.quantum > 0 ? Math.pow(1 + (gs.unlockedAchievements.length * 0.1), gs.chickens.quantum) : 1;
-    const eventHorizonBonus = 1 + (gs.upgrades.eventHorizon * 0.01 * gs.prestigeCount);
+    
+    const quantumTheoryBonus = 1 + ((gs.upgrades.quantumEggTheory || 0) * 0.5);
+    const quantumBonus = gs.chickens.quantum > 0 ? Math.pow(1 + (gs.unlockedAchievements.length * 0.1), gs.chickens.quantum) * quantumTheoryBonus : 1;
+    
+    const eventHorizonBonus = 1 + (gs.upgrades.eventHorizon * 0.02 * gs.prestigeCount);
     const artifactBonus = 1 + getArtifactBonus(gs, 'eps');
+    const temporalBonus = 1 + ((gs.lunarUpgrades && gs.lunarUpgrades.temporalAccelerator || 0) * 0.05); // Moon bonus
     
     const totalBuildings = Object.values(gs.upgrades).reduce((a, b) => a + b, 0) + Object.values(gs.chickens).reduce((a, b) => a + b, 0);
     const cluckworkBonus = 1 + (gs.upgrades.cluckworkAutomation * 0.05 * totalBuildings);
-    return (baseEps + nestEggInterest) * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * quantumBonus * eventHorizonBonus * cluckworkBonus * artifactBonus;
+    return (baseEps + nestEggInterest) * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * quantumBonus * eventHorizonBonus * cluckworkBonus * artifactBonus * temporalBonus;
 };
 
 /**
@@ -131,8 +136,22 @@ export function getPrestigeCost(gs) {
  * @returns {object|null} The found artifact object or null.
  */
 export function tryDigArtifact(gs) {
-    if (Math.random() < CONFIG.ARTIFACT_DIG_CHANCE) {
-        const available = Object.keys(CONFIG.ARTIFACTS).filter(id => !gs.artifacts.includes(id));
+    // Requirement: Must own Shovel
+    if ((gs.upgrades.shovel || 0) < 1) return null;
+
+    const roll = Math.random();
+
+    // 1. Special Find: Donator Pack (Extremely Rare: 0.01% chance)
+    if (roll < 0.0001) {
+        if (!gs.artifacts.includes('donatorPack')) {
+            gs.artifacts.push('donatorPack');
+            return CONFIG.ARTIFACTS['donatorPack'];
+        }
+    }
+
+    // 2. Regular Artifacts (Rare: Chance defined in config, e.g., 0.05%)
+    if (roll < CONFIG.ARTIFACT_DIG_CHANCE) {
+        const available = Object.keys(CONFIG.ARTIFACTS).filter(id => !gs.artifacts.includes(id) && id !== 'donatorPack');
         if (available.length > 0) {
             const id = available[Math.floor(Math.random() * available.length)];
             gs.artifacts.push(id);

@@ -11,6 +11,32 @@
 <body>
 
     <div id="app-wrapper">
+
+        <!-- Top Navigation Bar (Meta/Info) -->
+        <div id="top-bar">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.5rem; font-weight: bold; text-shadow: 1px 1px 0 #000;">CHICKEN CLICKER</span>
+                <span style="font-size: 1.2rem; opacity: 0.9; font-weight: bold;">v3.4</span>
+            </div>
+            <div class="hud-nav">
+                <div class="nav-btn" data-modal="achievements-screen">
+                    <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1l0 2.5C3 14 5.7 17.5 9 18.4V20h6v-1.6c3.3-.9 6-4.4 6-7.9V7c0-1.1-.9-2-2-2zM5 9V7h2v2H5zm10 9.4V20H9v-1.6c-2.8-.7-4.9-3.2-5-6.4h2c0 3.3 2.7 6 6 6s6-2.7 6-6h2c-.1 3.2-2.2 5.7-5 6.4zM17 9h2V7h-2v2z"/></svg>
+                    <span>Awards</span>
+                </div>
+                <div class="nav-btn" data-modal="museum-screen">
+                    <svg viewBox="0 0 24 24"><path d="M2 20h20v2H2v-2zm2-8h2v7H4v-7zm5 0h2v7H9v-7zm5 0h2v7h-2v-7zm5 0h2v7h-2v-7zm5 0h2v7h-2v-7zM2 7l10-5 10 5v4H2V7zm2 2v2h16V9H4z"/></svg>
+                    <span>Museum</span>
+                </div>
+                <div class="nav-btn" data-modal="genetic-lab-screen">
+                    <svg viewBox="0 0 24 24"><path d="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2z"/></svg>
+                    <span>Genetic</span>
+                </div>
+                <div class="nav-btn" data-modal="settings-screen">
+                    <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.488.488 0 0 0-.59.22L2.64 8.87a.49.49 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l-.36-2.54c.59-.24 1.13-.58 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                    <span>System</span>
+                </div>
+            </div>
+        </div>
         
         <!-- Earth Scene Container -->
         <div id="earth-scene" class="scene-container">
@@ -29,6 +55,33 @@
             
             <div id="event-banner"></div>
 
+            <!-- Floating Help Icon -->
+            <div id="help-icon" class="help-icon-floating" title="Farmer's Guide">?</div>
+
+            <!-- Brahma Behemoth (Background) -->
+            <svg id="brahma-asset" class="scene-layer" viewBox="0 0 200 200">
+                <title>Brahma: The Giant</title>
+                <path d="M50,180 Q80,100 100,150 Q150,50 180,150 L160,200 H40 Z" fill="#2e7d32" opacity="0.5"/> <!-- Shadow/Body vague shape -->
+                <rect x="80" y="80" width="60" height="80" fill="#fff"/>
+                <rect x="90" y="160" width="10" height="40" fill="orange"/>
+                <rect x="120" y="160" width="10" height="40" fill="orange"/>
+                <circle cx="110" cy="70" r="20" fill="#fff"/>
+                <path d="M110,50 L120,60 L110,70 Z" fill="orange"/>
+            </svg>
+
+            <!-- Doja Cow (Background/Side) -->
+            <svg id="doja-asset" class="scene-layer" viewBox="0 0 100 60">
+                <title>Doja: Moooo?</title>
+                <rect x="10" y="20" width="60" height="30" fill="white" stroke="#333" stroke-width="2"/>
+                <rect x="20" y="25" width="10" height="10" fill="black"/>
+                <rect x="45" y="30" width="15" height="8" fill="black"/>
+                <rect x="10" y="50" width="5" height="10" fill="white" stroke="#333"/>
+                <rect x="65" y="50" width="5" height="10" fill="white" stroke="#333"/>
+                <rect x="70" y="10" width="20" height="20" fill="white" stroke="#333"/>
+                <rect x="85" y="15" width="2" height="2" fill="black"/>
+                <rect x="90" y="25" width="5" height="5" fill="pink"/>
+            </svg>
+
             <!-- Assets (Initially Hidden) -->
             <!-- Coop: A classic red barn -->
             <svg id="coop-asset" class="scene-layer" viewBox="0 0 100 100">
@@ -43,6 +96,30 @@
                 <line x1="65" y1="50" x2="35" y2="90" stroke="#3e2b22" stroke-width="2"/>
                 <!-- Loft Window -->
                 <circle cx="50" cy="30" r="8" fill="#fff" stroke="#5c4033" stroke-width="2"/>
+                
+                <!-- Weathervane (Attached to Roof) -->
+                <g id="weathervane-group" style="display:none;">
+                    <rect x="49" y="2" width="2" height="8" fill="#333"/>
+                    <path d="M40,5 L60,5 L55,2 M60,5 L55,8" stroke="#333" stroke-width="1" fill="none" class="spinning" style="transform-origin: 50px 5px;"/>
+                    <rect x="45" y="-5" width="5" height="5" fill="gold" class="spinning" style="transform-origin: 50px 5px;"/>
+                </g>
+            </svg>
+
+            <!-- Cluckwork Automation (Attached to Coop) -->
+            <svg id="cluckwork-asset" class="scene-layer" viewBox="0 0 50 50">
+                <rect x="0" y="20" width="30" height="5" fill="silver" stroke="#555"/>
+                <circle cx="30" cy="22" r="5" fill="#555"/>
+                <rect x="30" y="20" width="5" height="20" fill="silver" stroke="#555"/>
+                <path d="M25,40 L35,40 L30,50 Z" fill="gold"/>
+            </svg>
+
+            <!-- Rooster (On Coop Roof) -->
+            <svg id="rooster-asset" class="scene-layer" viewBox="0 0 50 50">
+                <path d="M10,30 Q20,10 30,30" fill="#c0392b"/>
+                <circle cx="30" cy="20" r="5" fill="#c0392b"/>
+                <path d="M35,20 L40,22 L35,24" fill="gold"/>
+                <path d="M30,15 L32,10 L28,10 Z" fill="red"/>
+                <path d="M5,30 Q0,20 10,20" fill="green"/>
             </svg>
 
             <!-- Incubator: A high-tech warm machine, not a shed -->
@@ -60,6 +137,16 @@
                 <rect x="37" y="22" width="26" height="6" fill="red"/>
             </svg>
 
+
+
+            <!-- Orpington Oracle (Mid-ground) -->
+            <svg id="oracle-asset" class="scene-layer floating" viewBox="0 0 50 60">
+                <ellipse cx="25" cy="50" rx="15" ry="5" fill="rgba(0,0,0,0.3)"/> <!-- Shadow -->
+                <circle cx="25" cy="30" r="15" fill="purple"/>
+                <path d="M15,30 Q25,50 35,30" fill="gold" opacity="0.5"/> <!-- Robe -->
+                <circle cx="25" cy="15" r="5" fill="#add8e6" opacity="0.8"/> <!-- Crystal Ball -->
+            </svg>
+
             <!-- Silkie Patch: Fenced off area with special feed -->
             <svg id="silkie-asset" class="scene-layer" viewBox="0 0 100 50" style="display:none;">
                 <title>Silkie Patch: Chance for feathers</title>
@@ -67,6 +154,24 @@
                 <circle cx="30" cy="25" r="5" fill="#fff" />
                 <circle cx="50" cy="20" r="5" fill="#fff" />
                 <circle cx="70" cy="30" r="5" fill="#fff" />
+            </svg>
+
+            <!-- Golden Loom (Near Silkie) -->
+            <svg id="loom-asset" class="scene-layer" viewBox="0 0 60 60">
+                <rect x="10" y="10" width="5" height="40" fill="#5c4033"/>
+                <rect x="45" y="10" width="5" height="40" fill="#5c4033"/>
+                <line x1="15" y1="20" x2="45" y2="20" stroke="gold" stroke-width="2"/>
+                <line x1="15" y1="30" x2="45" y2="30" stroke="gold" stroke-width="2"/>
+                <line x1="15" y1="40" x2="45" y2="40" stroke="gold" stroke-width="2"/>
+            </svg>
+
+            <!-- Nest Egg IRA (Piggybank - Foreground) -->
+            <svg id="piggybank-asset" class="scene-layer" viewBox="0 0 50 40">
+                <ellipse cx="25" cy="20" rx="20" ry="15" fill="pink" stroke="#e91e63" stroke-width="2"/>
+                <circle cx="15" cy="15" r="2" fill="black"/>
+                <rect x="22" y="8" width="6" height="2" fill="#333"/> <!-- Coin slot -->
+                <rect x="15" y="30" width="5" height="8" fill="pink" stroke="#e91e63"/>
+                <rect x="30" y="30" width="5" height="8" fill="pink" stroke="#e91e63"/>
             </svg>
 
             <!-- Fence: Wooden posts -->
@@ -85,30 +190,63 @@
                 <circle cx="25" cy="10" r="4" fill="gold" stroke="#f39c12" stroke-width="1"/>
             </svg>
 
+            <!-- Launchpad Asset (Space Program) -->
+            <svg id="launchpad-asset" class="scene-layer" viewBox="0 0 100 100">
+                <title>Space Program: To the Moon!</title>
+                <rect x="10" y="80" width="80" height="20" fill="#546e7a" stroke="#263238" stroke-width="2"/>
+                <rect x="30" y="20" width="10" height="60" fill="#b0bec5" stroke="#78909c"/>
+                <rect x="20" y="20" width="30" height="5" fill="#b0bec5" stroke="#78909c"/>
+            </svg>
+
+            <!-- Rocket Asset (For Animation) -->
+            <svg id="rocket-asset" class="scene-layer" viewBox="0 0 50 100">
+                <path d="M15,20 Q25,0 35,20 L35,70 L45,80 L45,90 L35,85 L25,90 L15,85 L5,90 L5,80 L15,70 Z" fill="#e0e0e0" stroke="#333" stroke-width="2"/>
+                <circle cx="25" cy="40" r="5" fill="#3498db" stroke="#333"/>
+                <path d="M15,70 L5,80 L5,90 L15,85" fill="#d32f2f" stroke="#333"/>
+                <path d="M35,70 L45,80 L45,90 L35,85" fill="#d32f2f" stroke="#333"/>
+            </svg>
+
             <!-- Interactive Events (Initially Hidden) -->
             
             <!-- Eagle: Flies across the sky -->
-            <svg id="eagle-asset" class="scene-layer" viewBox="0 0 100 50" style="display:none; width: 100px; cursor: crosshair; z-index: 100;">
+            <svg id="eagle-asset" class="scene-layer" viewBox="0 0 100 50" style="display:none; width: 100px; cursor: crosshair; z-index: 100; pointer-events: auto;">
                 <title>Eagle: Click to scare!</title>
-                <path d="M10,20 Q30,5 50,20 Q70,5 90,20 L80,30 Q60,40 50,30 Q40,40 20,30 Z" fill="#5c4033"/>
-                <circle cx="85" cy="22" r="2" fill="white"/>
-                <path d="M90,20 L95,25 L90,28 Z" fill="yellow"/>
+                <!-- Wings and Body -->
+                <path d="M5,20 Q30,0 50,20 Q70,0 95,20 L80,35 L50,25 L20,35 Z" fill="#5c4033"/>
+                <!-- Head/Eye -->
+                <circle cx="85" cy="22" r="3" fill="white"/>
+                <circle cx="86" cy="22" r="1" fill="black"/>
+                <!-- Beak -->
+                <path d="M95,20 L100,23 L95,26 Z" fill="gold"/>
             </svg>
 
             <!-- Fox/Badger Eyes: Hiding in the bushes -->
-            <svg id="ground-critter-asset" class="scene-layer" viewBox="0 0 50 20" style="display:none; width: 50px; cursor: pointer; z-index: 40;">
+            <svg id="ground-critter-asset" class="scene-layer" viewBox="0 0 50 20" style="display:none; width: 50px; cursor: pointer; z-index: 40; pointer-events: auto;">
                 <title>Something in the bushes...</title>
                 <circle cx="15" cy="10" r="5" fill="yellow" class="glowing-eye"/>
                 <circle cx="35" cy="10" r="5" fill="yellow" class="glowing-eye"/>
             </svg>
 
             <!-- Umbrella: Appears during rain -->
-            <svg id="umbrella-asset" class="scene-layer" viewBox="0 0 50 50" style="display:none; width: 50px; cursor: pointer; z-index: 100;">
+            <svg id="umbrella-asset" class="scene-layer" viewBox="0 0 50 50" style="display:none; width: 80px; cursor: pointer; z-index: 100; pointer-events: auto;">
                 <title>Stay Dry!</title>
                 <path d="M5,25 Q25,5 45,25" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
                 <rect x="24" y="25" width="2" height="20" fill="#333"/>
                 <path d="M24,45 Q20,50 18,45" fill="none" stroke="#333" stroke-width="2"/>
             </svg>
+
+            <!-- Shovel Asset (For Digging Animation) -->
+            <svg id="shovel-asset" class="scene-layer" viewBox="0 0 50 50" style="display:none; width: 60px; z-index: 150;">
+                <path d="M20,20 L30,30" stroke="#5d4037" stroke-width="4" />
+                <path d="M30,30 L25,35 L35,45 L40,40 L30,30" fill="#7f8c8d" stroke="#5d4037" stroke-width="1"/>
+                <rect x="18" y="18" width="5" height="5" fill="#5d4037"/>
+            </svg>
+
+            <!-- Digging Animation Container -->
+            <div id="digging-container" style="position: absolute; inset: 0; pointer-events: none; z-index: 140;"></div>
+            
+            <!-- Confetti Container -->
+            <div id="confetti-container" style="position: absolute; inset: 0; pointer-events: none; z-index: 2000; display: none;"></div>
 
             <!-- Rain Overlay -->
             <div id="rain-overlay" class="scene-layer" style="display:none; width:100%; height:100%; z-index: 90; pointer-events: none; background: url('data:image/svg+xml;utf8,<svg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'><line x1=\'10\' y1=\'0\' x2=\'5\' y2=\'10\' stroke=\'rgba(173, 216, 230, 0.5)\' stroke-width=\'1\'/></svg>'); animation: rainFall 0.5s linear infinite;"></div>
@@ -150,9 +288,15 @@
         <!-- Moon Scene Container -->
         <div id="moon-scene" class="scene-container" style="display: none;">
             <!-- Layers -->
-            <div id="moon-sky-layer" class="scene-layer"></div>
-            <div id="moon-ground-layer" class="scene-layer"></div>
-            <div id="earth-asset" class="scene-layer"></div>
+            <div id="moon-sky-layer" class="scene-layer" style="width:100%; height:100%; z-index:0;"></div>
+            <div id="moon-ground-layer" class="scene-layer" style="width:100%; height:30%; bottom:0; z-index:10;"></div>
+            
+            <!-- Earthrise Asset -->
+            <svg id="earthrise-asset" class="scene-layer" viewBox="0 0 100 100" style="top: 10%; right: 10%; width: 80px; z-index: 5;">
+                <circle cx="50" cy="50" r="40" fill="#3498db" stroke="#2980b9" stroke-width="2"/>
+                <path d="M20,40 Q40,20 70,30 Q90,50 60,70 Q30,80 20,40 Z" fill="#2ecc71" opacity="0.8"/>
+                <path d="M40,15 Q60,25 50,40 Q30,30 40,15 Z" fill="#fff" opacity="0.6"/>
+            </svg>
 
             <!-- Lunar Assets -->
             <svg id="lunar-coop-asset" class="scene-layer" viewBox="0 0 100 100">
@@ -224,24 +368,15 @@
                     <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                     <span>LunarC</span>
                 </div>
-                <div class="nav-btn" data-modal="achievements-screen">
-                    <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1l0 2.5C3 14 5.7 17.5 9 18.4V20h6v-1.6c3.3-.9 6-4.4 6-7.9V7c0-1.1-.9-2-2-2zM5 9V7h2v2H5zm10 9.4V20H9v-1.6c-2.8-.7-4.9-3.2-5-6.4h2c0 3.3 2.7 6 6 6s6-2.7 6-6h2c-.1 3.2-2.2 5.7-5 6.4zM17 9h2V7h-2v2z"/></svg>
-                    <span>Awards</span>
-                </div>
+
                 <div class="nav-btn" data-modal="museum-screen">
                     <svg viewBox="0 0 24 24"><path d="M2 20h20v2H2v-2zm2-8h2v7H4v-7zm5 0h2v7H9v-7zm5 0h2v7h-2v-7zm5 0h2v7h-2v-7zM2 7l10-5 10 5v4H2V7zm2 2v2h16V9H4z"/></svg>
                     <span>Museum</span>
                 </div>
-                <div class="nav-btn" data-modal="genetic-lab-screen">
-                    <svg viewBox="0 0 24 24"><path d="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2z"/></svg>
-                    <span>Genetic</span>
-                </div>
-                <div class="nav-btn" data-modal="settings-screen">
-                    <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.488.488 0 0 0-.59.22L2.64 8.87a.49.49 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l-.36-2.54c.59-.24 1.13-.58 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-                    <span>System</span>
-                </div>
+
+
             </div>
-            <button id="scene-switcher-btn" class="nav-btn" style="background-color: #5c4033; margin-left: 10px;">
+            <button id="scene-switcher-btn" class="nav-btn" style="background-color: #5c4033; margin-left: 10px; display: none;">
                 <span class="stat-icon">🚀</span>
                 <span>Moon</span>
             </button>
@@ -285,9 +420,8 @@
                 <button class="close-modal-btn">&times;</button>
                 <h2 class="modal-title">Achievements</h2>
                 <div class="modal-body">
-                    <div id="achievements-list"></div>
                     <!-- Prestige Section -->
-                    <div style="margin-top: 20px; border-top: 4px double #5c4033; padding-top: 10px;">
+                    <div style="margin-bottom: 20px; border-bottom: 4px double #5c4033; padding-bottom: 10px;">
                         <h3 style="font-size: 2rem; text-align: center;">Sell The Farm</h3>
                         <p id="prestige-cost-text" style="text-align: center;">Cost: 1T Eggs</p>
                         <button id="prestige-button" class="funky-button" style="width: 100%; background: #8e44ad;">Prestige (Reset)</button>
@@ -300,6 +434,7 @@
                             <button id="buy-ancestralBlueprints" class="funky-button" style="width: 100%;">Buy Upgrade</button>
                         </div>
                     </div>
+                    <div id="achievements-list"></div>
                 </div>
             </div>
         </div>
@@ -344,21 +479,29 @@
                     
                     <button id="reset-button" class="funky-button" style="background: #c0392b;">HARD RESET</button>
                     
-                    <p style="text-align: center; margin-top: 20px; font-size: 0.8rem;">Version: <span id="version-number">3.3</span></p>
+                    <p style="text-align: center; margin-top: 20px; font-size: 0.8rem;">Version: <span id="version-number">3.4</span></p>
                     <details>
                         <summary id="license-summary" style="cursor: pointer; text-decoration: underline;">License</summary>
                         <p>MIT License</p>
                     </details>
                     <details style="margin-top: 10px;">
                         <summary style="cursor: pointer; text-decoration: underline; font-weight: bold;">Full Changelog</summary>
-                        <div style="text-align: left; font-size: 1rem; max-height: 300px; overflow-y: auto; margin-top: 10px; border: 2px solid #5c4033; padding: 10px; background: rgba(255,255,255,0.3);">
-                            <h3 style="border-bottom: 2px solid #5c4033;">Version 3.3 (The Cosmic Expansion)</h3>
+                        <div id="changelog-container" style="text-align: left; font-size: 1rem; max-height: 300px; overflow-y: auto; margin-top: 10px; border: 2px solid #5c4033; padding: 10px; background: rgba(255,255,255,0.3);">
+                            <h3 style="border-bottom: 2px solid #5c4033;">Version 3.4 (The Antiquities Update)</h3>
                             <ul>
-                                <li><strong>To the Moon!:</strong> A massive expansion that takes your farming operation into space.
+                                <li><strong>Digging for Treasure:</strong> Added a new "Shovel" tool to the shop. Once purchased, you may uncover ancient items while tending to your farm.</li>
+                                <li><strong>Rare Finds:</strong> Discovered items are now tracked in the Museum. Some are common, others are legendary.</li>
+                                <li><strong>Special Event:</strong> Rumors of a mysterious "Donator Pack" box appearing for the luckiest farmers.</li>
+                                <li><strong>Visuals:</strong> Enhanced graphics for weather events.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 3.3 (The Cosmic Expansion)</h3>
+                            <ul>
+                                <li><strong><span class="spoiler" data-unlock="moon">To the Moon!:</span></strong> <span class="spoiler" data-unlock="moon">A massive expansion that takes your farming operation into space.</span>
                                     <ul>
-                                        <li><strong>Lunar Scene:</strong> Toggle between Earth and the Moon using the Rocket button.</li>
-                                        <li><strong>New Currencies:</strong> Farm Moon Eggs and mine Dark Matter.</li>
-                                        <li><strong>Lunar Economy:</strong> 3 new Lunar Upgrades and 2 new Lunar Chickens (Lunar Hen, Alien Clucker).</li>
+                                        <li><strong><span class="spoiler" data-unlock="moon">Lunar Scene:</span></strong> <span class="spoiler" data-unlock="moon">Toggle between Earth and the Moon using the Rocket button.</span></li>
+                                        <li><strong><span class="spoiler" data-unlock="moon">New Currencies:</span></strong> <span class="spoiler" data-unlock="moon">Farm Moon Eggs and mine Dark Matter.</span></li>
+                                        <li><strong><span class="spoiler" data-unlock="moon">Lunar Economy:</span></strong> <span class="spoiler" data-unlock="moon">3 new Lunar Upgrades and 2 new Lunar Chickens (Lunar Hen, Alien Clucker).</span></li>
                                     </ul>
                                 </li>
                                 <li><strong>Housekeeping:</strong> Updated version number to 3.3.</li>
@@ -366,18 +509,18 @@
 
                             <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 3.2 (The Collector Update)</h3>
                             <ul>
-                                <li><strong>Museum of Antiquities:</strong> Dig up ancient artifacts while clicking. They provide permanent passive bonuses.</li>
-                                <li><strong>Genetic Lab:</strong> Unlock visual skins for your chicken by collecting different breeds. Equip them to change your look!</li>
+                                <li><strong><span class="spoiler" data-unlock="artifacts">Museum of Antiquities:</span></strong> <span class="spoiler" data-unlock="artifacts">Dig up ancient artifacts while clicking. They provide permanent passive bonuses.</span></li>
+                                <li><strong><span class="spoiler" data-unlock="skins">Genetic Lab:</span></strong> <span class="spoiler" data-unlock="skins">Unlock visual skins for your chicken by collecting different breeds. Equip them to change your look!</span></li>
                                 <li><strong>Housekeeping:</strong> Updated version number to 3.2.</li>
                             </ul>
 
-                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 3.1 (The Alive Update)</h3>
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 3.1 (The Petra Update)</h3>
                             <ul>
                                 <li><strong>Interactive Events:</strong> The farm now feels alive with 3 new randomized events to watch out for:
                                     <ul>
-                                        <li><strong>The Predator:</strong> An Eagle flies across the sky. Click it to protect your flock and earn a reward.</li>
-                                        <li><strong>Forest Critters:</strong> Keep an eye on the bushes. You might spot glowing eyes (Fox) or a rare Badger.</li>
-                                        <li><strong>Weather:</strong> Rainstorms pass through. Click the umbrella to stay dry and earn a bonus.</li>
+                                        <li><strong><span class="spoiler" data-unlock="events">The Predator:</span></strong> <span class="spoiler" data-unlock="events">An Eagle flies across the sky. Click it to protect your flock and earn a reward. (Thanks Petra!)</span></li>
+                                        <li><strong><span class="spoiler" data-unlock="events">Forest Critters:</span></strong> <span class="spoiler" data-unlock="events">Keep an eye on the bushes. You might spot glowing eyes (Fox) or a rare Badger.</span></li>
+                                        <li><strong><span class="spoiler" data-unlock="events">Weather:</span></strong> <span class="spoiler" data-unlock="events">Rainstorms pass through. Click the umbrella to stay dry and earn a bonus.</span></li>
                                     </ul>
                                 </li>
                                 <li><strong>New Achievements:</strong> Added 7 new achievements tied to these events, including the elusive "Mushroom Mushroom!" for finding a Badger.</li>
@@ -510,6 +653,36 @@
                             </ul>
                         </div>
                     </details>
+                </div>
+            </div>
+        </div>
+
+        <div id="help-screen" class="modal-screen">
+            <div class="modal-content">
+                <button class="close-modal-btn">&times;</button>
+                <h2 class="modal-title">Farmer's Guide</h2>
+                <div class="modal-body" style="font-size: 1.2rem; line-height: 1.6;">
+                    <div style="background: rgba(255,255,255,0.5); border: 2px solid #5c4033; padding: 10px; margin-bottom: 10px;">
+                        <h3>🥚 How to Play</h3>
+                        <p>Click the chicken to earn Eggs. Spend Eggs on <strong>Upgrades</strong> and <strong>Chickens</strong> to automate your farm.</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.5); border: 2px solid #5c4033; padding: 10px; margin-bottom: 10px;">
+                        <h3>🏭 Production</h3>
+                        <p><strong>EPS (Eggs Per Second):</strong> Passive income generated by your chickens.</p>
+                        <p><strong>EPC (Eggs Per Click):</strong> Amount earned every time you click.</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.5); border: 2px solid #5c4033; padding: 10px; margin-bottom: 10px;">
+                        <h3>🌌 <span class="spoiler" data-unlock="moon">Space Program</span></h3>
+                        <p><span class="spoiler" data-unlock="moon">Unlock the Space Program upgrade to travel to the Moon! Mine Dark Matter and farm Moon Eggs to boost your Earth production.</span></p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.5); border: 2px solid #5c4033; padding: 10px; margin-bottom: 10px;">
+                        <h3>🦅 Events</h3>
+                        <p>Keep an eye on the farm! Interactive events like <span class="spoiler" data-unlock="events">Eagles, Foxes, and Rainstorms</span> appear randomly. Click them for rewards!</p>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.5); border: 2px solid #5c4033; padding: 10px; margin-bottom: 10px;">
+                        <h3>🏅 Prestige</h3>
+                        <p>Stuck? Sell your farm for <strong>Reputation</strong>. This resets your progress but grants a permanent bonus to all production.</p>
+                    </div>
                 </div>
             </div>
         </div>
