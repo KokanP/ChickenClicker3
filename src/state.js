@@ -23,4 +23,13 @@ export const initialGameState = {
     lastSuperClickTime: 0, superClickChain: 0, modalOpens: 0, timeSinceLastClick: 0,
     firstInsultFired: false,
     prestigeUpgrades: { ancestralBlueprints: 0 },
+    moonEggs: 0,
+    darkMatter: 0,
+    lunarUpgrades: {
+        moonMiner: 0, gravStabilizer: 0, cosmicDustFilter: 0
+    },
+    lunarChickens: {
+        lunar: 0, alien: 0
+    },
+    activeScene: 'earth',
 };

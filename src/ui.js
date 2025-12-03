@@ -1,7 +1,7 @@
 // src/ui.js
 import { CONFIG, achievements, achievementConditions } from './config.js';
 import { calculateCost, formatNumber } from './utils.js';
-import { getEggsPerSecond, getEggsPerClick, getPrestigeCost } from './logic.js';
+import { getEggsPerSecond, getEggsPerClick, getPrestigeCost, getMoonDarkMatterPerSecond, getMoonDarkMatterPerClick } from './logic.js';
 
 export const elements = {
     nicknameInput: document.getElementById('nickname-input'),
@@ -46,8 +46,22 @@ export const elements = {
     museumList: document.getElementById('museum-list'),
     geneticLabList: document.getElementById('genetic-lab-list'),
     chickenSVG: document.getElementById('chicken'),
+    sceneSwitcherBtn: document.getElementById('scene-switcher-btn'),
+    earthScene: document.getElementById('earth-scene'),
+    moonScene: document.getElementById('moon-scene'),
+    lunarCoopListContainer: document.getElementById('lunar-coop-list'),
+    lunarUpgradesListContainer: document.getElementById('lunar-upgrades-list'),
+    moonEggCounter: document.getElementById('moon-egg-counter'),
+    darkMatterCounter: document.getElementById('dark-matter-counter'),
+    moonEpsCounter: document.getElementById('moon-eps-counter'),
+    moonEpcCounter: document.getElementById('moon-epc-counter'),
 };
 
+/**
+ * Renders the Genetic Lab modal with available skins.
+ * @param {object} gameState - The current game state.
+ * @param {function} equipSkinCallback - Callback function to equip a skin.
+ */
 export function renderGeneticLab(gameState, equipSkinCallback) {
     elements.geneticLabList.innerHTML = '';
     for (const id in CONFIG.SKINS) {
@@ -78,6 +92,10 @@ export function renderGeneticLab(gameState, equipSkinCallback) {
     }
 }
 
+/**
+ * Updates the SVG content of the main chicken based on the selected skin.
+ * @param {string} skinId - The ID of the skin to apply.
+ */
 export function updateChickenSkin(skinId) {
     const skin = CONFIG.SKINS[skinId];
     if (elements.chickenSVG && skin) {
@@ -85,6 +103,11 @@ export function updateChickenSkin(skinId) {
     }
 }
 
+/**
+ * Builds the Earth-side upgrade shop.
+ * @param {object} gameState - The current game state.
+ * @param {function} buyUpgradeCallback - Callback for buying upgrades.
+ */
 export function buildUpgradeShop(gameState, buyUpgradeCallback) {
     elements.upgradesListContainer.innerHTML = '';
     for (const id in CONFIG.UPGRADES) {
@@ -104,6 +127,11 @@ export function buildUpgradeShop(gameState, buyUpgradeCallback) {
     }
 }
 
+/**
+ * Builds the Earth-side chicken coop.
+ * @param {object} gameState - The current game state.
+ * @param {function} buyChickenCallback - Callback for buying chickens.
+ */
 export function buildCoop(gameState, buyChickenCallback) {
     elements.coopListContainer.innerHTML = '';
     for (const id in CONFIG.CHICKENS) {
@@ -124,6 +152,57 @@ export function buildCoop(gameState, buyChickenCallback) {
         document.getElementById(`buy-${id}`).addEventListener('click', () => buyChickenCallback(id));
     }
 }
+
+/**
+ * Builds the Lunar-side upgrade shop.
+ * @param {object} gameState - The current game state.
+ * @param {function} buyLunarUpgradeCallback - Callback for buying lunar upgrades.
+ */
+export function buildLunarUpgradeShop(gameState, buyLunarUpgradeCallback) {
+    elements.lunarUpgradesListContainer.innerHTML = '';
+    for (const id in CONFIG.LUNAR_UPGRADES) {
+        const upgrade = CONFIG.LUNAR_UPGRADES[id];
+        const el = document.createElement('div');
+        el.className = `shop-item`;
+        el.innerHTML = `
+            <div>
+                <h4>${upgrade.name}</h4>
+                <p>${upgrade.desc}</p>
+                <p>Lvl: <span id="lunar-${id}-level">0</span></p>
+            </div>
+            <button id="buy-lunar-${id}" class="funky-button">Buy: <span id="lunar-${id}-cost">10</span></button>
+        `;
+        elements.lunarUpgradesListContainer.appendChild(el);
+        document.getElementById(`buy-lunar-${id}`).addEventListener('click', () => buyLunarUpgradeCallback(id));
+    }
+}
+
+/**
+ * Builds the Lunar-side chicken coop.
+ * @param {object} gameState - The current game state.
+ * @param {function} buyLunarChickenCallback - Callback for buying lunar chickens.
+ */
+export function buildLunarCoop(gameState, buyLunarChickenCallback) {
+    elements.lunarCoopListContainer.innerHTML = '';
+    for (const id in CONFIG.LUNAR_CHICKENS) {
+        const chicken = CONFIG.LUNAR_CHICKENS[id];
+        const el = document.createElement('div');
+        el.className = `shop-item`;
+        let buttonHtml = `<button id="buy-lunar-${id}" class="funky-button">Buy: <span id="lunar-${id}-cost">1000</span></button>`;
+        
+        el.innerHTML = `
+            <div>
+                <h4>${chicken.name}</h4>
+                <p>${chicken.desc}</p>
+                <p>Owned: <span id="lunar-${id}-chickens">0</span></p>
+            </div>
+            ${buttonHtml}
+        `;
+        elements.lunarCoopListContainer.appendChild(el);
+        document.getElementById(`buy-lunar-${id}`).addEventListener('click', () => buyLunarChickenCallback(id));
+    }
+}
+
 
 const uiCache = new Map();
 
@@ -236,6 +315,71 @@ export function updateUI(gameState) {
     if (elements.silkieAsset) elements.silkieAsset.style.display = gameState.chickens.silkie > 0 ? 'block' : 'none';
     if (elements.fenceAsset) elements.fenceAsset.style.display = gameState.totalEggs >= 1000000 ? 'block' : 'none';
     if (elements.flagpoleAsset) elements.flagpoleAsset.style.display = gameState.prestigeCount > 0 ? 'block' : 'none';
+
+    // Lunar UI
+    if (gameState.activeScene === 'moon') {
+        setText(elements.moonEggCounter, formatNumber(gameState.moonEggs));
+        setText(elements.darkMatterCounter, formatNumber(gameState.darkMatter));
+        // Need getMoonDarkMatterPerSecond and getMoonDarkMatterPerClick from logic
+        // setText(elements.moonEpsCounter, `DM/s: ${formatNumber(getMoonDarkMatterPerSecond(gameState))}`);
+        // setText(elements.moonEpcCounter, `DM/c: ${formatNumber(getMoonDarkMatterPerClick(gameState))}`);
+    }
+
+    for (const id in CONFIG.LUNAR_UPGRADES) {
+        const upgrade = CONFIG.LUNAR_UPGRADES[id];
+        const levelEl = document.getElementById(`lunar-${id}-level`);
+        const costEl = document.getElementById(`lunar-${id}-cost`);
+        const buttonEl = document.getElementById(`buy-lunar-${id}`);
+        if (!levelEl || !costEl || !buttonEl) continue;
+
+        setText(levelEl, formatNumber(gameState.lunarUpgrades[id]));
+        const cost = calculateCost(upgrade.baseCost, gameState.lunarUpgrades[id], upgrade.exponent, gameState);
+        setText(costEl, formatNumber(cost));
+        buttonEl.disabled = gameState[upgrade.currency] < cost;
+    }
+
+    for (const id in CONFIG.LUNAR_CHICKENS) {
+        const chicken = CONFIG.LUNAR_CHICKENS[id];
+        const ownedEl = document.getElementById(`lunar-${id}-chickens`);
+        const costEl = document.getElementById(`lunar-${id}-cost`);
+        const buttonEl = document.getElementById(`buy-lunar-${id}`);
+        if (!ownedEl || !costEl || !buttonEl) continue;
+
+        setText(ownedEl, formatNumber(gameState.lunarChickens[id]));
+        const cost = calculateCost(chicken.baseCost, gameState.lunarChickens[id], chicken.exponent, gameState);
+        setText(costEl, formatNumber(cost));
+        buttonEl.disabled = gameState.moonEggs < cost;
+    }
+}
+
+/**
+ * Conditionally shows/hides UI elements based on the active scene.
+ * @param {string} scene - 'earth' or 'moon'.
+ */
+export function updateUIScene(scene) {
+    if (elements.earthScene) elements.earthScene.style.display = scene === 'earth' ? 'block' : 'none';
+    if (elements.moonScene) elements.moonScene.style.display = scene === 'moon' ? 'block' : 'none';
+
+    // Adjust visibility of HUD elements that change between scenes
+    const earthHudElements = [
+        elements.eggCounter.parentElement.parentElement, // eggs div
+        elements.featherCounter.parentElement.parentElement, // feathers/rep div
+        elements.epsCounter.parentElement, // EPS/EPC div
+        elements.epcCounter.parentElement,
+        document.querySelector('.nav-btn[data-modal="upgrades-screen"]'),
+        document.querySelector('.nav-btn[data-modal="coop-screen"]')
+    ];
+    const moonHudElements = [
+        elements.moonEggCounter.parentElement.parentElement, // moon eggs div
+        elements.darkMatterCounter.parentElement.parentElement, // dark matter div
+        elements.moonEpsCounter.parentElement, // moon DM/s, DM/c
+        elements.moonEpcCounter.parentElement,
+        document.querySelector('.nav-btn[data-modal="lunar-upgrades-screen"]'),
+        document.querySelector('.nav-btn[data-modal="lunar-coop-screen"]')
+    ];
+
+    earthHudElements.forEach(el => { if(el) el.style.display = scene === 'earth' ? 'flex' : 'none'; });
+    moonHudElements.forEach(el => { if(el) el.style.display = scene === 'moon' ? 'flex' : 'none'; });
 }
 
 export function renderAchievements(gameState) {
@@ -259,11 +403,11 @@ export function renderAchievements(gameState) {
                 const target = parseFloat(match[4]);
                 let current = 0;
                 if (key.startsWith('upgrades.')) {
-                    current = gameState.upgrades[match[2]] || 0;
+                    current = gs.upgrades[match[2]] || 0;
                 } else if (key.startsWith('chickens.')) {
-                    current = gameState.chickens[match[3]] || 0;
+                    current = gs.chickens[match[3]] || 0;
                 } else {
-                    current = gameState[key] || 0;
+                    current = gs[key] || 0;
                 }
                 const progress = Math.min(current / target, 1);
                 if (progress > 0) {
@@ -313,14 +457,13 @@ export function updateAchievementProgress(gs) {
         const text = el.querySelector('.achievement-progress-text');
         
         if (bar && text && achievementConditions[id]) {
-            const conditionStr = achievementConditions[id].toString();
+            const conditionStr = condition.toString();
             const match = conditionStr.match(/gs\.(totalClicks|totalEggs|upgrades\.(\w+)|chickens\.(\w+)|goldenChickensClicked)\s*>=\s*([\d.e+]+)/);
             
             if (match) {
                 const key = match[1];
                 const target = parseFloat(match[4]);
                 let current = 0;
-                
                 if (key.startsWith('upgrades.')) {
                     current = gs.upgrades[match[2]] || 0;
                 } else if (key.startsWith('chickens.')) {
@@ -328,7 +471,6 @@ export function updateAchievementProgress(gs) {
                 } else {
                     current = gs[key] || 0;
                 }
-                
                 const progress = Math.min(current / target, 1);
                 bar.style.width = `${progress * 100}%`;
                 text.textContent = `${formatNumber(current)} / ${formatNumber(target)}`;

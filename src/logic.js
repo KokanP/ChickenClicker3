@@ -92,6 +92,29 @@ export const getEggsPerClick = (gs) => {
 };
 
 /**
+ * Calculates Dark Matter per second for lunar operations.
+ * @param {object} gs - The game state.
+ * @returns {number} DM/s.
+ */
+export const getMoonDarkMatterPerSecond = (gs) => {
+    let baseDps = gs.lunarUpgrades.moonMiner * gs.lunarChickens.lunar * 1;
+    baseDps += gs.lunarChickens.alien * 0.1; // Alien chickens produce a flat rate
+    // Add cosmicDustFilter bonus
+    baseDps *= (1 + gs.lunarUpgrades.cosmicDustFilter * 0.10); 
+    return baseDps;
+};
+
+/**
+ * Calculates Dark Matter per click for lunar operations.
+ * @param {object} gs - The game state.
+ * @returns {number} DM/c.
+ */
+export const getMoonDarkMatterPerClick = (gs) => {
+    let baseDpc = CONFIG.DARK_MATTER_PER_CLICK + gs.lunarUpgrades.gravStabilizer * 1;
+    return baseDpc;
+};
+
+/**
  * Calculates the cost to prestige.
  * @param {object} gs - The game state.
  * @returns {number} Cost in eggs.

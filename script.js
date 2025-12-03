@@ -2,7 +2,7 @@
   // src/config.js
   var CONFIG = {
     SAVE_KEY: "chickenClickerSave_v2.9",
-    GAME_VERSION: "3.2 (The Collector Update)",
+    GAME_VERSION: "3.3 (The Cosmic Expansion)",
     GAME_TICK_INTERVAL: 0.1,
     SAVE_INTERVAL: 5,
     GOLDEN_CHICKEN_SPAWN_INTERVAL: 60,
@@ -13,6 +13,8 @@
     ARTIFACT_DIG_CHANCE: 1e-4,
     // 1 in 10,000 clicks
     PRESTIGE_COST: 1e12,
+    DARK_MATTER_PER_CLICK: 1,
+    // Base Dark Matter per click
     ARTIFACTS: {
       ancientKernel: { name: "Ancient Kernel", desc: "Petrified corn. Hard as a rock.", bonusDesc: "+1% Click Power", effect: "click", value: 0.01 },
       rustySpur: { name: "Rusty Spur", desc: "From a cowboy who rode a rooster?", bonusDesc: "+1% EPS", effect: "eps", value: 0.01 },
@@ -54,6 +56,17 @@
       serama: { name: "Serama Sorcerer", desc: "Has a chance to grant a free upgrade level.", baseCost: 1e18, exponent: 1.5, color: "purple" },
       banty: { name: "Banty Chicken", desc: "The king. Provides a +10% multiplicative bonus to ALL production.", baseCost: 1e21, exponent: 1.6, color: "indigo" },
       quantum: { name: "Quantum Clucker", desc: "Exists in multiple coops at once. Multiplies EPS by (1 + Unlocked Achievements).", baseCost: 1e40, exponent: 1.8, color: "cyan" }
+    },
+    LUNAR_UPGRADES: {
+      // New section for lunar upgrades
+      moonMiner: { name: "Moon Miner", desc: "Extracts Dark Matter from lunar soil. +1 DM/s per level.", baseCost: 100, exponent: 1.2, currency: "moonEggs", color: "gray" },
+      gravStabilizer: { name: "Gravity Stabilizer", desc: "Reduces lunar gravity. +1 DM/click per level.", baseCost: 500, exponent: 1.2, currency: "moonEggs", color: "white" },
+      cosmicDustFilter: { name: "Cosmic Dust Filter", desc: "Increases Moon Egg production efficiency. +10% Moon Eggs per level.", baseCost: 1e4, exponent: 1.3, currency: "darkMatter", color: "purple" }
+    },
+    LUNAR_CHICKENS: {
+      // New section for lunar chickens
+      lunar: { name: "Lunar Hen", desc: "A sturdy chicken adapted to lunar life. Produces 1 Moon Egg/s per Moon Miner.", baseCost: 5e3, exponent: 1.3, color: "silver" },
+      alien: { name: "Alien Clucker", desc: "Mysterious origins. Generates Dark Matter over time.", baseCost: 1e6, exponent: 1.4, color: "lime" }
     },
     COLORED_EGGS: {
       green: { likelihood: 15, effect: "discount", value: 0.1, duration: 5, color: "#4ade80" },
@@ -143,69 +156,69 @@
     umbrella10: { name: "Kingsman", description: "Manners maketh man. Use 10 Umbrellas.", bonus: 1.03 }
   };
   var achievementConditions = {
-    click1: (gs) => gs.totalClicks >= 1,
-    click1k: (gs) => gs.totalClicks >= 1e3,
-    click100k: (gs) => gs.totalClicks >= 1e5,
-    click1M: (gs) => gs.totalClicks >= 1e6,
-    egg1k: (gs) => gs.totalEggs >= 1e3,
-    egg1M: (gs) => gs.totalEggs >= 1e6,
-    egg1B: (gs) => gs.totalEggs >= 1e9,
-    egg1T: (gs) => gs.totalEggs >= 1e12,
-    worker25: (gs) => gs.upgrades.worker >= 25,
-    worker100: (gs) => gs.upgrades.worker >= 100,
-    incubator25: (gs) => gs.upgrades.incubator >= 25,
-    incubator100: (gs) => gs.upgrades.incubator >= 100,
-    loom1: (gs) => gs.upgrades.loom >= 1,
-    loom10: (gs) => gs.upgrades.loom >= 10,
-    featherForecast1: (gs) => gs.upgrades.featherForecast >= 1,
-    eggstraClicks1: (gs) => gs.upgrades.eggstraClicks >= 1,
-    cluckworkAutomation1: (gs) => gs.upgrades.cluckworkAutomation >= 1,
-    peckingOrder1: (gs) => gs.upgrades.peckingOrder >= 1,
-    nestEggIRA1: (gs) => gs.upgrades.nestEggIRA >= 1,
-    fowlLanguage1: (gs) => gs.upgrades.fowlLanguage >= 1,
-    silkie1: (gs) => gs.chickens.silkie >= 1,
-    rooster1: (gs) => gs.chickens.rooster >= 1,
-    orpington1: (gs) => gs.chickens.orpington >= 1,
-    wyandotte1: (gs) => gs.chickens.wyandotte >= 1,
-    doja1: (gs) => gs.chickens.doja >= 1,
-    brahma1: (gs) => gs.chickens.brahma >= 1,
-    serama1: (gs) => gs.chickens.serama >= 1,
-    banty1: (gs) => gs.chickens.banty >= 1,
-    secondChance: (gs) => gs.prestigeCount >= 1,
-    eternalFarmer: (gs) => gs.prestigeCount >= 10,
-    prestigeWorldwide: (gs) => gs.prestigeCount >= 25,
-    goldenTouch: (gs) => gs.goldenChickensClicked >= 1,
-    goldRush: (gs) => gs.goldenChickensClicked >= 10,
-    goldFever: (gs) => gs.goldenChickensClicked >= 50,
-    eggGreen: (gs) => gs.clickedColoredEggs["green"],
-    eggRed: (gs) => gs.clickedColoredEggs["red"],
-    eggPink: (gs) => gs.clickedColoredEggs["pink"],
-    eggOrange: (gs) => gs.clickedColoredEggs["orange"],
-    eggYellow: (gs) => gs.clickedColoredEggs["yellow"],
-    eggWhite: (gs) => gs.clickedColoredEggs["white"],
-    eggBlack: (gs) => gs.clickedColoredEggs["black"],
-    eggBlue: (gs) => gs.clickedColoredEggs["blue"],
-    eggPurple: (gs) => gs.clickedColoredEggs["purple"],
-    eggGold: (gs) => gs.clickedColoredEggs["gold"],
-    impatient: (gs) => gs.failedBuys >= 50,
-    license: (gs) => gs.licenseClicked,
-    reset: (gs) => gs.resets > 0,
-    lazy: (gs) => gs.totalClicks === 0 && gs.timePlayed >= 120,
-    loner: (gs) => gs.totalEggs >= 1e6 && gs.upgrades.worker === 0,
-    afk: (gs) => gs.timeSinceLastClick >= 900,
-    indecisive: (gs) => gs.modalOpens >= 50,
-    justTheBasics: (gs) => gs.totalEggs >= 1e7 && Object.keys(gs.chickens).every((c) => c === "leghorn" || gs.chickens[c] === 0),
-    allUpgrades: (gs) => Object.keys(CONFIG.UPGRADES).every((u) => gs.upgrades[u] > 0),
-    allChickens: (gs) => Object.keys(CONFIG.CHICKENS).every((c) => gs.chickens[c] > 0),
-    eggCollector: (gs) => Object.keys(CONFIG.COLORED_EGGS).every((c) => gs.clickedColoredEggs[c]),
-    firstInsult: (gs) => gs.firstInsultFired,
-    eagle1: (gs) => gs.eagleClicks >= 1,
-    eagle10: (gs) => gs.eagleClicks >= 10,
-    eagle50: (gs) => gs.eagleClicks >= 50,
-    fox1: (gs) => gs.foxClicks >= 1,
-    badger1: (gs) => gs.badgerClicks >= 1,
-    umbrella1: (gs) => gs.umbrellaClicks >= 1,
-    umbrella10: (gs) => gs.umbrellaClicks >= 10
+    click1: (gs2) => gs2.totalClicks >= 1,
+    click1k: (gs2) => gs2.totalClicks >= 1e3,
+    click100k: (gs2) => gs2.totalClicks >= 1e5,
+    click1M: (gs2) => gs2.totalClicks >= 1e6,
+    egg1k: (gs2) => gs2.totalEggs >= 1e3,
+    egg1M: (gs2) => gs2.totalEggs >= 1e6,
+    egg1B: (gs2) => gs2.totalEggs >= 1e9,
+    egg1T: (gs2) => gs2.totalEggs >= 1e12,
+    worker25: (gs2) => gs2.upgrades.worker >= 25,
+    worker100: (gs2) => gs2.upgrades.worker >= 100,
+    incubator25: (gs2) => gs2.upgrades.incubator >= 25,
+    incubator100: (gs2) => gs2.upgrades.incubator >= 100,
+    loom1: (gs2) => gs2.upgrades.loom >= 1,
+    loom10: (gs2) => gs2.upgrades.loom >= 10,
+    featherForecast1: (gs2) => gs2.upgrades.featherForecast >= 1,
+    eggstraClicks1: (gs2) => gs2.upgrades.eggstraClicks >= 1,
+    cluckworkAutomation1: (gs2) => gs2.upgrades.cluckworkAutomation >= 1,
+    peckingOrder1: (gs2) => gs2.upgrades.peckingOrder >= 1,
+    nestEggIRA1: (gs2) => gs2.upgrades.nestEggIRA >= 1,
+    fowlLanguage1: (gs2) => gs2.upgrades.fowlLanguage >= 1,
+    silkie1: (gs2) => gs2.chickens.silkie >= 1,
+    rooster1: (gs2) => gs2.chickens.rooster >= 1,
+    orpington1: (gs2) => gs2.chickens.orpington >= 1,
+    wyandotte1: (gs2) => gs2.chickens.wyandotte >= 1,
+    doja1: (gs2) => gs2.chickens.doja >= 1,
+    brahma1: (gs2) => gs2.chickens.brahma >= 1,
+    serama1: (gs2) => gs2.chickens.serama >= 1,
+    banty1: (gs2) => gs2.chickens.banty >= 1,
+    secondChance: (gs2) => gs2.prestigeCount >= 1,
+    eternalFarmer: (gs2) => gs2.prestigeCount >= 10,
+    prestigeWorldwide: (gs2) => gs2.prestigeCount >= 25,
+    goldenTouch: (gs2) => gs2.goldenChickensClicked >= 1,
+    goldRush: (gs2) => gs2.goldenChickensClicked >= 10,
+    goldFever: (gs2) => gs2.goldenChickensClicked >= 50,
+    eggGreen: (gs2) => gs2.clickedColoredEggs["green"],
+    eggRed: (gs2) => gs2.clickedColoredEggs["red"],
+    eggPink: (gs2) => gs2.clickedColoredEggs["pink"],
+    eggOrange: (gs2) => gs2.clickedColoredEggs["orange"],
+    eggYellow: (gs2) => gs2.clickedColoredEggs["yellow"],
+    eggWhite: (gs2) => gs2.clickedColoredEggs["white"],
+    eggBlack: (gs2) => gs2.clickedColoredEggs["black"],
+    eggBlue: (gs2) => gs2.clickedColoredEggs["blue"],
+    eggPurple: (gs2) => gs2.clickedColoredEggs["purple"],
+    eggGold: (gs2) => gs2.clickedColoredEggs["gold"],
+    impatient: (gs2) => gs2.failedBuys >= 50,
+    license: (gs2) => gs2.licenseClicked,
+    reset: (gs2) => gs2.resets > 0,
+    lazy: (gs2) => gs2.totalClicks === 0 && gs2.timePlayed >= 120,
+    loner: (gs2) => gs2.totalEggs >= 1e6 && gs2.upgrades.worker === 0,
+    afk: (gs2) => gs2.timeSinceLastClick >= 900,
+    indecisive: (gs2) => gs2.modalOpens >= 50,
+    justTheBasics: (gs2) => gs2.totalEggs >= 1e7 && Object.keys(gs2.chickens).every((c) => c === "leghorn" || gs2.chickens[c] === 0),
+    allUpgrades: (gs2) => Object.keys(CONFIG.UPGRADES).every((u) => gs2.upgrades[u] > 0),
+    allChickens: (gs2) => Object.keys(CONFIG.CHICKENS).every((c) => gs2.chickens[c] > 0),
+    eggCollector: (gs2) => Object.keys(CONFIG.COLORED_EGGS).every((c) => gs2.clickedColoredEggs[c]),
+    firstInsult: (gs2) => gs2.firstInsultFired,
+    eagle1: (gs2) => gs2.eagleClicks >= 1,
+    eagle10: (gs2) => gs2.eagleClicks >= 10,
+    eagle50: (gs2) => gs2.eagleClicks >= 50,
+    fox1: (gs2) => gs2.foxClicks >= 1,
+    badger1: (gs2) => gs2.badgerClicks >= 1,
+    umbrella1: (gs2) => gs2.umbrellaClicks >= 1,
+    umbrella10: (gs2) => gs2.umbrellaClicks >= 10
   };
 
   // src/utils.js
@@ -326,22 +339,34 @@
     modalOpens: 0,
     timeSinceLastClick: 0,
     firstInsultFired: false,
-    prestigeUpgrades: { ancestralBlueprints: 0 }
+    prestigeUpgrades: { ancestralBlueprints: 0 },
+    moonEggs: 0,
+    darkMatter: 0,
+    lunarUpgrades: {
+      moonMiner: 0,
+      gravStabilizer: 0,
+      cosmicDustFilter: 0
+    },
+    lunarChickens: {
+      lunar: 0,
+      alien: 0
+    },
+    activeScene: "earth"
   };
 
   // src/logic.js
-  var getReputationBonus = (gs) => 1 + (gs.reputation || 0) * 0.05;
-  var getEventModifier = (gs) => gs.event.active ? gs.event.modifier : 1;
-  var getBuffModifier = (gs, buffType, defaultValue = 1) => {
-    const buff = gs.activeBuffs[buffType];
+  var getReputationBonus = (gs2) => 1 + (gs2.reputation || 0) * 0.05;
+  var getEventModifier = (gs2) => gs2.event.active ? gs2.event.modifier : 1;
+  var getBuffModifier = (gs2, buffType, defaultValue = 1) => {
+    const buff = gs2.activeBuffs[buffType];
     if (buff && buff.duration > 0) {
       return buff.value;
     }
     return defaultValue;
   };
-  var getBoostMultiplier = (gs) => getBuffModifier(gs, "boostMultiplier");
-  var getArtifactBonus = (gs, effectType) => {
-    return gs.artifacts.reduce((total, id) => {
+  var getBoostMultiplier = (gs2) => getBuffModifier(gs2, "boostMultiplier");
+  var getArtifactBonus = (gs2, effectType) => {
+    return gs2.artifacts.reduce((total, id) => {
       const art = CONFIG.ARTIFACTS[id];
       if (art && (art.effect === effectType || art.effect === "global")) {
         return total + art.value;
@@ -349,50 +374,60 @@
       return total;
     }, 0);
   };
-  var getAchievementBonus = (gs) => {
-    const totalBonus = gs.unlockedAchievements.reduce((sum, id) => {
+  var getAchievementBonus = (gs2) => {
+    const totalBonus = gs2.unlockedAchievements.reduce((sum, id) => {
       const bonusValue = achievements2[id]?.bonus || 1;
       return sum + (bonusValue - 1);
     }, 0);
     return 1 + totalBonus;
   };
-  var getBaseEggsPerSecond = (gs) => {
-    let baseEps = gs.upgrades.worker * gs.chickens.leghorn * 1;
-    baseEps += gs.chickens.brahma * (baseEps * 5);
+  var getBaseEggsPerSecond = (gs2) => {
+    let baseEps = gs2.upgrades.worker * gs2.chickens.leghorn * 1;
+    baseEps += gs2.chickens.brahma * (baseEps * 5);
     return baseEps;
   };
-  var getEggsPerSecond = (gs) => {
-    const baseEps = getBaseEggsPerSecond(gs);
+  var getEggsPerSecond = (gs2) => {
+    const baseEps = getBaseEggsPerSecond(gs2);
     const interestCap = baseEps > 0 ? baseEps * 10 : 1e3;
-    const nestEggInterest = gs.upgrades.nestEggIRA > 0 ? Math.min(baseEps * 1e-3 * gs.upgrades.nestEggIRA, interestCap) : 0;
-    const peckingOrderBonus = 1 + gs.upgrades.peckingOrder * 0.1;
-    const bantyBonus = Math.pow(1.1, gs.chickens.banty);
-    const quantumBonus = gs.chickens.quantum > 0 ? Math.pow(1 + gs.unlockedAchievements.length * 0.1, gs.chickens.quantum) : 1;
-    const eventHorizonBonus = 1 + gs.upgrades.eventHorizon * 0.01 * gs.prestigeCount;
-    const artifactBonus = 1 + getArtifactBonus(gs, "eps");
-    const totalBuildings = Object.values(gs.upgrades).reduce((a, b) => a + b, 0) + Object.values(gs.chickens).reduce((a, b) => a + b, 0);
-    const cluckworkBonus = 1 + gs.upgrades.cluckworkAutomation * 0.05 * totalBuildings;
-    return (baseEps + nestEggInterest) * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * quantumBonus * eventHorizonBonus * cluckworkBonus * artifactBonus;
+    const nestEggInterest = gs2.upgrades.nestEggIRA > 0 ? Math.min(baseEps * 1e-3 * gs2.upgrades.nestEggIRA, interestCap) : 0;
+    const peckingOrderBonus = 1 + gs2.upgrades.peckingOrder * 0.1;
+    const bantyBonus = Math.pow(1.1, gs2.chickens.banty);
+    const quantumBonus = gs2.chickens.quantum > 0 ? Math.pow(1 + gs2.unlockedAchievements.length * 0.1, gs2.chickens.quantum) : 1;
+    const eventHorizonBonus = 1 + gs2.upgrades.eventHorizon * 0.01 * gs2.prestigeCount;
+    const artifactBonus = 1 + getArtifactBonus(gs2, "eps");
+    const totalBuildings = Object.values(gs2.upgrades).reduce((a, b) => a + b, 0) + Object.values(gs2.chickens).reduce((a, b) => a + b, 0);
+    const cluckworkBonus = 1 + gs2.upgrades.cluckworkAutomation * 0.05 * totalBuildings;
+    return (baseEps + nestEggInterest) * getAchievementBonus(gs2) * getReputationBonus(gs2) * getEventModifier(gs2) * getBoostMultiplier(gs2) * gs2.permanentBonus * peckingOrderBonus * bantyBonus * quantumBonus * eventHorizonBonus * cluckworkBonus * artifactBonus;
   };
-  var getEggsPerClick = (gs) => {
-    const loomBoost = 1 + gs.upgrades.loom * 0.25;
-    const baseEpc = 1 + gs.upgrades.incubator;
-    const peckingOrderBonus = 1 + gs.upgrades.peckingOrder * 0.1;
-    const bantyBonus = Math.pow(1.1, gs.chickens.banty);
-    const artifactBonus = 1 + getArtifactBonus(gs, "click");
-    return Math.floor(baseEpc * loomBoost * getAchievementBonus(gs) * getReputationBonus(gs) * getEventModifier(gs) * getBoostMultiplier(gs) * gs.permanentBonus * peckingOrderBonus * bantyBonus * getBuffModifier(gs, "clickFrenzy") * artifactBonus);
+  var getEggsPerClick = (gs2) => {
+    const loomBoost = 1 + gs2.upgrades.loom * 0.25;
+    const baseEpc = 1 + gs2.upgrades.incubator;
+    const peckingOrderBonus = 1 + gs2.upgrades.peckingOrder * 0.1;
+    const bantyBonus = Math.pow(1.1, gs2.chickens.banty);
+    const artifactBonus = 1 + getArtifactBonus(gs2, "click");
+    return Math.floor(baseEpc * loomBoost * getAchievementBonus(gs2) * getReputationBonus(gs2) * getEventModifier(gs2) * getBoostMultiplier(gs2) * gs2.permanentBonus * peckingOrderBonus * bantyBonus * getBuffModifier(gs2, "clickFrenzy") * artifactBonus);
   };
-  function getPrestigeCost(gs) {
+  var getMoonDarkMatterPerSecond = (gs2) => {
+    let baseDps = gs2.lunarUpgrades.moonMiner * gs2.lunarChickens.lunar * 1;
+    baseDps += gs2.lunarChickens.alien * 0.1;
+    baseDps *= 1 + gs2.lunarUpgrades.cosmicDustFilter * 0.1;
+    return baseDps;
+  };
+  var getMoonDarkMatterPerClick = (gs2) => {
+    let baseDpc = CONFIG.DARK_MATTER_PER_CLICK + gs2.lunarUpgrades.gravStabilizer * 1;
+    return baseDpc;
+  };
+  function getPrestigeCost(gs2) {
     const baseCost = CONFIG.PRESTIGE_COST;
-    const prestigeCount = gs.prestigeCount || 0;
+    const prestigeCount = gs2.prestigeCount || 0;
     return baseCost * Math.pow(2, prestigeCount);
   }
-  function tryDigArtifact(gs) {
+  function tryDigArtifact(gs2) {
     if (Math.random() < CONFIG.ARTIFACT_DIG_CHANCE) {
-      const available = Object.keys(CONFIG.ARTIFACTS).filter((id) => !gs.artifacts.includes(id));
+      const available = Object.keys(CONFIG.ARTIFACTS).filter((id) => !gs2.artifacts.includes(id));
       if (available.length > 0) {
         const id = available[Math.floor(Math.random() * available.length)];
-        gs.artifacts.push(id);
+        gs2.artifacts.push(id);
         return CONFIG.ARTIFACTS[id];
       }
     }
@@ -454,7 +489,16 @@
     rainOverlay: document.getElementById("rain-overlay"),
     museumList: document.getElementById("museum-list"),
     geneticLabList: document.getElementById("genetic-lab-list"),
-    chickenSVG: document.getElementById("chicken")
+    chickenSVG: document.getElementById("chicken"),
+    sceneSwitcherBtn: document.getElementById("scene-switcher-btn"),
+    earthScene: document.getElementById("earth-scene"),
+    moonScene: document.getElementById("moon-scene"),
+    lunarCoopListContainer: document.getElementById("lunar-coop-list"),
+    lunarUpgradesListContainer: document.getElementById("lunar-upgrades-list"),
+    moonEggCounter: document.getElementById("moon-egg-counter"),
+    darkMatterCounter: document.getElementById("dark-matter-counter"),
+    moonEpsCounter: document.getElementById("moon-eps-counter"),
+    moonEpcCounter: document.getElementById("moon-epc-counter")
   };
   function renderGeneticLab(gameState2, equipSkinCallback) {
     elements.geneticLabList.innerHTML = "";
@@ -462,21 +506,21 @@
       const skin = CONFIG.SKINS[id];
       const isUnlocked = gameState2.unlockedSkins.includes(id);
       const isActive = gameState2.skin === id;
-      const el = document.createElement("div");
-      el.className = `shop-item`;
-      el.style.flexDirection = "column";
-      el.style.alignItems = "center";
-      el.style.textAlign = "center";
-      el.style.opacity = isUnlocked ? "1" : "0.5";
-      el.style.filter = isUnlocked ? "none" : "grayscale(100%)";
-      el.style.border = isActive ? "2px solid gold" : "";
-      el.innerHTML = `
+      const el2 = document.createElement("div");
+      el2.className = `shop-item`;
+      el2.style.flexDirection = "column";
+      el2.style.alignItems = "center";
+      el2.style.textAlign = "center";
+      el2.style.opacity = isUnlocked ? "1" : "0.5";
+      el2.style.filter = isUnlocked ? "none" : "grayscale(100%)";
+      el2.style.border = isActive ? "2px solid gold" : "";
+      el2.innerHTML = `
             <svg viewBox="0 0 100 100" style="width: 60px; height: 60px;">${skin.svg}</svg>
             <h4 style="font-size: 1.2rem; margin-top: 5px;">${isUnlocked ? skin.name : "???" + skin.name.substring(1)}</h4>
             <p style="font-size: 0.9rem; color: #555;">${isUnlocked ? skin.desc : "Unlock to reveal"}</p>
             <button id="equip-${id}" class="funky-button" ${!isUnlocked || isActive ? "disabled" : ""}>${isActive ? "Equipped" : "Equip"}</button>
         `;
-      elements.geneticLabList.appendChild(el);
+      elements.geneticLabList.appendChild(el2);
       if (isUnlocked && !isActive) {
         document.getElementById(`equip-${id}`).addEventListener("click", () => equipSkinCallback(id));
       }
@@ -492,9 +536,9 @@
     elements.upgradesListContainer.innerHTML = "";
     for (const id in CONFIG.UPGRADES) {
       const upgrade = CONFIG.UPGRADES[id];
-      const el = document.createElement("div");
-      el.className = `shop-item`;
-      el.innerHTML = `
+      const el2 = document.createElement("div");
+      el2.className = `shop-item`;
+      el2.innerHTML = `
             <div>
                 <h4>${upgrade.name}</h4>
                 <p>${upgrade.desc}</p>
@@ -502,7 +546,7 @@
             </div>
             <button id="buy-${id}" class="funky-button">Buy: <span id="${id}-cost">10</span></button>
         `;
-      elements.upgradesListContainer.appendChild(el);
+      elements.upgradesListContainer.appendChild(el2);
       document.getElementById(`buy-${id}`).addEventListener("click", () => buyUpgradeCallback(id));
     }
   }
@@ -510,10 +554,10 @@
     elements.coopListContainer.innerHTML = "";
     for (const id in CONFIG.CHICKENS) {
       const chicken = CONFIG.CHICKENS[id];
-      const el = document.createElement("div");
-      el.className = `shop-item`;
+      const el2 = document.createElement("div");
+      el2.className = `shop-item`;
       let buttonHtml = `<button id="buy-${id}" class="funky-button">Buy: <span id="${id}-cost">1000</span></button>`;
-      el.innerHTML = `
+      el2.innerHTML = `
             <div>
                 <h4>${chicken.name}</h4>
                 <p>${chicken.desc}</p>
@@ -521,8 +565,45 @@
             </div>
             ${buttonHtml}
         `;
-      elements.coopListContainer.appendChild(el);
+      elements.coopListContainer.appendChild(el2);
       document.getElementById(`buy-${id}`).addEventListener("click", () => buyChickenCallback(id));
+    }
+  }
+  function buildLunarUpgradeShop(gameState2, buyLunarUpgradeCallback) {
+    elements.lunarUpgradesListContainer.innerHTML = "";
+    for (const id in CONFIG.LUNAR_UPGRADES) {
+      const upgrade = CONFIG.LUNAR_UPGRADES[id];
+      const el2 = document.createElement("div");
+      el2.className = `shop-item`;
+      el2.innerHTML = `
+            <div>
+                <h4>${upgrade.name}</h4>
+                <p>${upgrade.desc}</p>
+                <p>Lvl: <span id="lunar-${id}-level">0</span></p>
+            </div>
+            <button id="buy-lunar-${id}" class="funky-button">Buy: <span id="lunar-${id}-cost">10</span></button>
+        `;
+      elements.lunarUpgradesListContainer.appendChild(el2);
+      document.getElementById(`buy-lunar-${id}`).addEventListener("click", () => buyLunarUpgradeCallback(id));
+    }
+  }
+  function buildLunarCoop(gameState2, buyLunarChickenCallback) {
+    elements.lunarCoopListContainer.innerHTML = "";
+    for (const id in CONFIG.LUNAR_CHICKENS) {
+      const chicken = CONFIG.LUNAR_CHICKENS[id];
+      const el2 = document.createElement("div");
+      el2.className = `shop-item`;
+      let buttonHtml = `<button id="buy-lunar-${id}" class="funky-button">Buy: <span id="lunar-${id}-cost">1000</span></button>`;
+      el2.innerHTML = `
+            <div>
+                <h4>${chicken.name}</h4>
+                <p>${chicken.desc}</p>
+                <p>Owned: <span id="lunar-${id}-chickens">0</span></p>
+            </div>
+            ${buttonHtml}
+        `;
+      elements.lunarCoopListContainer.appendChild(el2);
+      document.getElementById(`buy-lunar-${id}`).addEventListener("click", () => buyLunarChickenCallback(id));
     }
   }
   var uiCache = /* @__PURE__ */ new Map();
@@ -539,20 +620,20 @@
     for (const id in CONFIG.ARTIFACTS) {
       const art = CONFIG.ARTIFACTS[id];
       const isUnlocked = gameState2.artifacts.includes(id);
-      const el = document.createElement("div");
-      el.className = `shop-item`;
-      el.style.flexDirection = "column";
-      el.style.alignItems = "center";
-      el.style.textAlign = "center";
-      el.style.opacity = isUnlocked ? "1" : "0.5";
-      el.style.filter = isUnlocked ? "none" : "grayscale(100%)";
-      el.innerHTML = `
+      const el2 = document.createElement("div");
+      el2.className = `shop-item`;
+      el2.style.flexDirection = "column";
+      el2.style.alignItems = "center";
+      el2.style.textAlign = "center";
+      el2.style.opacity = isUnlocked ? "1" : "0.5";
+      el2.style.filter = isUnlocked ? "none" : "grayscale(100%)";
+      el2.innerHTML = `
             <div style="font-size: 2rem; margin-bottom: 5px;">\u{1F3FA}</div>
             <h4 style="font-size: 1.2rem;">${isUnlocked ? art.name : "???"}</h4>
             <p style="font-size: 0.9rem; color: #555;">${isUnlocked ? art.desc : "Undiscovered"}</p>
             <p style="font-size: 0.8rem; font-weight: bold; color: #c0392b;">${isUnlocked ? art.bonusDesc : ""}</p>
         `;
-      elements.museumList.appendChild(el);
+      elements.museumList.appendChild(el2);
     }
   }
   function updateUI(gameState2) {
@@ -604,6 +685,64 @@
     if (elements.silkieAsset) elements.silkieAsset.style.display = gameState2.chickens.silkie > 0 ? "block" : "none";
     if (elements.fenceAsset) elements.fenceAsset.style.display = gameState2.totalEggs >= 1e6 ? "block" : "none";
     if (elements.flagpoleAsset) elements.flagpoleAsset.style.display = gameState2.prestigeCount > 0 ? "block" : "none";
+    if (gameState2.activeScene === "moon") {
+      setText(elements.moonEggCounter, formatNumber(gameState2.moonEggs));
+      setText(elements.darkMatterCounter, formatNumber(gameState2.darkMatter));
+    }
+    for (const id in CONFIG.LUNAR_UPGRADES) {
+      const upgrade = CONFIG.LUNAR_UPGRADES[id];
+      const levelEl = document.getElementById(`lunar-${id}-level`);
+      const costEl = document.getElementById(`lunar-${id}-cost`);
+      const buttonEl = document.getElementById(`buy-lunar-${id}`);
+      if (!levelEl || !costEl || !buttonEl) continue;
+      setText(levelEl, formatNumber(gameState2.lunarUpgrades[id]));
+      const cost = calculateCost(upgrade.baseCost, gameState2.lunarUpgrades[id], upgrade.exponent, gameState2);
+      setText(costEl, formatNumber(cost));
+      buttonEl.disabled = gameState2[upgrade.currency] < cost;
+    }
+    for (const id in CONFIG.LUNAR_CHICKENS) {
+      const chicken = CONFIG.LUNAR_CHICKENS[id];
+      const ownedEl = document.getElementById(`lunar-${id}-chickens`);
+      const costEl = document.getElementById(`lunar-${id}-cost`);
+      const buttonEl = document.getElementById(`buy-lunar-${id}`);
+      if (!ownedEl || !costEl || !buttonEl) continue;
+      setText(ownedEl, formatNumber(gameState2.lunarChickens[id]));
+      const cost = calculateCost(chicken.baseCost, gameState2.lunarChickens[id], chicken.exponent, gameState2);
+      setText(costEl, formatNumber(cost));
+      buttonEl.disabled = gameState2.moonEggs < cost;
+    }
+  }
+  function updateUIScene(scene) {
+    if (elements.earthScene) elements.earthScene.style.display = scene === "earth" ? "block" : "none";
+    if (elements.moonScene) elements.moonScene.style.display = scene === "moon" ? "block" : "none";
+    const earthHudElements = [
+      elements.eggCounter.parentElement.parentElement,
+      // eggs div
+      elements.featherCounter.parentElement.parentElement,
+      // feathers/rep div
+      elements.epsCounter.parentElement,
+      // EPS/EPC div
+      elements.epcCounter.parentElement,
+      document.querySelector('.nav-btn[data-modal="upgrades-screen"]'),
+      document.querySelector('.nav-btn[data-modal="coop-screen"]')
+    ];
+    const moonHudElements = [
+      elements.moonEggCounter.parentElement.parentElement,
+      // moon eggs div
+      elements.darkMatterCounter.parentElement.parentElement,
+      // dark matter div
+      elements.moonEpsCounter.parentElement,
+      // moon DM/s, DM/c
+      elements.moonEpcCounter.parentElement,
+      document.querySelector('.nav-btn[data-modal="lunar-upgrades-screen"]'),
+      document.querySelector('.nav-btn[data-modal="lunar-coop-screen"]')
+    ];
+    earthHudElements.forEach((el2) => {
+      if (el2) el2.style.display = scene === "earth" ? "flex" : "none";
+    });
+    moonHudElements.forEach((el2) => {
+      if (el2) el2.style.display = scene === "moon" ? "flex" : "none";
+    });
   }
   function renderAchievements(gameState2) {
     elements.achievementsList.innerHTML = "";
@@ -611,24 +750,24 @@
       const ach = achievements2[id];
       const isUnlocked = gameState2.unlockedAchievements.includes(id);
       if (ach.hidden && !isUnlocked) return;
-      const el = document.createElement("div");
-      el.dataset.id = id;
-      el.className = `achievement-item p-2 rounded-lg transition-all duration-300 font-semibold ${isUnlocked ? "bg-yellow-300 text-yellow-800" : "bg-gray-200 text-gray-500"}`;
+      const el2 = document.createElement("div");
+      el2.dataset.id = id;
+      el2.className = `achievement-item p-2 rounded-lg transition-all duration-300 font-semibold ${isUnlocked ? "bg-yellow-300 text-yellow-800" : "bg-gray-200 text-gray-500"}`;
       let progressHtml = "";
       if (!isUnlocked) {
-        const condition = achievementConditions[id];
-        const conditionStr = condition.toString();
+        const condition2 = achievementConditions[id];
+        const conditionStr = condition2.toString();
         const match = conditionStr.match(/gs\.(totalClicks|totalEggs|upgrades\.(\w+)|chickens\.(\w+)|goldenChickensClicked)\s*>=\s*([\d.e+]+)/);
         if (match) {
           const key = match[1];
           const target = parseFloat(match[4]);
           let current = 0;
           if (key.startsWith("upgrades.")) {
-            current = gameState2.upgrades[match[2]] || 0;
+            current = gs.upgrades[match[2]] || 0;
           } else if (key.startsWith("chickens.")) {
-            current = gameState2.chickens[match[3]] || 0;
+            current = gs.chickens[match[3]] || 0;
           } else {
-            current = gameState2[key] || 0;
+            current = gs[key] || 0;
           }
           const progress = Math.min(current / target, 1);
           if (progress > 0) {
@@ -641,7 +780,7 @@
           }
         }
       }
-      el.innerHTML = `
+      el2.innerHTML = `
             <div class="flex justify-between items-center">
                 <div>
                     <strong>${ach.name}</strong>
@@ -651,9 +790,9 @@
             </div>
             ${progressHtml}
         `;
-      elements.achievementsList.appendChild(el);
+      elements.achievementsList.appendChild(el2);
       if (isUnlocked) {
-        const shareIcon = el.querySelector(`#share-${id}`);
+        const shareIcon = el2.querySelector(`#share-${id}`);
         if (shareIcon) {
           shareIcon.title = "Share Achievement";
           shareIcon.addEventListener("click", (e) => {
@@ -664,26 +803,26 @@
       }
     });
   }
-  function updateAchievementProgress(gs) {
+  function updateAchievementProgress(gs2) {
     const achievementItems = document.querySelectorAll(".achievement-item");
-    achievementItems.forEach((el) => {
-      const id = el.dataset.id;
-      if (!id || gs.unlockedAchievements.includes(id)) return;
-      const bar = el.querySelector(".achievement-progress");
-      const text = el.querySelector(".achievement-progress-text");
+    achievementItems.forEach((el2) => {
+      const id = el2.dataset.id;
+      if (!id || gs2.unlockedAchievements.includes(id)) return;
+      const bar = el2.querySelector(".achievement-progress");
+      const text = el2.querySelector(".achievement-progress-text");
       if (bar && text && achievementConditions[id]) {
-        const conditionStr = achievementConditions[id].toString();
+        const conditionStr = condition.toString();
         const match = conditionStr.match(/gs\.(totalClicks|totalEggs|upgrades\.(\w+)|chickens\.(\w+)|goldenChickensClicked)\s*>=\s*([\d.e+]+)/);
         if (match) {
           const key = match[1];
           const target = parseFloat(match[4]);
           let current = 0;
           if (key.startsWith("upgrades.")) {
-            current = gs.upgrades[match[2]] || 0;
+            current = gs2.upgrades[match[2]] || 0;
           } else if (key.startsWith("chickens.")) {
-            current = gs.chickens[match[3]] || 0;
+            current = gs2.chickens[match[3]] || 0;
           } else {
-            current = gs[key] || 0;
+            current = gs2[key] || 0;
           }
           const progress = Math.min(current / target, 1);
           bar.style.width = `${progress * 100}%`;
@@ -699,21 +838,21 @@
     setTimeout(() => elements.toast.classList.remove("show"), 4e3);
   }
   function showFloatingText(text, event, isSuper = false) {
-    const el = document.createElement("div");
-    el.className = "floating-text";
+    const el2 = document.createElement("div");
+    el2.className = "floating-text";
     if (isSuper) {
-      el.classList.add("super-click-text");
+      el2.classList.add("super-click-text");
     }
-    el.textContent = text;
+    el2.textContent = text;
     const scene = document.getElementById("game-scene");
     if (!scene) return;
-    scene.appendChild(el);
+    scene.appendChild(el2);
     const containerRect = scene.getBoundingClientRect();
-    el.style.left = `${event.clientX - containerRect.left}px`;
-    el.style.top = `${event.clientY - containerRect.top}px`;
+    el2.style.left = `${event.clientX - containerRect.left}px`;
+    el2.style.top = `${event.clientY - containerRect.top}px`;
     setTimeout(() => {
-      if (el.parentElement) {
-        el.parentElement.removeChild(el);
+      if (el2.parentElement) {
+        el2.parentElement.removeChild(el2);
       }
     }, 1450);
   }
@@ -738,32 +877,40 @@
   // src/main.js
   var gameState = {};
   function clickChicken(event) {
-    let epc = getEggsPerClick(gameState);
-    if (gameState.upgrades.eggstraClicks > 0 && Math.random() < gameState.upgrades.eggstraClicks * 0.05) {
-      epc *= 10;
+    if (gameState.activeScene === "moon") {
+      let dmc = getMoonDarkMatterPerClick(gameState);
+      gameState.darkMatter += dmc;
+      showFloatingText(`+${formatNumber(dmc)} DM`, event);
+    } else {
+      let epc = getEggsPerClick(gameState);
+      if (gameState.upgrades.eggstraClicks > 0 && Math.random() < gameState.upgrades.eggstraClicks * 0.05) {
+        epc *= 10;
+      }
+      gameState.eggs += epc;
+      gameState.totalEggs += epc;
+      showFloatingText(`+${formatNumber(epc)}`, event);
     }
-    gameState.eggs += epc;
-    gameState.totalEggs += epc;
-    showFloatingText(`+${formatNumber(epc)}`, event);
-    const artifact = tryDigArtifact(gameState);
-    if (artifact) {
-      showToast("Artifact Found!", `You dug up: ${artifact.name}`);
-      renderMuseum(gameState);
+    if (gameState.activeScene === "earth") {
+      const artifact = tryDigArtifact(gameState);
+      if (artifact) {
+        showToast("Artifact Found!", `You dug up: ${artifact.name}`);
+        renderMuseum(gameState);
+      }
     }
     if (gameState.upgrades.fowlLanguage > 0 && Math.random() < 8333e-8) {
       const insult = FOWL_INSULTS[Math.floor(Math.random() * FOWL_INSULTS.length)];
-      const el = document.createElement("div");
-      el.className = "floating-insult";
-      el.textContent = insult;
+      const el2 = document.createElement("div");
+      el2.className = "floating-insult";
+      el2.textContent = insult;
       const scene = document.getElementById("game-scene");
       if (scene) {
-        scene.appendChild(el);
+        scene.appendChild(el2);
         const containerRect = scene.getBoundingClientRect();
-        el.style.left = `${containerRect.width / 2 - el.offsetWidth / 2}px`;
-        el.style.top = `${containerRect.height * 0.6}px`;
+        el2.style.left = `${containerRect.width / 2 - el2.offsetWidth / 2}px`;
+        el2.style.top = `${containerRect.height * 0.6}px`;
         setTimeout(() => {
-          if (el.parentElement) {
-            el.parentElement.removeChild(el);
+          if (el2.parentElement) {
+            el2.parentElement.removeChild(el2);
           }
         }, 1450);
       }
@@ -808,6 +955,28 @@
         showToast("New Skin Unlocked!", `You can now use the ${CONFIG.SKINS[id].name} skin!`);
         renderGeneticLab(gameState, equipSkin);
       }
+      updateUI(gameState);
+    } else {
+      gameState.failedBuys++;
+    }
+  }
+  function buyLunarUpgrade(id) {
+    const upgrade = CONFIG.LUNAR_UPGRADES[id];
+    const cost = calculateCost(upgrade.baseCost, gameState.lunarUpgrades[id], upgrade.exponent, gameState);
+    if (gameState[upgrade.currency] >= cost) {
+      gameState[upgrade.currency] -= cost;
+      gameState.lunarUpgrades[id]++;
+      updateUI(gameState);
+    } else {
+      gameState.failedBuys++;
+    }
+  }
+  function buyLunarChicken(id) {
+    const chicken = CONFIG.LUNAR_CHICKENS[id];
+    const cost = calculateCost(chicken.baseCost, gameState.lunarChickens[id], chicken.exponent, gameState);
+    if (gameState.moonEggs >= cost) {
+      gameState.moonEggs -= cost;
+      gameState.lunarChickens[id]++;
       updateUI(gameState);
     } else {
       gameState.failedBuys++;
@@ -865,7 +1034,7 @@
         }, { once: true });
         elements.coloredEggContainer.appendChild(eggEl);
         setTimeout(() => {
-          if (eggEl.parentElement) eggEl.parentElement.removeChild(eggEl);
+          if (eggEl.parentElement) eggEl.parentElement.removeChild(el);
         }, 1e4);
         return;
       }
@@ -1011,17 +1180,20 @@
     if (offlineSeconds <= 10) return;
     const maxOfflineSeconds = 86400 + gameState.upgrades.comfyCoopBedding * 7200;
     offlineSeconds = Math.min(offlineSeconds, maxOfflineSeconds);
-    const offlineEps = getEggsPerSecond(gameState);
-    const eggsGained = Math.floor(offlineEps * offlineSeconds);
+    if (gameState.activeScene === "moon") {
+      const offlineDps = getMoonDarkMatterPerSecond(gameState);
+      gameState.darkMatter += offlineDps * offlineSeconds;
+      gameState.moonEggs += gameState.lunarChickens.lunar * offlineSeconds;
+    } else {
+      const offlineEps = getEggsPerSecond(gameState);
+      gameState.eggs += offlineEps * offlineSeconds;
+      gameState.totalEggs += offlineEps * offlineSeconds;
+    }
     const featherChancePerSecond = gameState.chickens.silkie * (0.1 + gameState.upgrades.featherForecast * 0.01);
     const feathersGained = Math.floor(featherChancePerSecond * offlineSeconds);
     const repChancePerSecond = gameState.chickens.rooster * 0.01;
     const repGained = repChancePerSecond * offlineSeconds;
     if (eggsGained <= 0 && feathersGained <= 0 && repGained <= 0) return;
-    gameState.eggs += eggsGained;
-    gameState.totalEggs += eggsGained;
-    gameState.feathers += feathersGained;
-    gameState.reputation += repGained;
     const timeAwayHours = Math.floor(offlineSeconds / 3600);
     const timeAwayMinutes = Math.floor(offlineSeconds % 3600 / 60);
     document.getElementById("offline-time").textContent = `${timeAwayHours}h ${timeAwayMinutes}m`;
@@ -1049,9 +1221,15 @@
       let secondsPassed = (now - lastTick) / 1e3;
       lastTick = now;
       if (secondsPassed > 3600) secondsPassed = 0.1;
-      const eps = getEggsPerSecond(gameState);
-      gameState.eggs += eps * secondsPassed;
-      gameState.totalEggs += eps * secondsPassed;
+      if (gameState.activeScene === "moon") {
+        const dps = getMoonDarkMatterPerSecond(gameState);
+        gameState.darkMatter += dps * secondsPassed;
+        gameState.moonEggs += gameState.lunarChickens.lunar * secondsPassed;
+      } else {
+        const eps = getEggsPerSecond(gameState);
+        gameState.eggs += eps * secondsPassed;
+        gameState.totalEggs += eps * secondsPassed;
+      }
       gameState.timePlayed += secondsPassed;
       gameState.timeSinceLastClick = (gameState.timeSinceLastClick || 0) + secondsPassed;
       const activeBuffKeys = Object.keys(gameState.activeBuffs);
@@ -1186,6 +1364,7 @@
     elements.licenseSummary.addEventListener("click", () => {
       gameState.licenseClicked = true;
     });
+    elements.sceneSwitcherBtn.addEventListener("click", toggleScene);
     const saveExitTime = () => localStorage.setItem("chickenClickerExitTime", Date.now());
     window.addEventListener("beforeunload", saveExitTime);
     document.addEventListener("visibilitychange", () => {
@@ -1213,6 +1392,12 @@
         gameState.prestigeUpgrades.ancestralBlueprints++;
       }
     });
+    for (const id in CONFIG.LUNAR_UPGRADES) {
+      document.getElementById(`buy-lunar-${id}`).addEventListener("click", () => buyLunarUpgrade(id));
+    }
+    for (const id in CONFIG.LUNAR_CHICKENS) {
+      document.getElementById(`buy-lunar-${id}`).addEventListener("click", () => buyLunarChicken(id));
+    }
     elements.eagleAsset.addEventListener("click", () => {
       gameState.eagleClicks++;
       const bonus = getEggsPerSecond(gameState) * 600;
@@ -1248,6 +1433,27 @@
       checkAchievements(gameState, showToast);
     });
   }
+  function equipSkin(skinId) {
+    if (gameState.unlockedSkins.includes(skinId)) {
+      gameState.skin = skinId;
+      updateChickenSkin(skinId);
+      renderGeneticLab(gameState, equipSkin);
+      showToast("Skin Changed!", `You are now a ${CONFIG.SKINS[skinId].name}!`);
+    } else {
+      showToast("Locked Skin", "You haven't unlocked this skin yet!");
+    }
+  }
+  function toggleScene() {
+    if (gameState.activeScene === "earth") {
+      gameState.activeScene = "moon";
+      showToast("To the Moon!", "Welcome to your Lunar Coop!");
+    } else {
+      gameState.activeScene = "earth";
+      showToast("Back to Earth!", "Welcome back to the farm!");
+    }
+    updateUIScene(gameState.activeScene);
+    updateUI(gameState);
+  }
   function triggerInteractiveEvent() {
     const roll = Math.random();
     if (roll < 0.4) {
@@ -1279,28 +1485,21 @@
       }, 8e3);
     }
   }
-  function equipSkin(skinId) {
-    if (gameState.unlockedSkins.includes(skinId)) {
-      gameState.skin = skinId;
-      updateChickenSkin(skinId);
-      renderGeneticLab(gameState, equipSkin);
-      showToast("Skin Changed!", `You are now a ${CONFIG.SKINS[skinId].name}!`);
-    } else {
-      showToast("Locked Skin", "You haven't unlocked this skin yet!");
-    }
-  }
   function initialize() {
     if (elements.versionNumberEl) {
       elements.versionNumberEl.textContent = CONFIG.GAME_VERSION;
     }
     buildUpgradeShop(gameState, buyUpgrade);
     buildCoop(gameState, buyChicken);
+    buildLunarUpgradeShop(gameState, buyLunarUpgrade);
+    buildLunarCoop(gameState, buyLunarChicken);
     loadGame();
     calculateOfflineProgress();
     renderAchievements(gameState);
     renderMuseum(gameState);
     renderGeneticLab(gameState, equipSkin);
     updateChickenSkin(gameState.skin);
+    updateUIScene(gameState.activeScene);
     updateUI(gameState);
     setupEventListeners();
     setInterval(gameLoop, CONFIG.GAME_TICK_INTERVAL * 1e3);

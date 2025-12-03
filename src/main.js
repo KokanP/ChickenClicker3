@@ -2,28 +2,36 @@
 import { CONFIG, FOWL_INSULTS } from './config.js';
 import { formatNumber, calculateCost, deepMerge, isObject } from './utils.js';
 import { initialGameState } from './state.js';
-import { getEggsPerSecond, getEggsPerClick, getPrestigeCost, checkAchievements, getBuffModifier, tryDigArtifact } from './logic.js';
+import { getEggsPerSecond, getEggsPerClick, getPrestigeCost, checkAchievements, getBuffModifier, tryDigArtifact, getMoonDarkMatterPerSecond, getMoonDarkMatterPerClick } from './logic.js';
 import { 
     elements, buildUpgradeShop, buildCoop, updateUI, 
-    renderAchievements, updateAchievementProgress, showToast, showFloatingText, renderMuseum, renderGeneticLab, updateChickenSkin
+    renderAchievements, updateAchievementProgress, showToast, showFloatingText, renderMuseum, renderGeneticLab, updateChickenSkin, buildLunarUpgradeShop, buildLunarCoop, updateUIScene
 } from './ui.js';
 
 let gameState = {};
 
 function clickChicken(event) {
-    let epc = getEggsPerClick(gameState);
-    if (gameState.upgrades.eggstraClicks > 0 && Math.random() < (gameState.upgrades.eggstraClicks * 0.05)) {
-        epc *= 10;
+    if (gameState.activeScene === 'moon') {
+        let dmc = getMoonDarkMatterPerClick(gameState);
+        gameState.darkMatter += dmc;
+        showFloatingText(`+${formatNumber(dmc)} DM`, event);
+    } else {
+        let epc = getEggsPerClick(gameState);
+        if (gameState.upgrades.eggstraClicks > 0 && Math.random() < (gameState.upgrades.eggstraClicks * 0.05)) {
+            epc *= 10;
+        }
+        gameState.eggs += epc;
+        gameState.totalEggs += epc;
+        showFloatingText(`+${formatNumber(epc)}`, event);
     }
-    gameState.eggs += epc;
-    gameState.totalEggs += epc;
-    showFloatingText(`+${formatNumber(epc)}`, event);
     
-    // Artifact Digging
-    const artifact = tryDigArtifact(gameState);
-    if (artifact) {
-        showToast("Artifact Found!", `You dug up: ${artifact.name}`);
-        renderMuseum(gameState); // Update UI if open
+    // Artifact Digging (only on Earth)
+    if (gameState.activeScene === 'earth') {
+        const artifact = tryDigArtifact(gameState);
+        if (artifact) {
+            showToast("Artifact Found!", `You dug up: ${artifact.name}`);
+            renderMuseum(gameState); // Update UI if open
+        }
     }
     
     // Check for Fowl Language upgrade and occasionally show an insult
@@ -96,6 +104,30 @@ function buyChicken(id) {
     }
 }
 
+function buyLunarUpgrade(id) {
+    const upgrade = CONFIG.LUNAR_UPGRADES[id];
+    const cost = calculateCost(upgrade.baseCost, gameState.lunarUpgrades[id], upgrade.exponent, gameState);
+    if (gameState[upgrade.currency] >= cost) {
+        gameState[upgrade.currency] -= cost;
+        gameState.lunarUpgrades[id]++;
+        updateUI(gameState); // Immediate update
+    } else {
+        gameState.failedBuys++;
+    }
+}
+
+function buyLunarChicken(id) {
+    const chicken = CONFIG.LUNAR_CHICKENS[id];
+    const cost = calculateCost(chicken.baseCost, gameState.lunarChickens[id], chicken.exponent, gameState);
+    if (gameState.moonEggs >= cost) {
+        gameState.moonEggs -= cost;
+        gameState.lunarChickens[id]++;
+        updateUI(gameState); // Immediate update
+    } else {
+        gameState.failedBuys++;
+    }
+}
+
 function spawnGoldenChicken() {
     const containerRect = elements.coloredEggContainer.getBoundingClientRect();
     const groundTop = containerRect.height * 0.65; 
@@ -117,7 +149,7 @@ function spawnGoldenChicken() {
             elements.goldenChicken.style.display = 'none';
             elements.goldenChicken.classList.remove('run-animation');
         }, 500);
-    }, 10000); // Animation is 10s
+    }, 10000);
 }
 
 function clickGoldenChicken(event) {
@@ -151,7 +183,7 @@ function spawnColoredEgg() {
             eggEl.style.display = 'block';
             eggEl.addEventListener('click', () => { applyEggEffect(id); eggEl.remove(); }, { once: true });
             elements.coloredEggContainer.appendChild(eggEl);
-            setTimeout(() => { if (eggEl.parentElement) eggEl.parentElement.removeChild(eggEl); }, 10000);
+            setTimeout(() => { if (eggEl.parentElement) eggEl.parentElement.removeChild(el); }, 10000);
             return;
         }
     }
@@ -284,8 +316,15 @@ function calculateOfflineProgress() {
     const maxOfflineSeconds = 86400 + (gameState.upgrades.comfyCoopBedding * 7200);
     offlineSeconds = Math.min(offlineSeconds, maxOfflineSeconds);
 
-    const offlineEps = getEggsPerSecond(gameState);
-    const eggsGained = Math.floor(offlineEps * offlineSeconds);
+    if (gameState.activeScene === 'moon') {
+        const offlineDps = getMoonDarkMatterPerSecond(gameState);
+        gameState.darkMatter += offlineDps * offlineSeconds;
+        gameState.moonEggs += gameState.lunarChickens.lunar * offlineSeconds;
+    } else {
+        const offlineEps = getEggsPerSecond(gameState);
+        gameState.eggs += offlineEps * offlineSeconds;
+        gameState.totalEggs += offlineEps * offlineSeconds;
+    }
     
     const featherChancePerSecond = (gameState.chickens.silkie * (0.1 + (gameState.upgrades.featherForecast * 0.01)));
     const feathersGained = Math.floor(featherChancePerSecond * offlineSeconds);
@@ -294,11 +333,6 @@ function calculateOfflineProgress() {
     const repGained = repChancePerSecond * offlineSeconds;
 
     if (eggsGained <= 0 && feathersGained <= 0 && repGained <= 0) return;
-
-    gameState.eggs += eggsGained;
-    gameState.totalEggs += eggsGained;
-    gameState.feathers += feathersGained;
-    gameState.reputation += repGained;
 
     const timeAwayHours = Math.floor(offlineSeconds / 3600);
     const timeAwayMinutes = Math.floor((offlineSeconds % 3600) / 60);
@@ -335,9 +369,16 @@ function gameLoop() {
         
         if (secondsPassed > 3600) secondsPassed = 0.1; 
 
-        const eps = getEggsPerSecond(gameState);
-        gameState.eggs += eps * secondsPassed;
-        gameState.totalEggs += eps * secondsPassed;
+        if (gameState.activeScene === 'moon') {
+            const dps = getMoonDarkMatterPerSecond(gameState);
+            gameState.darkMatter += dps * secondsPassed;
+            gameState.moonEggs += gameState.lunarChickens.lunar * secondsPassed;
+        } else {
+            const eps = getEggsPerSecond(gameState);
+            gameState.eggs += eps * secondsPassed;
+            gameState.totalEggs += eps * secondsPassed;
+        }
+        
         gameState.timePlayed += secondsPassed;
         gameState.timeSinceLastClick = (gameState.timeSinceLastClick || 0) + secondsPassed;
         const activeBuffKeys = Object.keys(gameState.activeBuffs);
@@ -483,6 +524,7 @@ function setupEventListeners() {
     elements.prestigeButton.addEventListener('click', prestige);
     elements.resetButton.addEventListener('click', hardReset);
     elements.licenseSummary.addEventListener('click', () => { gameState.licenseClicked = true; });
+    elements.sceneSwitcherBtn.addEventListener('click', toggleScene);
     
     const saveExitTime = () => localStorage.setItem('chickenClickerExitTime', Date.now());
     window.addEventListener('beforeunload', saveExitTime);
@@ -513,6 +555,14 @@ function setupEventListeners() {
             gameState.prestigeUpgrades.ancestralBlueprints++;
         }
     });
+
+    // Event listeners for Lunar Upgrades and Chickens
+    for (const id in CONFIG.LUNAR_UPGRADES) {
+        document.getElementById(`buy-lunar-${id}`).addEventListener('click', () => buyLunarUpgrade(id));
+    }
+    for (const id in CONFIG.LUNAR_CHICKENS) {
+        document.getElementById(`buy-lunar-${id}`).addEventListener('click', () => buyLunarChicken(id));
+    }
 
     // Interactive Event Listeners
     elements.eagleAsset.addEventListener('click', () => {
@@ -555,6 +605,29 @@ function setupEventListeners() {
     });
 }
 
+function equipSkin(skinId) {
+    if (gameState.unlockedSkins.includes(skinId)) {
+        gameState.skin = skinId;
+        updateChickenSkin(skinId);
+        renderGeneticLab(gameState, equipSkin); // Re-render to update 'Equipped' state
+        showToast("Skin Changed!", `You are now a ${CONFIG.SKINS[skinId].name}!`);
+    } else {
+        showToast("Locked Skin", "You haven't unlocked this skin yet!");
+    }
+}
+
+function toggleScene() {
+    if (gameState.activeScene === 'earth') {
+        gameState.activeScene = 'moon';
+        showToast("To the Moon!", "Welcome to your Lunar Coop!");
+    } else {
+        gameState.activeScene = 'earth';
+        showToast("Back to Earth!", "Welcome back to the farm!");
+    }
+    updateUIScene(gameState.activeScene);
+    updateUI(gameState);
+}
+
 function triggerInteractiveEvent() {
     const roll = Math.random();
     
@@ -564,7 +637,6 @@ function triggerInteractiveEvent() {
         elements.eagleAsset.classList.remove('run-animation');
         // Re-use run-animation logic but maybe we need a fly-animation? 
         // For now, just place it and move it via CSS or reuse the class if it works horizontally.
-        // Let's repurpose 'run-animation' which moves left to right.
         elements.eagleAsset.style.top = '50px';
         elements.eagleAsset.style.left = '-100px';
         void elements.eagleAsset.offsetWidth;
@@ -596,23 +668,14 @@ function triggerInteractiveEvent() {
     }
 }
 
-function equipSkin(skinId) {
-    if (gameState.unlockedSkins.includes(skinId)) {
-        gameState.skin = skinId;
-        updateChickenSkin(skinId);
-        renderGeneticLab(gameState, equipSkin); // Re-render to update 'Equipped' state
-        showToast("Skin Changed!", `You are now a ${CONFIG.SKINS[skinId].name}!`);
-    } else {
-        showToast("Locked Skin", "You haven't unlocked this skin yet!");
-    }
-}
-
 function initialize() {
     if (elements.versionNumberEl) {
         elements.versionNumberEl.textContent = CONFIG.GAME_VERSION;
     }
     buildUpgradeShop(gameState, buyUpgrade);
     buildCoop(gameState, buyChicken);
+    buildLunarUpgradeShop(gameState, buyLunarUpgrade); // New lunar shop
+    buildLunarCoop(gameState, buyLunarChicken); // New lunar coop
     loadGame();
     
     calculateOfflineProgress();
@@ -621,6 +684,7 @@ function initialize() {
     renderMuseum(gameState);
     renderGeneticLab(gameState, equipSkin); // Initial render
     updateChickenSkin(gameState.skin); // Apply active skin on load
+    updateUIScene(gameState.activeScene); // Set initial scene visibility
     updateUI(gameState);
     setupEventListeners();
     setInterval(gameLoop, CONFIG.GAME_TICK_INTERVAL * 1000);

@@ -2,7 +2,7 @@
 
 export const CONFIG = {
     SAVE_KEY: 'chickenClickerSave_v2.9',
-    GAME_VERSION: '3.2 (The Collector Update)',
+    GAME_VERSION: '3.3 (The Cosmic Expansion)',
     GAME_TICK_INTERVAL: 0.1,
     SAVE_INTERVAL: 5,
     GOLDEN_CHICKEN_SPAWN_INTERVAL: 60,
@@ -12,6 +12,7 @@ export const CONFIG = {
     COLORED_EGG_SPAWN_CHANCE: 10 / 240,
     ARTIFACT_DIG_CHANCE: 0.0001, // 1 in 10,000 clicks
     PRESTIGE_COST: 1e12,
+    DARK_MATTER_PER_CLICK: 1, // Base Dark Matter per click
     ARTIFACTS: {
         ancientKernel: { name: "Ancient Kernel", desc: "Petrified corn. Hard as a rock.", bonusDesc: "+1% Click Power", effect: 'click', value: 0.01 },
         rustySpur: { name: "Rusty Spur", desc: "From a cowboy who rode a rooster?", bonusDesc: "+1% EPS", effect: 'eps', value: 0.01 },
@@ -53,6 +54,15 @@ export const CONFIG = {
         serama: { name: 'Serama Sorcerer', desc: 'Has a chance to grant a free upgrade level.', baseCost: 1e18, exponent: 1.5, color: 'purple' },
         banty: { name: 'Banty Chicken', desc: 'The king. Provides a +10% multiplicative bonus to ALL production.', baseCost: 1e21, exponent: 1.6, color: 'indigo' },
         quantum: { name: 'Quantum Clucker', desc: 'Exists in multiple coops at once. Multiplies EPS by (1 + Unlocked Achievements).', baseCost: 1e40, exponent: 1.8, color: 'cyan' }
+    },
+    LUNAR_UPGRADES: { // New section for lunar upgrades
+        moonMiner: { name: 'Moon Miner', desc: 'Extracts Dark Matter from lunar soil. +1 DM/s per level.', baseCost: 100, exponent: 1.2, currency: 'moonEggs', color: 'gray' },
+        gravStabilizer: { name: 'Gravity Stabilizer', desc: 'Reduces lunar gravity. +1 DM/click per level.', baseCost: 500, exponent: 1.2, currency: 'moonEggs', color: 'white' },
+        cosmicDustFilter: { name: 'Cosmic Dust Filter', desc: 'Increases Moon Egg production efficiency. +10% Moon Eggs per level.', baseCost: 10000, exponent: 1.3, currency: 'darkMatter', color: 'purple' }
+    },
+    LUNAR_CHICKENS: { // New section for lunar chickens
+        lunar: { name: 'Lunar Hen', desc: 'A sturdy chicken adapted to lunar life. Produces 1 Moon Egg/s per Moon Miner.', baseCost: 5000, exponent: 1.3, color: 'silver' },
+        alien: { name: 'Alien Clucker', desc: 'Mysterious origins. Generates Dark Matter over time.', baseCost: 1e6, exponent: 1.4, color: 'lime' }
     },
     COLORED_EGGS: {
         green:  { likelihood: 15, effect: 'discount', value: 0.1, duration: 5, color: '#4ade80' },

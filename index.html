@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chicken Clicker: The Farm</title>
-    <link rel="stylesheet" href="style.css?v=3.2">
+    <link rel="stylesheet" href="style.css?v=3.3">
     <!-- html2canvas for achievement screenshots -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -12,8 +12,8 @@
 
     <div id="app-wrapper">
         
-        <!-- The Farm Scene -->
-        <div id="game-scene">
+        <!-- Earth Scene Container -->
+        <div id="earth-scene" class="scene-container">
             <!-- Layers -->
             <div id="sky-layer" class="scene-layer"></div>
             
@@ -146,11 +146,36 @@
                 <p id="toast-description"></p>
             </div>
         </div>
+        
+        <!-- Moon Scene Container -->
+        <div id="moon-scene" class="scene-container" style="display: none;">
+            <!-- Layers -->
+            <div id="moon-sky-layer" class="scene-layer"></div>
+            <div id="moon-ground-layer" class="scene-layer"></div>
+            <div id="earth-asset" class="scene-layer"></div>
+
+            <!-- Lunar Assets -->
+            <svg id="lunar-coop-asset" class="scene-layer" viewBox="0 0 100 100">
+                <title>Lunar Coop: Home for Moon Miners</title>
+                <path d="M10,40 L50,10 L90,40 V90 H10 Z" fill="#607d8b" stroke="#37474f" stroke-width="3"/>
+                <rect x="35" y="50" width="30" height="40" fill="#263238" stroke="#546e7a" stroke-width="2"/>
+                <circle cx="50" cy="30" r="8" fill="#e0e0e0" stroke="#78909c" stroke-width="2"/>
+                <path d="M30,70 L70,70 L70,90 L30,90 Z" fill="#b0bec5"/>
+            </svg>
+            <svg id="mining-drone-asset" class="scene-layer" viewBox="0 0 100 100">
+                <title>Mining Drone: Extracts Dark Matter</title>
+                <circle cx="50" cy="50" r="20" fill="#9e9e9e"/>
+                <rect x="45" y="30" width="10" height="40" fill="#757575"/>
+                <rect x="30" y="45" width="40" height="10" fill="#757575"/>
+                <polygon points="45,25 50,15 55,25" fill="#e0e0e0"/>
+                <polygon points="45,75 50,85 55,75" fill="#e0e0e0"/>
+            </svg>
+        </div>
 
         <!-- The HUD -->
         <div id="hud-bar">
-            <!-- Stats -->
-            <div class="hud-stats">
+            <!-- Earth Stats -->
+            <div class="hud-stats" id="earth-stats">
                 <div class="stat-row">
                     <span class="stat-icon">🥚</span>
                     <span id="egg-counter" class="stat-value">0</span>
@@ -166,6 +191,21 @@
                 </div>
             </div>
 
+            <!-- Moon Stats -->
+            <div class="hud-stats" id="moon-stats" style="display:none;">
+                <div class="stat-row">
+                    <span class="stat-icon">🌑</span>
+                    <span id="moon-egg-counter" class="stat-value">0</span>
+                </div>
+                <div class="stat-row" style="font-size: 1rem;">
+                    <span class="stat-icon" style="font-size:1rem">⚛️</span>
+                    <span id="dark-matter-counter">0</span>
+                </div>
+                <div class="sub-stats">
+                    <span id="moon-eps-counter">DM/s: 0</span> | <span id="moon-epc-counter">DM/c: 1</span>
+                </div>
+            </div>
+
             <!-- Navigation -->
             <div class="hud-nav">
                 <div class="nav-btn" data-modal="upgrades-screen">
@@ -175,6 +215,14 @@
                 <div class="nav-btn" data-modal="coop-screen">
                     <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                     <span>Coop</span>
+                </div>
+                <div class="nav-btn" data-modal="lunar-upgrades-screen" style="display:none;">
+                    <svg viewBox="0 0 24 24"><path d="M14.7 6.3l-1.7-1.7c-.4-.4-1-.4-1.4 0l-3 3c-.4.4-.4 1 0 1.4l1.7 1.7L5 16.3V21h4.7l5-5.3 1.7 1.7c.4.4 1 .4 1.4 0l3-3c-.4-.4.4-1 0-1.4l-1.7-1.7L21 9.4l-4.7-4.8-1.6 1.7zM12 13.4l-3-3L12 7.4l3 3-3 3z"/></svg>
+                    <span>LunarB</span>
+                </div>
+                <div class="nav-btn" data-modal="lunar-coop-screen" style="display:none;">
+                    <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                    <span>LunarC</span>
                 </div>
                 <div class="nav-btn" data-modal="achievements-screen">
                     <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1l0 2.5C3 14 5.7 17.5 9 18.4V20h6v-1.6c3.3-.9 6-4.4 6-7.9V7c0-1.1-.9-2-2-2zM5 9V7h2v2H5zm10 9.4V20H9v-1.6c-2.8-.7-4.9-3.2-5-6.4h2c0 3.3 2.7 6 6 6s6-2.7 6-6h2c-.1 3.2-2.2 5.7-5 6.4zM17 9h2V7h-2v2z"/></svg>
@@ -189,10 +237,14 @@
                     <span>Genetic</span>
                 </div>
                 <div class="nav-btn" data-modal="settings-screen">
-                    <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.488.488 0 0 0-.59.22L2.64 8.87a.49.49 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.58 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.488.488 0 0 0-.59.22L2.64 8.87a.49.49 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l-.36-2.54c.59-.24 1.13-.58 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
                     <span>System</span>
                 </div>
             </div>
+            <button id="scene-switcher-btn" class="nav-btn" style="background-color: #5c4033; margin-left: 10px;">
+                <span class="stat-icon">🚀</span>
+                <span>Moon</span>
+            </button>
         </div>
 
         <!-- Modals -->
@@ -209,6 +261,22 @@
                 <button class="close-modal-btn">&times;</button>
                 <h2 class="modal-title">The Coop</h2>
                 <div id="coop-list" class="modal-body"></div>
+            </div>
+        </div>
+
+        <div id="lunar-upgrades-screen" class="modal-screen">
+            <div class="modal-content">
+                <button class="close-modal-btn">&times;</button>
+                <h2 class="modal-title">Lunar Upgrades</h2>
+                <div id="lunar-upgrades-list" class="modal-body"></div>
+            </div>
+        </div>
+
+        <div id="lunar-coop-screen" class="modal-screen">
+            <div class="modal-content">
+                <button class="close-modal-btn">&times;</button>
+                <h2 class="modal-title">Lunar Coop</h2>
+                <div id="lunar-coop-list" class="modal-body"></div>
             </div>
         </div>
 
@@ -276,7 +344,7 @@
                     
                     <button id="reset-button" class="funky-button" style="background: #c0392b;">HARD RESET</button>
                     
-                    <p style="text-align: center; margin-top: 20px; font-size: 0.8rem;">Version: <span id="version-number">3.0</span></p>
+                    <p style="text-align: center; margin-top: 20px; font-size: 0.8rem;">Version: <span id="version-number">3.3</span></p>
                     <details>
                         <summary id="license-summary" style="cursor: pointer; text-decoration: underline;">License</summary>
                         <p>MIT License</p>
@@ -284,7 +352,26 @@
                     <details style="margin-top: 10px;">
                         <summary style="cursor: pointer; text-decoration: underline; font-weight: bold;">Full Changelog</summary>
                         <div style="text-align: left; font-size: 1rem; max-height: 300px; overflow-y: auto; margin-top: 10px; border: 2px solid #5c4033; padding: 10px; background: rgba(255,255,255,0.3);">
-                            <h3 style="border-bottom: 2px solid #5c4033;">Version 3.1 (The Alive Update)</h3>
+                            <h3 style="border-bottom: 2px solid #5c4033;">Version 3.3 (The Cosmic Expansion)</h3>
+                            <ul>
+                                <li><strong>To the Moon!:</strong> A massive expansion that takes your farming operation into space.
+                                    <ul>
+                                        <li><strong>Lunar Scene:</strong> Toggle between Earth and the Moon using the Rocket button.</li>
+                                        <li><strong>New Currencies:</strong> Farm Moon Eggs and mine Dark Matter.</li>
+                                        <li><strong>Lunar Economy:</strong> 3 new Lunar Upgrades and 2 new Lunar Chickens (Lunar Hen, Alien Clucker).</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 3.3.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 3.2 (The Collector Update)</h3>
+                            <ul>
+                                <li><strong>Museum of Antiquities:</strong> Dig up ancient artifacts while clicking. They provide permanent passive bonuses.</li>
+                                <li><strong>Genetic Lab:</strong> Unlock visual skins for your chicken by collecting different breeds. Equip them to change your look!</li>
+                                <li><strong>Housekeeping:</strong> Updated version number to 3.2.</li>
+                            </ul>
+
+                            <h3 style="border-bottom: 2px solid #5c4033; margin-top: 20px;">Version 3.1 (The Alive Update)</h3>
                             <ul>
                                 <li><strong>Interactive Events:</strong> The farm now feels alive with 3 new randomized events to watch out for:
                                     <ul>
@@ -460,6 +547,6 @@
         <p id="screenshot-date" style="font-size: 1rem; text-align: right; margin-top: 10px;"></p>
     </div>
 
-    <script src="script.js?v=3.2"></script>
+    <script src="script.js?v=3.3"></script>
 </body>
 </html>
