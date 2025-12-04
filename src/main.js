@@ -748,9 +748,11 @@ function toggleScene() {
     if (gameState.activeScene === 'earth') {
         gameState.activeScene = 'moon';
         showToast("To the Moon!", "Welcome to your Lunar Coop!");
+        updateChickenSkin('astronaut'); // Force astronaut skin on Moon
     } else {
         gameState.activeScene = 'earth';
         showToast("Back to Earth!", "Welcome back to the farm!");
+        updateChickenSkin(gameState.skin); // Revert to equipped skin on Earth
     }
     updateUIScene(gameState.activeScene);
     updateUI(gameState);
@@ -811,7 +813,14 @@ function initialize() {
     renderAchievements(gameState);
     renderMuseum(gameState);
     renderGeneticLab(gameState, equipSkin); // Initial render
-    updateChickenSkin(gameState.skin); // Apply active skin on load
+    
+    // Apply skin based on initial scene
+    if (gameState.activeScene === 'moon') {
+        updateChickenSkin('astronaut');
+    } else {
+        updateChickenSkin(gameState.skin);
+    }
+
     updateUIScene(gameState.activeScene); // Set initial scene visibility
     updateUI(gameState);
     setupEventListeners();
