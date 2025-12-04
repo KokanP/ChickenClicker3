@@ -2,7 +2,7 @@
   // src/config.js
   var CONFIG = {
     SAVE_KEY: "chickenClickerSave_v3.4",
-    GAME_VERSION: "3.4 (The Antiquities Update)",
+    GAME_VERSION: "3.5 (The Lunar Rescue)",
     GAME_TICK_INTERVAL: 0.1,
     SAVE_INTERVAL: 5,
     GOLDEN_CHICKEN_SPAWN_INTERVAL: 60,
@@ -79,7 +79,8 @@
       leghorn: { name: "Leghorn Look", desc: "A sleek, no-nonsense classic white.", svg: `<rect x="30" y="40" width="40" height="40" fill="lightgray" /><rect x="30" y="30" width="20" height="10" fill="lightgray" /><rect x="70" y="40" width="10" height="10" fill="orange" /><rect x="30" y="20" width="10" height="10" fill="red" /><rect x="40" y="80" width="5" height="15" fill="orange" /><rect x="55" y="80" width="5" height="15" fill="orange" /><rect x="50" y="35" width="5" height="5" fill="black" />` },
       silkie: { name: "Silkie Style", desc: "Fluffy and fabulous.", svg: `<circle cx="50" cy="50" r="30" fill="white" /><circle cx="40" cy="30" r="10" fill="white" /><circle cx="60" cy="30" r="10" fill="white" /><rect x="70" y="40" width="10" height="10" fill="orange" /><circle cx="50" cy="20" r="5" fill="red" /><rect x="40" y="80" width="5" height="15" fill="orange" /><rect x="55" y="80" width="5" height="15" fill="orange" /><circle cx="50" cy="35" r="3" fill="black" />` },
       rooster: { name: "Rooster Royalty", desc: "Proud and vibrant.", svg: `<rect x="30" y="40" width="40" height="40" fill="darkred" /><rect x="30" y="30" width="20" height="10" fill="darkred" /><rect x="70" y="40" width="10" height="10" fill="orange" /><path d="M30,20 L35,15 L40,20 L35,25 Z" fill="yellow" /><rect x="40" y="80" width="5" height="15" fill="orange" /><rect x="55" y="80" width="5" height="15" fill="orange" /><rect x="50" y="35" width="5" height="5" fill="black" />` },
-      quantum: { name: "Quantum Form", desc: "A glitch in the matrix. Pixelated and electric.", svg: `<rect x="30" y="40" width="40" height="40" fill="cyan" /><rect x="30" y="30" width="20" height="10" fill="cyan" /><rect x="70" y="40" width="10" height="10" fill="lightgreen" /><rect x="30" y="20" width="10" height="10" fill="blue" /><rect x="40" y="80" width="5" height="15" fill="lightgreen" /><rect x="55" y="80" width="5" height="15" fill="lightgreen" /><rect x="50" y="35" width="5" height="5" fill="white" />` }
+      quantum: { name: "Quantum Form", desc: "A glitch in the matrix. Pixelated and electric.", svg: `<rect x="30" y="40" width="40" height="40" fill="cyan" /><rect x="30" y="30" width="20" height="10" fill="cyan" /><rect x="70" y="40" width="10" height="10" fill="lightgreen" /><rect x="30" y="20" width="10" height="10" fill="blue" /><rect x="40" y="80" width="5" height="15" fill="lightgreen" /><rect x="55" y="80" width="5" height="15" fill="lightgreen" /><rect x="50" y="35" width="5" height="5" fill="white" />` },
+      astronaut: { name: "Astro-Chicken", desc: "One small peck for chicken-kind.", svg: `<rect x="30" y="40" width="40" height="40" fill="#e0e0e0" stroke="#999" stroke-width="2" /><rect x="30" y="30" width="20" height="10" fill="#e0e0e0" /><rect x="70" y="40" width="10" height="10" fill="orange" /><rect x="40" y="80" width="5" height="15" fill="orange" /><rect x="55" y="80" width="5" height="15" fill="orange" /><circle cx="45" cy="30" r="18" fill="rgba(100, 200, 255, 0.4)" stroke="#aaa" stroke-width="2" /><rect x="50" y="35" width="5" height="5" fill="black" />` }
     },
     UPGRADES: {
       shovel: { name: "Archaeologist's Shovel", desc: "Allows you to dig for ancient artifacts while clicking.", baseCost: 1e4, exponent: 1e3, currency: "eggs", color: "brown", oneTime: true },
@@ -1775,9 +1776,11 @@
     if (gameState.activeScene === "earth") {
       gameState.activeScene = "moon";
       showToast("To the Moon!", "Welcome to your Lunar Coop!");
+      updateChickenSkin("astronaut");
     } else {
       gameState.activeScene = "earth";
       showToast("Back to Earth!", "Welcome back to the farm!");
+      updateChickenSkin(gameState.skin);
     }
     updateUIScene(gameState.activeScene);
     updateUI(gameState);
@@ -1826,7 +1829,11 @@
     renderAchievements(gameState);
     renderMuseum(gameState);
     renderGeneticLab(gameState, equipSkin);
-    updateChickenSkin(gameState.skin);
+    if (gameState.activeScene === "moon") {
+      updateChickenSkin("astronaut");
+    } else {
+      updateChickenSkin(gameState.skin);
+    }
     updateUIScene(gameState.activeScene);
     updateUI(gameState);
     setupEventListeners();
