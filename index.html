@@ -251,20 +251,6 @@
             <!-- Rain Overlay -->
             <div id="rain-overlay" class="scene-layer" style="display:none; width:100%; height:100%; z-index: 90; pointer-events: none; background: url('data:image/svg+xml;utf8,<svg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'><line x1=\'10\' y1=\'0\' x2=\'5\' y2=\'10\' stroke=\'rgba(173, 216, 230, 0.5)\' stroke-width=\'1\'/></svg>'); animation: rainFall 0.5s linear infinite;"></div>
 
-            <!-- The Main Chicken -->
-            <div id="chicken-container">
-                <svg id="chicken" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
-                    <!-- Pixelated style chicken attempt via SVG -->
-                    <rect x="30" y="40" width="40" height="40" fill="white" />
-                    <rect x="30" y="30" width="20" height="10" fill="white" />
-                    <rect x="70" y="40" width="10" height="10" fill="orange" /> <!-- Beak -->
-                    <rect x="30" y="20" width="10" height="10" fill="red" /> <!-- Comb -->
-                    <rect x="40" y="80" width="5" height="15" fill="orange" /> <!-- Leg -->
-                    <rect x="55" y="80" width="5" height="15" fill="orange" /> <!-- Leg -->
-                    <rect x="50" y="35" width="5" height="5" fill="black" /> <!-- Eye -->
-                </svg>
-            </div>
-
             <!-- Container for random event items -->
             <div id="colored-egg-container" style="position: absolute; inset: 0; pointer-events: none;">
                 <!-- Golden chicken and eggs will be injected here via JS -->
@@ -313,6 +299,20 @@
                 <rect x="30" y="45" width="40" height="10" fill="#757575"/>
                 <polygon points="45,25 50,15 55,25" fill="#e0e0e0"/>
                 <polygon points="45,75 50,85 55,75" fill="#e0e0e0"/>
+            </svg>
+        </div>
+
+        <!-- The Main Chicken (Global) -->
+        <div id="chicken-container">
+            <svg id="chicken" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+                <!-- Pixelated style chicken attempt via SVG -->
+                <rect x="30" y="40" width="40" height="40" fill="white" />
+                <rect x="30" y="30" width="20" height="10" fill="white" />
+                <rect x="70" y="40" width="10" height="10" fill="orange" /> <!-- Beak -->
+                <rect x="30" y="20" width="10" height="10" fill="red" /> <!-- Comb -->
+                <rect x="40" y="80" width="5" height="15" fill="orange" /> <!-- Leg -->
+                <rect x="55" y="80" width="5" height="15" fill="orange" /> <!-- Leg -->
+                <rect x="50" y="35" width="5" height="5" fill="black" /> <!-- Eye -->
             </svg>
         </div>
 
