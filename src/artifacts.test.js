@@ -54,6 +54,7 @@ describe('Digging Logic', () => {
 
     beforeEach(() => {
         mockState = deepMerge({}, initialGameState);
+        mockState.upgrades.shovel = 1; // Unlock shovel for digging tests
     });
 
     afterEach(() => {
@@ -77,7 +78,7 @@ describe('Digging Logic', () => {
         let callCount = 0;
         Math.random = () => {
             callCount++;
-            if (callCount === 1) return 0.0; // Success check
+            if (callCount === 1) return 0.0002; // Success check (Between 0.0001 and 0.0005)
             return 0.0; // Index 0
         };
 
@@ -93,15 +94,16 @@ describe('Digging Logic', () => {
 
     test('tryDigArtifact does not find duplicates', () => {
         // Give player all artifacts except one
-        const allIds = Object.keys(CONFIG.ARTIFACTS);
+        // Exclude donatorPack from this logic as it has special finding rules
+        const allIds = Object.keys(CONFIG.ARTIFACTS).filter(id => id !== 'donatorPack');
         const missingId = allIds.pop(); // Remove last one
-        mockState.artifacts = [...allIds]; // Player has all but one
+        mockState.artifacts = [...allIds, 'donatorPack']; // Player has all others including donatorPack
 
-        // Mock random to succeed chance (0.0) and pick index 0 (0.0)
+        // Mock random to succeed chance (0.0002) and pick index 0 (0.0)
         let callCount = 0;
         Math.random = () => {
             callCount++;
-            if (callCount === 1) return 0.0; // Chance
+            if (callCount === 1) return 0.0002; // Chance
             return 0.0; // Index
         };
 

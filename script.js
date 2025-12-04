@@ -122,7 +122,7 @@
     },
     LUNAR_CHICKENS: {
       // New section for lunar chickens
-      lunar: { name: "Lunar Hen", desc: "A sturdy chicken adapted to lunar life. Produces 1 Moon Egg/s per Moon Miner.", baseCost: 5e3, exponent: 1.3, color: "silver" },
+      lunar: { name: "Lunar Hen", desc: "A sturdy chicken adapted to lunar life. Produces 1 Moon Egg/s per Moon Miner.", baseCost: 1e3, exponent: 1.3, currency: "darkMatter", color: "silver" },
       alien: { name: "Alien Clucker", desc: "Mysterious origins. Generates Dark Matter over time.", baseCost: 1e6, exponent: 1.4, color: "lime" }
     },
     COLORED_EGGS: {
@@ -830,7 +830,8 @@
       setText(ownedEl, formatNumber(gameState2.lunarChickens[id]));
       const cost = calculateCost(chicken.baseCost, gameState2.lunarChickens[id], chicken.exponent, gameState2);
       setText(costEl, formatNumber(cost));
-      buttonEl.disabled = gameState2.moonEggs < cost;
+      const currency = chicken.currency || "moonEggs";
+      buttonEl.disabled = gameState2[currency] < cost;
     }
   }
   function updateUIScene(scene) {
@@ -1210,9 +1211,10 @@
   }
   function buyLunarChicken(id) {
     const chicken = CONFIG.LUNAR_CHICKENS[id];
+    const currency = chicken.currency || "moonEggs";
     const cost = calculateCost(chicken.baseCost, gameState.lunarChickens[id], chicken.exponent, gameState);
-    if (gameState.moonEggs >= cost) {
-      gameState.moonEggs -= cost;
+    if (gameState[currency] >= cost) {
+      gameState[currency] -= cost;
       gameState.lunarChickens[id]++;
       updateUI(gameState);
     } else {

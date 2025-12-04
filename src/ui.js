@@ -407,7 +407,8 @@ export function updateUI(gameState) {
         setText(ownedEl, formatNumber(gameState.lunarChickens[id]));
         const cost = calculateCost(chicken.baseCost, gameState.lunarChickens[id], chicken.exponent, gameState);
         setText(costEl, formatNumber(cost));
-        buttonEl.disabled = gameState.moonEggs < cost;
+        const currency = chicken.currency || 'moonEggs';
+        buttonEl.disabled = gameState[currency] < cost;
     }
 }
 

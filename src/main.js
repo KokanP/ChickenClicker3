@@ -133,9 +133,10 @@ function buyLunarUpgrade(id) {
 
 function buyLunarChicken(id) {
     const chicken = CONFIG.LUNAR_CHICKENS[id];
+    const currency = chicken.currency || 'moonEggs';
     const cost = calculateCost(chicken.baseCost, gameState.lunarChickens[id], chicken.exponent, gameState);
-    if (gameState.moonEggs >= cost) {
-        gameState.moonEggs -= cost;
+    if (gameState[currency] >= cost) {
+        gameState[currency] -= cost;
         gameState.lunarChickens[id]++;
         updateUI(gameState); // Immediate update
     } else {

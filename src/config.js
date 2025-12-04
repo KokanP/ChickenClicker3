@@ -116,7 +116,7 @@ export const CONFIG = {
         temporalAccelerator: { name: 'Temporal Accelerator', desc: 'Uses Dark Matter to speed up Earth time. +5% Global EPS per level.', baseCost: 250, exponent: 1.5, currency: 'darkMatter', color: 'blue' }
     },
     LUNAR_CHICKENS: { // New section for lunar chickens
-        lunar: { name: 'Lunar Hen', desc: 'A sturdy chicken adapted to lunar life. Produces 1 Moon Egg/s per Moon Miner.', baseCost: 5000, exponent: 1.3, color: 'silver' },
+        lunar: { name: 'Lunar Hen', desc: 'A sturdy chicken adapted to lunar life. Produces 1 Moon Egg/s per Moon Miner.', baseCost: 1000, exponent: 1.3, currency: 'darkMatter', color: 'silver' },
         alien: { name: 'Alien Clucker', desc: 'Mysterious origins. Generates Dark Matter over time.', baseCost: 1e6, exponent: 1.4, color: 'lime' }
     },
     COLORED_EGGS: {
