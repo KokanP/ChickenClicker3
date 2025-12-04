@@ -12,7 +12,7 @@ The game is built with vanilla HTML, CSS, and JavaScript, using Tailwind CSS for
 
 The easiest way to play is to visit the official project URL:
 
-[**https://chickenclicker.iffy.top/**](https://chickenclicker.iffy.top/)
+[**https://chickenclicker3.iffy.top/**](https://chickenclicker3.iffy.top/)
 
 ### Running Locally
 

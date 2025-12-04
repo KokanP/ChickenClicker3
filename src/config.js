@@ -1,7 +1,7 @@
 // src/config.js
 
 export const CONFIG = {
-    SAVE_KEY: 'chickenClickerSave_v2.9',
+    SAVE_KEY: 'chickenClickerSave_v3.4',
     GAME_VERSION: '3.4 (The Antiquities Update)',
     GAME_TICK_INTERVAL: 0.1,
     SAVE_INTERVAL: 5,
