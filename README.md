@@ -33,6 +33,12 @@ Version 2.5 introduces the ability to export and import your save data. This is 
 
 ## **Changelog**
 
+### **Version 3.4 (The Antiquities Update)**
+*   **Digging for Treasure:** Added a new "Shovel" tool to the shop. Once purchased, you may uncover ancient items while tending to your farm.
+*   **Rare Finds:** Discovered items are now tracked in the Museum. Some are common, others are legendary.
+*   **Special Event:** Rumors of a mysterious "Donator Pack" box appearing for the luckiest farmers.
+*   **Visuals:** Enhanced graphics for artifacts and digging animations. Improved layout of farm assets.
+
 ### **Version 3.3 (The Cosmic Expansion)**
 *   **To the Moon!:** A massive expansion that takes your farming operation into space.
     *   **Lunar Scene:** Toggle between Earth and the Moon using the Rocket button.
@@ -45,9 +51,9 @@ Version 2.5 introduces the ability to export and import your save data. This is 
 *   **Genetic Lab:** Unlock visual skins for your chicken by collecting different breeds. Equip them to change your look!
 *   **Housekeeping:** Updated version number to 3.2.
 
-### **Version 3.1 (The Alive Update)**
+### **Version 3.1 (The Petra Update)**
 *   **Interactive Events:** The farm now feels alive with 3 new randomized events to watch out for:
-    *   **The Predator:** An Eagle flies across the sky. Click it to protect your flock and earn a reward.
+    *   **The Predator:** An Eagle flies across the sky. Click it to protect your flock and earn a reward. (Thanks Petra!)
     *   **Forest Critters:** Keep an eye on the bushes. You might spot glowing eyes (Fox) or a rare Badger.
     *   **Weather:** Rainstorms pass through. Click the umbrella to stay dry and earn a bonus.
 *   **New Achievements:** Added 7 new achievements tied to these events, including the elusive "Mushroom Mushroom!" for finding a Badger.
@@ -163,4 +169,3 @@ Version 2.5 introduces the ability to export and import your save data. This is 
 *   Introduction of the prestige system (Reputation).  
 *   Redesign to a mobile-first UI with a fixed bottom navigation and modal screens.  
 *   Addition of a constrained, bordered layout for a better desktop/tablet experience.
-
