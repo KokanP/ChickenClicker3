@@ -2,7 +2,7 @@
 
 export const CONFIG = {
     SAVE_KEY: 'chickenClickerSave_v3.4',
-    GAME_VERSION: '3.4 (The Antiquities Update)',
+    GAME_VERSION: '3.5 (The Lunar Rescue)',
     GAME_TICK_INTERVAL: 0.1,
     SAVE_INTERVAL: 5,
     GOLDEN_CHICKEN_SPAWN_INTERVAL: 60,

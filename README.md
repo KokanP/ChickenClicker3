@@ -31,9 +31,14 @@ Version 2.5 introduces the ability to export and import your save data. This is 
 *   **Exporting:** In the "Settings" menu, you can export your save data either to your clipboard or as a downloadable text file.  
 *   **Importing:** In the "Settings" menu, you can paste save data into the text box and click "From Text", or you can select a previously downloaded save file by clicking "From File". The game will reload to apply the new save state.
 
-## **Changelog**
+## 📜 Changelog
 
-### **Version 3.4 (The Antiquities Update)**
+### v3.5 (The Lunar Rescue)
+*   **Fix:** Changed "Lunar Hen" cost to Dark Matter to fix economy deadlock.
+*   **Visual:** Added "Astro-Chicken" skin for Lunar scene.
+*   **Fix:** Made chicken clickable on Moon scene.
+
+### v3.4 (The Antiquities Update)
 *   **Digging for Treasure:** Added a new "Shovel" tool to the shop. Once purchased, you may uncover ancient items while tending to your farm.
 *   **Rare Finds:** Discovered items are now tracked in the Museum. Some are common, others are legendary.
 *   **Special Event:** Rumors of a mysterious "Donator Pack" box appearing for the luckiest farmers.
